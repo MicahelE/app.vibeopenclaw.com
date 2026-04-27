@@ -1,0 +1,128 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-bg-deep: #050810;
+  --color-bg-surface: #0a0f1a;
+  --color-bg-elevated: #111827;
+  --color-coral-bright: #ff4d4d;
+  --color-coral-mid: #e63946;
+  --color-coral-dark: #991b1b;
+  --color-cyan-bright: #00e5cc;
+  --color-cyan-mid: #14b8a6;
+  --color-text-primary: #f0f4ff;
+  --color-text-secondary: #8892b0;
+  --color-text-muted: #5a6480;
+  --color-border-subtle: rgba(136, 146, 176, 0.15);
+  --color-border-accent: rgba(255, 77, 77, 0.3);
+  --color-surface-card: rgba(10, 15, 26, 0.65);
+  --color-surface-card-strong: rgba(10, 15, 26, 0.8);
+  --color-surface-overlay: rgba(0, 0, 0, 0.3);
+  --color-surface-interactive: rgba(255, 255, 255, 0.1);
+  --color-surface-interactive-hover: rgba(255, 255, 255, 0.2);
+  --color-surface-coral-soft: rgba(255, 77, 77, 0.15);
+  --color-surface-cyan-soft: rgba(0, 229, 204, 0.15);
+  --font-sans: "Satoshi", system-ui, sans-serif;
+  --font-display: "Clash Display", system-ui, sans-serif;
+  --font-mono: "SF Mono", "Fira Code", monospace;
+}
+
+/* Starfield background */
+.stars {
+  position: fixed;
+  inset: 0;
+  background-image:
+    radial-gradient(2px 2px at 20px 30px, rgba(255,255,255,0.8), transparent),
+    radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.5), transparent),
+    radial-gradient(1px 1px at 90px 40px, rgba(255,255,255,0.6), transparent),
+    radial-gradient(2px 2px at 130px 80px, rgba(255,255,255,0.4), transparent),
+    radial-gradient(1px 1px at 160px 120px, rgba(255,255,255,0.7), transparent),
+    radial-gradient(2px 2px at 200px 60px, rgba(0,229,204,0.6), transparent),
+    radial-gradient(1px 1px at 250px 150px, rgba(255,255,255,0.5), transparent),
+    radial-gradient(2px 2px at 300px 40px, rgba(255,77,77,0.4), transparent);
+  background-size: 350px 200px;
+  animation: twinkle 8s ease-in-out infinite alternate;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Nebula background */
+.nebula {
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 50% at 20% 20%, rgba(255,77,77,0.12), transparent 50%),
+    radial-gradient(ellipse 60% 60% at 80% 30%, rgba(0,229,204,0.08), transparent 50%),
+    radial-gradient(ellipse 90% 70% at 50% 90%, rgba(255,77,77,0.06), transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+@keyframes twinkle {
+  0% { opacity: 0.4; }
+  100% { opacity: 0.7; }
+}
+
+@keyframes fadeInUp {
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.8s ease-out forwards;
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+.animate-gradient-shift {
+  background-size: 200% 200%;
+  animation: gradientShift 6s ease infinite;
+}
+
+/* Gradient text */
+.gradient-text {
+  background: linear-gradient(135deg, #f0f4ff 0%, #ff4d4d 52%, #00e5cc 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Glass card */
+.glass-card {
+  background: rgba(10, 15, 26, 0.65);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(136, 146, 176, 0.15);
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #050810;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(136, 146, 176, 0.3);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(136, 146, 176, 0.5);
+}
+
+body {
+  background-color: #050810;
+  color: #f0f4ff;
+  font-family: "Satoshi", system-ui, sans-serif;
+}
