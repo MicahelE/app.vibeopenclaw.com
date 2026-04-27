@@ -5,9 +5,6 @@ import { AuthProvider } from "@/lib/auth";
 export const metadata: Metadata = {
   title: "VibeOpenClaw — Managed AI Agents",
   description: "Deploy OpenClaw and Hermes AI agents in one click. Managed SaaS with BYOK.",
-  icons: {
-    icon: "/favicon.svg",
-  },
 };
 
 export default function RootLayout({
