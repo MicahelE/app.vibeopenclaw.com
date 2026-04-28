@@ -1,8 +1,19 @@
 import Docker from 'dockerode';
+import { mkdir } from 'fs/promises';
 
 const docker = new Docker();
 const AGENT_NETWORK = process.env.AGENT_NETWORK || 'voc-agents';
 const DATA_DIR = process.env.DATA_DIR || '/opt/vibeopenclaw/data/agents';
+const OPENCLAW_IMAGE = process.env.OPENCLAW_IMAGE || 'ghcr.io/openclaw/openclaw:latest';
+const HERMES_IMAGE = process.env.HERMES_IMAGE || 'hermes-agent:latest';
+
+const AGENT_CONFIG: Record<string, { image: string; port: number; healthPath: string }> = {
+  OPENCLAW: { image: OPENCLAW_IMAGE, port: 18789, healthPath: '/healthz' },
+  HERMES: { image: HERMES_IMAGE, port: 8642, healthPath: '/' },
+};
+
+const HEALTH_CHECK_TIMEOUT = 60_000;
+const HEALTH_CHECK_INTERVAL = 2_000;
 
 export async function ensureNetwork() {
   try {
@@ -12,6 +23,22 @@ export async function ensureNetwork() {
       Name: AGENT_NETWORK,
       Driver: 'bridge',
       Labels: { app: 'vibeopenclaw' },
+    });
+  }
+}
+
+export async function ensureImage(image: string): Promise<void> {
+  try {
+    await docker.getImage(image).inspect();
+  } catch {
+    await new Promise<void>((resolve, reject) => {
+      docker.pull(image, (err: Error | null, stream: NodeJS.ReadableStream) => {
+        if (err) return reject(err);
+        docker.modem.followProgress(stream, (followErr: Error | null) => {
+          if (followErr) return reject(followErr);
+          resolve();
+        });
+      });
     });
   }
 }
@@ -28,32 +55,49 @@ export async function createAgentContainer(
   discordToken?: string,
   slackToken?: string
 ) {
+  const type = agentType.toUpperCase() as keyof typeof AGENT_CONFIG;
+  const config = AGENT_CONFIG[type] || AGENT_CONFIG.OPENCLAW;
   const containerName = `voc-agent-${agentId}`;
   const agentDir = `${DATA_DIR}/${agentId}`;
-  
-  const env = [
-    `NODE_ENV=production`,
-    `AGENT_ID=${agentId}`,
-    `AGENT_NAME=${agentName}`,
-    `MODEL_PROVIDER=${modelProvider}`,
-    `MODEL_NAME=${modelName}`,
-  ];
-  
-  Object.entries(apiKeys).forEach(([provider, key]) => {
-    env.push(`${provider.toUpperCase()}_API_KEY=${key}`);
-  });
+  const isHermes = type === 'HERMES';
+
+  await mkdir(agentDir, { recursive: true });
+
+  await ensureImage(config.image);
+
+  const env: string[] = [];
+  if (isHermes) {
+    env.push(`HERMES_HOME=/data`);
+  } else {
+    env.push(`OPENCLAW_GATEWAY_BIND=lan`);
+  }
+  env.push(`AGENT_ID=${agentId}`);
+  env.push(`AGENT_NAME=${agentName}`);
+
+  if (isHermes) {
+    env.push(`DEFAULT_MODEL=${modelProvider}/${modelName}`);
+  } else {
+    if (modelProvider === 'openai') env.push(`OPENAI_MODEL=${modelName}`);
+    else if (modelProvider === 'anthropic') env.push(`ANTHROPIC_MODEL=${modelName}`);
+    else if (modelProvider === 'google') env.push(`GOOGLE_MODEL=${modelName}`);
+  }
+
+  const keyMap: Record<string, string> = {
+    openai: 'OPENAI_API_KEY',
+    anthropic: 'ANTHROPIC_API_KEY',
+    google: 'GOOGLE_API_KEY',
+  };
+  for (const [provider, key] of Object.entries(apiKeys)) {
+    const envVar = keyMap[provider.toLowerCase()] || `${provider.toUpperCase()}_API_KEY`;
+    env.push(`${envVar}=${key}`);
+  }
+
   if (telegramToken) env.push(`TELEGRAM_BOT_TOKEN=${telegramToken}`);
   if (discordToken) env.push(`DISCORD_BOT_TOKEN=${discordToken}`);
   if (slackToken) env.push(`SLACK_BOT_TOKEN=${slackToken}`);
 
-  const image = agentType === 'openclaw' ? 'node:24-alpine' : 'python:3.11-slim';
-  const port = agentType === 'openclaw' ? '18789' : '8642';
-  const command = agentType === 'openclaw'
-    ? ['sh', '-c', 'node -e \'const http=require("http");const s=http.createServer((q,r)=>{r.writeHead(200);r.end(JSON.stringify({status:"ok",agent:process.env.AGENT_NAME,type:"openclaw",time:new Date().toISOString()}))});s.listen(18789,"0.0.0.0",()=>console.log("ok"))\'']
-    : ['sh', '-c', 'pip install fastapi uvicorn -q && python -c \'import uvicorn,os,fastapi;app=fastapi.FastAPI();@app.get("/")async def r():return{"status":"ok","agent":os.getenv("AGENT_NAME","hermes"),"type":"hermes"}\' && uvicorn main:app --host 0.0.0.0 --port 8642'];
-
   const container = await docker.createContainer({
-    Image: image,
+    Image: config.image,
     name: containerName,
     Env: env,
     HostConfig: {
@@ -61,9 +105,9 @@ export async function createAgentContainer(
       Memory: parseMemory(memoryLimit),
       MemorySwap: parseMemory(memoryLimit),
       RestartPolicy: { Name: 'unless-stopped' },
-      PortBindings: { [`${port}/tcp`]: [{ HostPort: '' }] },
+      PortBindings: { [`${config.port}/tcp`]: [{ HostPort: '' }] },
     },
-    ExposedPorts: { [`${port}/tcp`]: {} },
+    ExposedPorts: { [`${config.port}/tcp`]: {} },
     NetworkingConfig: {
       EndpointsConfig: {
         [AGENT_NETWORK]: {},
@@ -72,9 +116,8 @@ export async function createAgentContainer(
     Labels: {
       app: 'vibeopenclaw',
       agent_id: agentId,
-      agent_type: agentType,
+      agent_type: type,
     },
-    Cmd: command,
   });
 
   await container.start();
@@ -86,6 +129,23 @@ function parseMemory(limit: string): number {
   if (!match) return 1536 * 1024 * 1024;
   const num = parseInt(match[1]);
   return match[2].toLowerCase() === 'g' ? num * 1024 * 1024 * 1024 : num * 1024 * 1024;
+}
+
+export async function waitForHealthy(containerId: string, internalPort: number, healthPath: string): Promise<boolean> {
+  const start = Date.now();
+  while (Date.now() - start < HEALTH_CHECK_TIMEOUT) {
+    try {
+      const hostPort = await getContainerPort(containerId, internalPort);
+      if (hostPort) {
+        const res = await fetch(`http://localhost:${hostPort}${healthPath}`, {
+          signal: AbortSignal.timeout(3000),
+        });
+        if (res.ok) return true;
+      }
+    } catch {}
+    await new Promise(r => setTimeout(r, HEALTH_CHECK_INTERVAL));
+  }
+  return false;
 }
 
 export async function stopContainer(containerId: string) {
@@ -141,4 +201,9 @@ export async function getContainerPort(containerId: string, internalPort: number
   } catch {
     return null;
   }
+}
+
+export function getAgentConfig(agentType: string) {
+  const type = agentType.toUpperCase() as keyof typeof AGENT_CONFIG;
+  return AGENT_CONFIG[type] || AGENT_CONFIG.OPENCLAW;
 }

@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { query } from '@/lib/db';
 import { getCurrentUser } from '@/lib/session';
-import { createAgentContainer, getContainerPort, ensureNetwork } from '@/lib/docker';
-import { encrypt } from '@/lib/encrypt';
+import { createAgentContainer, getContainerPort, ensureNetwork, waitForHealthy, getAgentConfig } from '@/lib/docker';
+import { decrypt } from '@/lib/encrypt';
 import { v4 as uuidv4 } from 'uuid';
 
 const PLAN_LIMITS: Record<string, { agents: number; memory_mb: number }> = {
@@ -59,21 +59,24 @@ export async function POST(req: NextRequest) {
     const agentId = uuidv4();
     const memoryLimit = `${limits.memory_mb}m`;
     
-    // Insert agent as CREATING
     await query(
       `INSERT INTO agents (id, user_id, name, agent_type, status, model_provider, model_name, telegram_bot_token, discord_bot_token, slack_bot_token)
        VALUES ($1, $2, $3, $4, 'CREATING', $5, $6, $7, $8, $9)`,
       [agentId, user.id, name, agentType.toUpperCase(), modelProvider, modelName, telegramToken || null, discordToken || null, slackToken || null]
     );
     
-    // Get API keys
     const keyResult = await query(
       'SELECT provider, encrypted_key FROM api_keys WHERE user_id = $1 AND is_active = true',
       [user.id]
     );
     const apiKeys: Record<string, string> = {};
-    // We can't decrypt with Node.js yet since keys were encrypted with Python Fernet
-    // For now, agents won't have API keys injected during migration
+    for (const row of keyResult.rows) {
+      try {
+        apiKeys[row.provider] = decrypt(row.encrypted_key);
+      } catch {
+        console.error(`Failed to decrypt ${row.provider} key for user ${user.id}`);
+      }
+    }
     
     try {
       await ensureNetwork();
@@ -82,8 +85,15 @@ export async function POST(req: NextRequest) {
         modelProvider, modelName, telegramToken, discordToken, slackToken
       );
       
-      const internalPort = agentType.toUpperCase() === 'OPENCLAW' ? 18789 : 8642;
-      const hostPort = await getContainerPort(containerId, internalPort);
+      const config = getAgentConfig(agentType);
+      const healthy = await waitForHealthy(containerId, config.port, config.healthPath);
+      
+      if (!healthy) {
+        await query("UPDATE agents SET status = 'ERROR' WHERE id = $1", [agentId]);
+        return NextResponse.json({ detail: 'Agent container started but health check timed out' }, { status: 504 });
+      }
+      
+      const hostPort = await getContainerPort(containerId, config.port);
       
       await query(
         'UPDATE agents SET container_id = $1, container_name = $2, status = $3, port = $4, last_started_at = NOW() WHERE id = $5',
