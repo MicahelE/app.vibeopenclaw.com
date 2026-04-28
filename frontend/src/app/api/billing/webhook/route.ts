@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
       const userId = data.metadata?.user_id || data.customerMetadata?.user_id;
       if (userId) {
         await query(
-          "UPDATE users SET subscription_id = $1, subscription_status = 'active' WHERE id = $2",
+          "UPDATE users SET subscription_id = $1, subscription_status = 'ACTIVE' WHERE id = $2",
           [data.id, userId]
         );
       }
@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
       const userId = data.metadata?.user_id || data.customerMetadata?.user_id;
       if (userId) {
         await query(
-          "UPDATE users SET subscription_status = 'canceled', plan_tier = 'pro' WHERE id = $1",
+          "UPDATE users SET subscription_status = 'CANCELED', plan_tier = 'PRO' WHERE id = $1",
           [userId]
         );
       }

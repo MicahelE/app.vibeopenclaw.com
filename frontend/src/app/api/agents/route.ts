@@ -46,9 +46,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ detail: 'Name and agent_type required' }, { status: 400 });
     }
     
-    const limits = PLAN_LIMITS[user.plan_tier] || PLAN_LIMITS.pro;
+    const limits = PLAN_LIMITS[user.plan_tier?.toLowerCase()] || PLAN_LIMITS.pro;
     const countResult = await query(
-      "SELECT COUNT(*) FROM agents WHERE user_id = $1 AND status != 'deleted'",
+      "SELECT COUNT(*) FROM agents WHERE user_id = $1 AND status != 'DELETED'",
       [user.id]
     );
     const currentCount = parseInt(countResult.rows[0].count);
@@ -59,11 +59,11 @@ export async function POST(req: NextRequest) {
     const agentId = uuidv4();
     const memoryLimit = `${limits.memory_mb}m`;
     
-    // Insert agent as creating
+    // Insert agent as CREATING
     await query(
       `INSERT INTO agents (id, user_id, name, agent_type, status, model_provider, model_name, telegram_bot_token, discord_bot_token, slack_bot_token)
-       VALUES ($1, $2, $3, $4, 'creating', $5, $6, $7, $8, $9)`,
-      [agentId, user.id, name, agentType, modelProvider, modelName, telegramToken || null, discordToken || null, slackToken || null]
+       VALUES ($1, $2, $3, $4, 'CREATING', $5, $6, $7, $8, $9)`,
+      [agentId, user.id, name, agentType.toUpperCase(), modelProvider, modelName, telegramToken || null, discordToken || null, slackToken || null]
     );
     
     // Get API keys
@@ -82,17 +82,17 @@ export async function POST(req: NextRequest) {
         modelProvider, modelName, telegramToken, discordToken, slackToken
       );
       
-      const internalPort = agentType === 'openclaw' ? 18789 : 8642;
+      const internalPort = agentType.toUpperCase() === 'OPENCLAW' ? 18789 : 8642;
       const hostPort = await getContainerPort(containerId, internalPort);
       
       await query(
         'UPDATE agents SET container_id = $1, container_name = $2, status = $3, port = $4, last_started_at = NOW() WHERE id = $5',
-        [containerId, `voc-agent-${agentId}`, 'running', hostPort, agentId]
+        [containerId, `voc-agent-${agentId}`, 'RUNNING', hostPort, agentId]
       );
       
       return NextResponse.json({ id: agentId, status: 'running', port: hostPort });
     } catch (err: any) {
-      await query("UPDATE agents SET status = 'error' WHERE id = $1", [agentId]);
+      await query("UPDATE agents SET status = 'ERROR' WHERE id = $1", [agentId]);
       return NextResponse.json({ detail: `Failed to provision agent: ${err.message}` }, { status: 500 });
     }
   } catch (err: any) {

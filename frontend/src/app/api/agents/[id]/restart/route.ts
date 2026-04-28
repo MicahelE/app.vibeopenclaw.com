@@ -17,7 +17,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   
   if (agent.container_id) {
     try { await restartContainer(agent.container_id); } catch (e) { console.error(e); }
-    const internalPort = agent.agent_type === 'openclaw' ? 18789 : 8642;
+    const internalPort = agent.agent_type === 'OPENCLAW' ? 18789 : 8642;
     const hostPort = await getContainerPort(agent.container_id, internalPort);
     await query(
       "UPDATE agents SET status = 'RUNNING', port = $1, last_started_at = NOW() WHERE id = $2",
