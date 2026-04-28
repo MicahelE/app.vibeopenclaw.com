@@ -79,11 +79,11 @@ export default function HomePage() {
             className="text-[#8892b0] text-lg md:text-xl max-w-xl mx-auto mb-2"
             style={{ fontFamily: '"Clash Display", system-ui, sans-serif', fontWeight: 500, letterSpacing: '0.15em', textTransform: 'uppercase' }}
           >
-            Deploy AI agents in one click
+            Host AI Agents in One Click
           </p>
 
           <p className="text-[#8892b0] text-base md:text-lg leading-relaxed max-w-2xl mx-auto mb-10">
-            Managed SaaS for OpenClaw and Hermes agents. Bring your own API keys, choose your plan, and go live in minutes. No infrastructure headaches.
+            Managed hosting for <strong className="text-[#f0f4ff]">OpenClaw</strong> and <strong className="text-[#f0f4ff]">Hermes</strong> AI agents. Deploy to Docker-isolated containers with BYOK model support, Telegram &amp; Discord integrations, and automatic SSL. No infrastructure headaches.
           </p>
 
           {/* CTA Buttons */}
@@ -116,11 +116,11 @@ export default function HomePage() {
             </span>
             <span className="flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-[#ff4d4d]" />
-              BYOK Model
+              BYOK — Bring Your Own Keys
             </span>
             <span className="flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-[#00e5cc]" />
-              SSL Included
+              HTTPS Included
             </span>
           </div>
         </section>
@@ -141,12 +141,12 @@ export default function HomePage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             {[
-              { title: 'Dual Agent Support', desc: 'Run both OpenClaw (Node.js) and Hermes (Python) agents on the same platform. Switch anytime.', accent: 'coral' },
-              { title: 'BYOK Model', desc: 'Bring Your Own API Keys. Connect OpenAI, Anthropic, or Google. You control your LLM spend.', accent: 'cyan' },
-              { title: 'One-Click Deploy', desc: 'Provision isolated Docker containers instantly. Each agent gets dedicated RAM and CPU limits.', accent: 'coral' },
-              { title: 'Channel Integrations', desc: 'Built-in support for Telegram, Discord, and Slack bots. Configure tokens and go live.', accent: 'cyan' },
-              { title: 'Path-Based Routing', desc: 'Every agent gets a unique URL: app.vibeopenclaw.com/agent/your-id. Share it instantly.', accent: 'coral' },
-              { title: 'Managed Infra', desc: 'We handle servers, SSL, backups, and updates. You focus on building great AI experiences.', accent: 'cyan' },
+              { title: 'OpenClaw & Hermes Agents', desc: 'Deploy OpenClaw (366k+ GitHub stars, Node.js) or Hermes Agent (self-improving, Python) with one click. Both agents support 20+ messaging channels including Telegram, Discord, Slack, and WhatsApp.', accent: 'coral' },
+              { title: 'BYOK Model Support', desc: 'Bring Your Own Keys for OpenAI, Anthropic, or Google. Connect your API keys directly — no middleman, no markup on LLM costs. Switch providers anytime.', accent: 'cyan' },
+              { title: 'One-Click Deploy', desc: 'Provision isolated Docker containers for each agent. Dedicated RAM and CPU limits, automatic health checks, and instant HTTPS endpoints at app.vibeopenclaw.com/agent/your-id.', accent: 'coral' },
+              { title: 'Channel Integrations', desc: 'Connect your agents to Telegram, Discord, and Slack with just a bot token. OpenClaw also supports WhatsApp, Signal, iMessage, and Matrix. Go live in minutes.', accent: 'cyan' },
+              { title: 'Unique Agent URLs', desc: 'Every agent gets a unique subpath URL at app.vibeopenclaw.com/agent/your-id. Share it instantly — no port forwarding, no DNS configuration needed.', accent: 'coral' },
+              { title: 'Fully Managed Infrastructure', desc: 'We handle servers, Docker, SSL certificates, backups, and updates. OpenClaw and Hermes run their latest stable versions automatically.', accent: 'cyan' },
             ].map((feature, i) => (
               <div
                 key={i}
@@ -192,7 +192,7 @@ export default function HomePage() {
                 <span className="text-[#5a6480]">/month</span>
               </div>
               <ul className="space-y-3 mb-8">
-                {['1 AI Agent', '1.5 GB RAM', 'BYOK (Bring Your Own Keys)', 'Telegram & Discord', 'Email Support'].map((item, i) => (
+                {['1 OpenClaw or Hermes Agent', '1.5 GB RAM', 'BYOK — Bring Your Own Keys', 'Telegram & Discord', 'Email Support'].map((item, i) => (
                   <li key={i} className="flex items-center gap-3 text-sm text-[#8892b0]">
                     <svg className="w-5 h-5 text-[#00e5cc] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
@@ -223,7 +223,7 @@ export default function HomePage() {
                 <span className="text-[#5a6480]">/month</span>
               </div>
               <ul className="space-y-3 mb-8">
-                {['3 AI Agents', '3 GB RAM each', 'BYOK (Bring Your Own Keys)', 'All Channels + Slack', 'Priority Support', 'Usage Analytics'].map((item, i) => (
+                {['3 OpenClaw or Hermes Agents', '3 GB RAM each', 'BYOK — Bring Your Own Keys', 'All Channels + Slack', 'Priority Support', 'Usage Analytics'].map((item, i) => (
                   <li key={i} className="flex items-center gap-3 text-sm text-[#8892b0]">
                     <svg className="w-5 h-5 text-[#00e5cc] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
@@ -256,10 +256,10 @@ export default function HomePage() {
               className="text-2xl md:text-3xl font-bold text-[#f0f4ff] mb-4"
               style={{ fontFamily: '"Clash Display", system-ui, sans-serif' }}
             >
-              Ready to Deploy Your First Agent?
+              Ready to Deploy Your First OpenClaw or Hermes Agent?
             </h2>
             <p className="text-[#8892b0] mb-8 max-w-md mx-auto">
-              Join the managed AI agent revolution. No infrastructure setup required.
+              Host AI agents with Docker isolation, BYOK model support, and instant channel integrations. No infrastructure setup required.
             </p>
             <button
               onClick={() => { setShowAuth(true); setIsLogin(false); }}
@@ -281,10 +281,12 @@ export default function HomePage() {
             <div className="w-6 h-6"><svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full"><defs><linearGradient id="foot-logo" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#ff4d4d"/><stop offset="100%" stop-color="#991b1b"/></linearGradient></defs><path d="M60 10 C30 10 15 35 15 55 C15 75 30 95 45 100 L45 110 L55 110 L55 100 C55 100 60 102 65 100 L65 110 L75 110 L75 100 C90 95 105 75 105 55 C105 35 90 10 60 10Z" fill="url(#foot-logo)"/><path d="M20 45 C5 40 0 50 5 60 C10 70 20 65 25 55 C28 48 25 45 20 45Z" fill="url(#foot-logo)"/><path d="M100 45 C115 40 120 50 115 60 C110 70 100 65 95 55 C92 48 95 45 100 45Z" fill="url(#foot-logo)"/><circle cx="45" cy="35" r="6" fill="#050810"/><circle cx="75" cy="35" r="6" fill="#050810"/><circle cx="46" cy="34" r="2.5" fill="#00e5cc"/><circle cx="76" cy="34" r="2.5" fill="#00e5cc"/></svg></div>
             <span className="text-[#f0f4ff] font-semibold text-sm" style={{ fontFamily: '"Clash Display", system-ui, sans-serif' }}>VibeOpenClaw</span>
           </div>
-          <p className="text-[#5a6480] text-xs mb-4">Managed SaaS for OpenClaw & Hermes Agents</p>
+          <p className="text-[#5a6480] text-xs mb-4">Managed hosting for OpenClaw &amp; Hermes AI agents</p>
           <div className="flex justify-center gap-6 text-xs text-[#5a6480]">
             <a href="https://clawhub.com" target="_blank" rel="noopener noreferrer" className="hover:text-[#f0f4ff] transition-colors">Skills Marketplace</a>
             <a href="#pricing" className="hover:text-[#f0f4ff] transition-colors">Pricing</a>
+            <a href="https://github.com/openclaw/openclaw" target="_blank" rel="noopener noreferrer" className="hover:text-[#f0f4ff] transition-colors">OpenClaw</a>
+            <a href="https://github.com/NousResearch/hermes-agent" target="_blank" rel="noopener noreferrer" className="hover:text-[#f0f4ff] transition-colors">Hermes Agent</a>
           </div>
         </footer>
       </main>
