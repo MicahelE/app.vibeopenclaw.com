@@ -1,42 +1,48 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { query } from '@/lib/db';
-import { stripe } from '@/lib/stripe';
+import { polar, POLAR_WEBHOOK_SECRET } from '@/lib/polar';
 
 export async function POST(req: NextRequest) {
-  const payload = await req.text();
-  const sig = req.headers.get('stripe-signature') || '';
-  
-  if (!process.env.STRIPE_WEBHOOK_SECRET) {
+  if (!POLAR_WEBHOOK_SECRET) {
     return NextResponse.json({ detail: 'Webhook secret not configured' }, { status: 500 });
   }
-  
-  let event;
+
   try {
-    event = stripe.webhooks.constructEvent(payload, sig, process.env.STRIPE_WEBHOOK_SECRET);
-  } catch (err: any) {
-    return NextResponse.json({ detail: err.message }, { status: 400 });
-  }
-  
-  try {
-    if (event.type === 'checkout.session.completed') {
-      const session = event.data.object as any;
-      const userId = session.metadata?.user_id;
+    const body = await req.text();
+    const event = await polar.validateWebhook({
+      request: {
+        body,
+        method: req.method,
+        url: req.url,
+        headers: Object.fromEntries(req.headers.entries()),
+      },
+    });
+
+    const type = (event as any).type;
+
+    if (type === 'subscription.active') {
+      const data = (event as any).data;
+      const userId = data.metadata?.user_id || data.customerMetadata?.user_id;
       if (userId) {
         await query(
           "UPDATE users SET subscription_id = $1, subscription_status = 'active' WHERE id = $2",
-          [session.subscription, userId]
+          [data.id, userId]
         );
       }
-    } else if (event.type === 'customer.subscription.deleted') {
-      const subscription = event.data.object as any;
-      await query(
-        "UPDATE users SET subscription_status = 'canceled', plan_tier = 'pro' WHERE subscription_id = $1",
-        [subscription.id]
-      );
+    } else if (type === 'subscription.canceled' || type === 'subscription.revoked') {
+      const data = (event as any).data;
+      const userId = data.metadata?.user_id || data.customerMetadata?.user_id;
+      if (userId) {
+        await query(
+          "UPDATE users SET subscription_status = 'canceled', plan_tier = 'pro' WHERE id = $1",
+          [userId]
+        );
+      }
     }
+
+    return NextResponse.json({ status: 'ok' });
   } catch (err: any) {
     console.error('Webhook handler error:', err);
+    return NextResponse.json({ detail: err.message }, { status: 500 });
   }
-  
-  return NextResponse.json({ status: 'ok' });
 }
