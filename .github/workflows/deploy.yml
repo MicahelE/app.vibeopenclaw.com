@@ -36,6 +36,7 @@ jobs:
             set -e
             cd /opt/vibeopenclaw/frontend
             git pull origin master
+            cd frontend
             npm ci
             npm run build
             cp -r .next/static .next/standalone/.next/
