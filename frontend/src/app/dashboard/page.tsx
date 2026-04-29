@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { getAgents, startAgent, stopAgent, deleteAgent } from '@/lib/api';
+import { getAgents } from '@/lib/api';
 
 interface Agent {
   id: string;
@@ -75,9 +75,10 @@ export default function DashboardPage() {
       ) : (
         <div className="grid gap-3">
           {agents.map((agent) => (
-            <div
+            <Link
               key={agent.id}
-              className="glass-card rounded-xl p-5 flex items-center justify-between transition-all hover:border-[rgba(255,77,77,0.2)]"
+              href={`/dashboard/agents/${agent.id}`}
+              className="glass-card rounded-xl p-5 flex items-center justify-between transition-all hover:border-[rgba(255,77,77,0.2)] block"
             >
               <div>
                 <h3 className="font-semibold text-[#f0f4ff] text-sm">{agent.name}</h3>
@@ -95,30 +96,10 @@ export default function DashboardPage() {
                   {agent.port && <span className="text-[#5a6480]">Port: {agent.port}</span>}
                 </div>
               </div>
-              <div className="flex items-center gap-2">
-                {agent.status === 'RUNNING' ? (
-                  <button
-                    onClick={() => handleStop(agent.id)}
-                    className="px-3 py-1.5 text-xs border border-[rgba(136,146,176,0.2)] rounded-lg text-[#8892b0] hover:text-[#f0f4ff] hover:border-[rgba(136,146,176,0.4)] transition-colors"
-                  >
-                    Stop
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => handleStart(agent.id)}
-                    className="px-3 py-1.5 text-xs bg-[rgba(0,229,204,0.15)] text-[#00e5cc] rounded-lg hover:bg-[rgba(0,229,204,0.25)] transition-colors"
-                  >
-                    Start
-                  </button>
-                )}
-                <button
-                  onClick={() => handleDelete(agent.id)}
-                  className="px-3 py-1.5 text-xs text-[#ff4d4d] border border-[rgba(255,77,77,0.2)] rounded-lg hover:bg-[rgba(255,77,77,0.1)] transition-colors"
-                >
-                  Delete
-                </button>
-              </div>
-            </div>
+              <svg className="w-4 h-4 text-[#5a6480]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </Link>
           ))}
         </div>
       )}
