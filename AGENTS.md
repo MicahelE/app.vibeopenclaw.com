@@ -26,7 +26,7 @@
 7. **Hermes agent deployment**: Configured to use `hermes-agent:latest` Docker image (must be built from source — see below).
 
 ### Database Schema
-- `users` table: `id`, `email`, `password_hash`, `name`, `plan_tier` (PRO/PREMIUM), `subscription_status`, `stripe_customer_id` (unused legacy column), timestamps
+- `users` table: `id`, `email`, `password_hash`, `name`, `plan_tier` (PRO/PREMIUM), `subscription_status`, `polar_customer_id`, timestamps
 - `agents` table: `id`, `user_id`, `name`, `agent_type` (OPENCLAW/HERMES), `status` (CREATING/RUNNING/STOPPED/ERROR/DELETED), `container_id`, `container_name`, `port`, `model_provider`, `model_name`, channel tokens, timestamps
 - `api_keys` table: `id`, `user_id`, `provider`, `encrypted_key` (AES-256-GCM), `is_active`, `created_at`
 - `usage_logs` table: `id`, `user_id`, `agent_id`, `date`, `messages_sent`, `api_calls`, token counts
@@ -146,8 +146,8 @@ docker images hermes-agent
 
 ## Known Issues / TODO
 
-- [ ] Add Polar.sh credentials to server `.env` (billing pages return 500 without them)
-- [ ] Build Hermes Docker image on server (or set up CI/CD for it)
-- [ ] Rename `stripe_customer_id` column in database to `polar_customer_id`
+- [x] Add Polar.sh credentials to server `.env` (sandbox mode configured)
+- [ ] Build Hermes Docker image on server (buildx installed, build in progress)
+- [ ] Add `POLAR_WEBHOOK_SECRET` to server `.env` (needed for billing webhooks)
 - [ ] Add `og:image` for social sharing (currently no image)
 - [ ] The dashboard pages (`/dashboard/*`) are client-rendered — consider adding SSR for better SEO if they need to be indexed
