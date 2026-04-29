@@ -33,19 +33,6 @@ export default function DashboardPage() {
     loadAgents();
   }, []);
 
-  async function handleStart(id: string) {
-    try { await startAgent(id); loadAgents(); } catch (err: any) { setError(err.message); }
-  }
-
-  async function handleStop(id: string) {
-    try { await stopAgent(id); loadAgents(); } catch (err: any) { setError(err.message); }
-  }
-
-  async function handleDelete(id: string) {
-    if (!confirm('Are you sure you want to delete this agent?')) return;
-    try { await deleteAgent(id); loadAgents(); } catch (err: any) { setError(err.message); }
-  }
-
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
