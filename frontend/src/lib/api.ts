@@ -85,6 +85,18 @@ export async function deleteAgent(id: string) {
   return apiFetch(`/api/agents/${id}`, { method: 'DELETE' });
 }
 
+export async function updateAgent(id: string, data: {
+  name?: string;
+  telegram_bot_token?: string | null;
+  discord_bot_token?: string | null;
+  slack_bot_token?: string | null;
+}) {
+  return apiFetch(`/api/agents/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify(data),
+  });
+}
+
 export async function startAgent(id: string) {
   return apiFetch(`/api/agents/${id}/start`, { method: 'POST' });
 }
