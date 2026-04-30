@@ -95,14 +95,14 @@ export async function POST(req: NextRequest) {
       );
       
       const config = getAgentConfig(agentType);
-      const healthy = await waitForHealthy(containerId, config.port, config.healthPath);
-      
+      const healthy = await waitForHealthy(containerId, config.port, config.healthPath, config.healthMode);
+
       if (!healthy) {
         await query("UPDATE agents SET status = 'ERROR' WHERE id = $1", [agentId]);
         return NextResponse.json({ detail: 'Agent container started but health check timed out. It may need more time to initialize — check back in a minute.' }, { status: 504 });
       }
-      
-      const hostPort = await getContainerPort(containerId, config.port);
+
+      const hostPort = config.port ? await getContainerPort(containerId, config.port) : null;
       
       await query(
         'UPDATE agents SET container_id = $1, container_name = $2, status = $3, port = $4, last_started_at = NOW() WHERE id = $5',

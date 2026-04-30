@@ -6,6 +6,7 @@ export interface ProviderConfig {
   baseUrl?: string;
   openclawApi: string;
   openclawBaseUrl: string;
+  hermesProvider: string;
   models: string[];
   placeholder: string;
   docsUrl: string;
@@ -19,6 +20,7 @@ export const PROVIDERS: ProviderConfig[] = [
     envModelName: 'OPENAI_MODEL',
     openclawApi: 'openai-completions',
     openclawBaseUrl: 'https://api.openai.com/v1',
+    hermesProvider: 'custom',
     models: ['gpt-4o', 'gpt-4o-mini', 'gpt-4-turbo', 'o1', 'o1-mini', 'o3-mini'],
     placeholder: 'sk-...',
     docsUrl: 'https://platform.openai.com/api-keys',
@@ -30,6 +32,7 @@ export const PROVIDERS: ProviderConfig[] = [
     envModelName: 'ANTHROPIC_MODEL',
     openclawApi: 'anthropic-messages',
     openclawBaseUrl: 'https://api.anthropic.com',
+    hermesProvider: 'anthropic',
     models: [
       'claude-opus-4-7',
       'claude-sonnet-4-6',
@@ -47,6 +50,7 @@ export const PROVIDERS: ProviderConfig[] = [
     envModelName: 'GOOGLE_MODEL',
     openclawApi: 'google-generative-ai',
     openclawBaseUrl: 'https://generativelanguage.googleapis.com',
+    hermesProvider: 'gemini',
     models: ['gemini-2.5-pro', 'gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-pro'],
     placeholder: 'AIza...',
     docsUrl: 'https://aistudio.google.com/apikey',
@@ -58,6 +62,7 @@ export const PROVIDERS: ProviderConfig[] = [
     baseUrl: 'https://api.groq.com/openai/v1',
     openclawApi: 'openai-completions',
     openclawBaseUrl: 'https://api.groq.com/openai/v1',
+    hermesProvider: 'custom',
     models: [
       'llama-3.3-70b-versatile',
       'llama-3.1-8b-instant',
@@ -75,6 +80,7 @@ export const PROVIDERS: ProviderConfig[] = [
     baseUrl: 'https://api.x.ai/v1',
     openclawApi: 'openai-completions',
     openclawBaseUrl: 'https://api.x.ai/v1',
+    hermesProvider: 'custom',
     models: ['grok-2-latest', 'grok-2-vision-latest', 'grok-beta'],
     placeholder: 'xai-...',
     docsUrl: 'https://console.x.ai',
@@ -86,6 +92,7 @@ export const PROVIDERS: ProviderConfig[] = [
     baseUrl: 'https://api.mistral.ai/v1',
     openclawApi: 'openai-completions',
     openclawBaseUrl: 'https://api.mistral.ai/v1',
+    hermesProvider: 'custom',
     models: [
       'mistral-large-latest',
       'mistral-medium-latest',
@@ -104,6 +111,7 @@ export const PROVIDERS: ProviderConfig[] = [
     baseUrl: 'https://api.deepseek.com/v1',
     openclawApi: 'openai-completions',
     openclawBaseUrl: 'https://api.deepseek.com/v1',
+    hermesProvider: 'custom',
     models: ['deepseek-chat', 'deepseek-reasoner'],
     placeholder: 'sk-...',
     docsUrl: 'https://platform.deepseek.com/api_keys',
@@ -115,6 +123,7 @@ export const PROVIDERS: ProviderConfig[] = [
     baseUrl: 'https://api.together.xyz/v1',
     openclawApi: 'openai-completions',
     openclawBaseUrl: 'https://api.together.xyz/v1',
+    hermesProvider: 'custom',
     models: [
       'meta-llama/Llama-3.3-70B-Instruct-Turbo',
       'meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo',
@@ -132,6 +141,7 @@ export const PROVIDERS: ProviderConfig[] = [
     baseUrl: 'https://api.fireworks.ai/inference/v1',
     openclawApi: 'openai-completions',
     openclawBaseUrl: 'https://api.fireworks.ai/inference/v1',
+    hermesProvider: 'custom',
     models: [
       'accounts/fireworks/models/llama-v3p3-70b-instruct',
       'accounts/fireworks/models/deepseek-v3',
@@ -147,6 +157,7 @@ export const PROVIDERS: ProviderConfig[] = [
     baseUrl: 'https://api.perplexity.ai',
     openclawApi: 'openai-completions',
     openclawBaseUrl: 'https://api.perplexity.ai',
+    hermesProvider: 'custom',
     models: ['sonar', 'sonar-pro', 'sonar-reasoning', 'sonar-deep-research'],
     placeholder: 'pplx-...',
     docsUrl: 'https://www.perplexity.ai/settings/api',
@@ -158,6 +169,7 @@ export const PROVIDERS: ProviderConfig[] = [
     baseUrl: 'https://openrouter.ai/api/v1',
     openclawApi: 'openai-completions',
     openclawBaseUrl: 'https://openrouter.ai/api/v1',
+    hermesProvider: 'openrouter',
     models: [
       'anthropic/claude-3.5-sonnet',
       'openai/gpt-4o',
@@ -174,6 +186,7 @@ export const PROVIDERS: ProviderConfig[] = [
     envKeyName: 'COHERE_API_KEY',
     openclawApi: 'openai-completions',
     openclawBaseUrl: 'https://api.cohere.com/compatibility/v1',
+    hermesProvider: 'custom',
     models: ['command-r-plus', 'command-r', 'command-r-08-2024'],
     placeholder: '...',
     docsUrl: 'https://dashboard.cohere.com/api-keys',

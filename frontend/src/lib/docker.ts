@@ -8,9 +8,27 @@ const DATA_DIR = process.env.DATA_DIR || '/opt/vibeopenclaw/data/agents';
 const OPENCLAW_IMAGE = process.env.OPENCLAW_IMAGE || 'ghcr.io/openclaw/openclaw:latest';
 const HERMES_IMAGE = process.env.HERMES_IMAGE || 'hermes-agent:latest';
 
-const AGENT_CONFIG: Record<string, { image: string; port: number; healthPath: string }> = {
-  OPENCLAW: { image: OPENCLAW_IMAGE, port: 18789, healthPath: '/healthz' },
-  HERMES: { image: HERMES_IMAGE, port: 8642, healthPath: '/' },
+type HealthMode = 'http' | 'container';
+type AgentRuntime = {
+  image: string;
+  port?: number;
+  healthPath?: string;
+  cmd?: string[];
+  healthMode: HealthMode;
+};
+
+const AGENT_CONFIG: Record<string, AgentRuntime> = {
+  OPENCLAW: {
+    image: OPENCLAW_IMAGE,
+    port: 18789,
+    healthPath: '/healthz',
+    healthMode: 'http',
+  },
+  HERMES: {
+    image: HERMES_IMAGE,
+    cmd: ['gateway', 'run'],
+    healthMode: 'container',
+  },
 };
 
 const HEALTH_CHECK_TIMEOUT = 60_000;
@@ -69,13 +87,19 @@ export async function createAgentContainer(
 
   const activeProvider = getProvider(modelProvider);
 
-  if (!isHermes && activeProvider && apiKeys[activeProvider.id]) {
-    await writeOpenclawConfig(agentDir, activeProvider, modelName, apiKeys[activeProvider.id]);
+  if (activeProvider && apiKeys[activeProvider.id]) {
+    if (isHermes) {
+      await writeHermesConfig(agentDir, activeProvider, modelName, apiKeys[activeProvider.id]);
+    } else {
+      await writeOpenclawConfig(agentDir, activeProvider, modelName, apiKeys[activeProvider.id]);
+    }
   }
 
   const env: string[] = [];
   if (isHermes) {
     env.push(`HERMES_HOME=/data`);
+    env.push(`HERMES_UID=1001`);
+    env.push(`HERMES_GID=1001`);
   } else {
     env.push(`OPENCLAW_GATEWAY_BIND=lan`);
   }
@@ -88,9 +112,7 @@ export async function createAgentContainer(
     env.push(`${envVar}=${key}`);
   }
 
-  if (isHermes) {
-    env.push(`DEFAULT_MODEL=${modelProvider}/${modelName}`);
-  } else if (activeProvider) {
+  if (!isHermes && activeProvider) {
     if (activeProvider.envModelName) {
       env.push(`${activeProvider.envModelName}=${modelName}`);
     }
@@ -105,18 +127,20 @@ export async function createAgentContainer(
   if (discordToken) env.push(`DISCORD_BOT_TOKEN=${discordToken}`);
   if (slackToken) env.push(`SLACK_BOT_TOKEN=${slackToken}`);
 
+  const portKey = config.port ? `${config.port}/tcp` : null;
   const container = await docker.createContainer({
     Image: config.image,
     name: containerName,
     Env: env,
+    Cmd: config.cmd,
     HostConfig: {
       Binds: [isHermes ? `${agentDir}:/data` : `${agentDir}:/home/node/.openclaw`],
       Memory: parseMemory(memoryLimit),
       MemorySwap: parseMemory(memoryLimit),
       RestartPolicy: { Name: 'unless-stopped' },
-      PortBindings: { [`${config.port}/tcp`]: [{ HostPort: '' }] },
+      ...(portKey ? { PortBindings: { [portKey]: [{ HostPort: '' }] } } : {}),
     },
-    ExposedPorts: { [`${config.port}/tcp`]: {} },
+    ...(portKey ? { ExposedPorts: { [portKey]: {} } } : {}),
     NetworkingConfig: {
       EndpointsConfig: {
         [AGENT_NETWORK]: {},
@@ -131,6 +155,26 @@ export async function createAgentContainer(
 
   await container.start();
   return container.id;
+}
+
+async function writeHermesConfig(
+  agentDir: string,
+  provider: ProviderConfig,
+  modelName: string,
+  apiKey: string
+) {
+  const isCustom = provider.hermesProvider === 'custom';
+  const lines = [
+    'model:',
+    `  default: "${isCustom ? modelName : `${provider.id}/${modelName}`}"`,
+    `  provider: "${provider.hermesProvider}"`,
+  ];
+  if (isCustom) {
+    lines.push(`  base_url: "${provider.openclawBaseUrl}"`);
+    lines.push(`  api_key: "${apiKey}"`);
+  }
+  lines.push('');
+  await writeFile(`${agentDir}/config.yaml`, lines.join('\n'));
 }
 
 async function writeOpenclawConfig(
@@ -178,16 +222,32 @@ function parseMemory(limit: string): number {
   return match[2].toLowerCase() === 'g' ? num * 1024 * 1024 * 1024 : num * 1024 * 1024;
 }
 
-export async function waitForHealthy(containerId: string, internalPort: number, healthPath: string): Promise<boolean> {
+export async function waitForHealthy(
+  containerId: string,
+  internalPort: number | undefined,
+  healthPath: string | undefined,
+  mode: HealthMode = 'http'
+): Promise<boolean> {
   const start = Date.now();
+  let stableSince: number | null = null;
   while (Date.now() - start < HEALTH_CHECK_TIMEOUT) {
     try {
-      const hostPort = await getContainerPort(containerId, internalPort);
-      if (hostPort) {
-        const res = await fetch(`http://localhost:${hostPort}${healthPath}`, {
-          signal: AbortSignal.timeout(3000),
-        });
-        if (res.ok) return true;
+      if (mode === 'container') {
+        const info = await docker.getContainer(containerId).inspect();
+        if (info.State.Running) {
+          if (stableSince === null) stableSince = Date.now();
+          if (Date.now() - stableSince >= 5000) return true;
+        } else {
+          stableSince = null;
+        }
+      } else if (internalPort && healthPath) {
+        const hostPort = await getContainerPort(containerId, internalPort);
+        if (hostPort) {
+          const res = await fetch(`http://localhost:${hostPort}${healthPath}`, {
+            signal: AbortSignal.timeout(3000),
+          });
+          if (res.ok) return true;
+        }
       }
     } catch {}
     await new Promise(r => setTimeout(r, HEALTH_CHECK_INTERVAL));
