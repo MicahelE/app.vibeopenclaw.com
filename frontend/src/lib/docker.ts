@@ -1,5 +1,5 @@
 import Docker from 'dockerode';
-import { mkdir, writeFile } from 'fs/promises';
+import { mkdir, writeFile, chmod } from 'fs/promises';
 import { getProvider, ProviderConfig } from './providers';
 
 const docker = new Docker();
@@ -63,6 +63,7 @@ export async function createAgentContainer(
   const isHermes = type === 'HERMES';
 
   await mkdir(agentDir, { recursive: true });
+  await chmod(agentDir, 0o777);
 
   await ensureImage(config.image);
 
