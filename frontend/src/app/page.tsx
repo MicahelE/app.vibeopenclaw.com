@@ -27,7 +27,7 @@ export default function HomePage() {
       } else {
         res = await register(email, password, name || undefined);
       }
-      authLogin(res.access_token, res.user_id);
+      await authLogin(res.access_token);
       router.push('/dashboard');
     } catch (err: any) {
       setError(err.message || 'Something went wrong');
