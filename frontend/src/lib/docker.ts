@@ -8,9 +8,14 @@ const DATA_DIR = process.env.DATA_DIR || '/opt/vibeopenclaw/data/agents';
 const OPENCLAW_IMAGE = process.env.OPENCLAW_IMAGE || 'ghcr.io/openclaw/openclaw:latest';
 const HERMES_IMAGE = process.env.HERMES_IMAGE || 'hermes-agent:latest';
 
-const AGENT_CONFIG: Record<string, { image: string; port: number; healthPath: string }> = {
+const AGENT_CONFIG: Record<string, { image: string; port: number; healthPath: string; cmd?: string[] }> = {
   OPENCLAW: { image: OPENCLAW_IMAGE, port: 18789, healthPath: '/healthz' },
-  HERMES: { image: HERMES_IMAGE, port: 8642, healthPath: '/' },
+  HERMES: {
+    image: HERMES_IMAGE,
+    port: 9119,
+    healthPath: '/',
+    cmd: ['dashboard', '--host', '0.0.0.0', '--port', '9119', '--insecure', '--no-open', '--tui'],
+  },
 };
 
 const HEALTH_CHECK_TIMEOUT = 60_000;
@@ -69,13 +74,19 @@ export async function createAgentContainer(
 
   const activeProvider = getProvider(modelProvider);
 
-  if (!isHermes && activeProvider && apiKeys[activeProvider.id]) {
-    await writeOpenclawConfig(agentDir, activeProvider, modelName, apiKeys[activeProvider.id]);
+  if (activeProvider && apiKeys[activeProvider.id]) {
+    if (isHermes) {
+      await writeHermesConfig(agentDir, activeProvider, modelName, apiKeys[activeProvider.id]);
+    } else {
+      await writeOpenclawConfig(agentDir, activeProvider, modelName, apiKeys[activeProvider.id]);
+    }
   }
 
   const env: string[] = [];
   if (isHermes) {
     env.push(`HERMES_HOME=/data`);
+    env.push(`HERMES_UID=1001`);
+    env.push(`HERMES_GID=1001`);
   } else {
     env.push(`OPENCLAW_GATEWAY_BIND=lan`);
   }
@@ -88,9 +99,7 @@ export async function createAgentContainer(
     env.push(`${envVar}=${key}`);
   }
 
-  if (isHermes) {
-    env.push(`DEFAULT_MODEL=${modelProvider}/${modelName}`);
-  } else if (activeProvider) {
+  if (!isHermes && activeProvider) {
     if (activeProvider.envModelName) {
       env.push(`${activeProvider.envModelName}=${modelName}`);
     }
@@ -109,6 +118,7 @@ export async function createAgentContainer(
     Image: config.image,
     name: containerName,
     Env: env,
+    Cmd: config.cmd,
     HostConfig: {
       Binds: [isHermes ? `${agentDir}:/data` : `${agentDir}:/home/node/.openclaw`],
       Memory: parseMemory(memoryLimit),
@@ -131,6 +141,26 @@ export async function createAgentContainer(
 
   await container.start();
   return container.id;
+}
+
+async function writeHermesConfig(
+  agentDir: string,
+  provider: ProviderConfig,
+  modelName: string,
+  apiKey: string
+) {
+  const isCustom = provider.hermesProvider === 'custom';
+  const lines = [
+    'model:',
+    `  default: "${isCustom ? modelName : `${provider.id}/${modelName}`}"`,
+    `  provider: "${provider.hermesProvider}"`,
+  ];
+  if (isCustom) {
+    lines.push(`  base_url: "${provider.openclawBaseUrl}"`);
+    lines.push(`  api_key: "${apiKey}"`);
+  }
+  lines.push('');
+  await writeFile(`${agentDir}/config.yaml`, lines.join('\n'));
 }
 
 async function writeOpenclawConfig(
