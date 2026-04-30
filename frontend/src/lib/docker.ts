@@ -1,5 +1,6 @@
 import Docker from 'dockerode';
 import { mkdir } from 'fs/promises';
+import { getProvider } from './providers';
 
 const docker = new Docker();
 const AGENT_NETWORK = process.env.AGENT_NETWORK || 'voc-agents';
@@ -74,22 +75,24 @@ export async function createAgentContainer(
   env.push(`AGENT_ID=${agentId}`);
   env.push(`AGENT_NAME=${agentName}`);
 
-  if (isHermes) {
-    env.push(`DEFAULT_MODEL=${modelProvider}/${modelName}`);
-  } else {
-    if (modelProvider === 'openai') env.push(`OPENAI_MODEL=${modelName}`);
-    else if (modelProvider === 'anthropic') env.push(`ANTHROPIC_MODEL=${modelName}`);
-    else if (modelProvider === 'google') env.push(`GOOGLE_MODEL=${modelName}`);
+  for (const [provider, key] of Object.entries(apiKeys)) {
+    const cfg = getProvider(provider);
+    const envVar = cfg?.envKeyName || `${provider.toUpperCase()}_API_KEY`;
+    env.push(`${envVar}=${key}`);
   }
 
-  const keyMap: Record<string, string> = {
-    openai: 'OPENAI_API_KEY',
-    anthropic: 'ANTHROPIC_API_KEY',
-    google: 'GOOGLE_API_KEY',
-  };
-  for (const [provider, key] of Object.entries(apiKeys)) {
-    const envVar = keyMap[provider.toLowerCase()] || `${provider.toUpperCase()}_API_KEY`;
-    env.push(`${envVar}=${key}`);
+  const activeProvider = getProvider(modelProvider);
+  if (isHermes) {
+    env.push(`DEFAULT_MODEL=${modelProvider}/${modelName}`);
+  } else if (activeProvider) {
+    if (activeProvider.envModelName) {
+      env.push(`${activeProvider.envModelName}=${modelName}`);
+    }
+    if (activeProvider.baseUrl && apiKeys[activeProvider.id]) {
+      env.push(`OPENAI_API_KEY=${apiKeys[activeProvider.id]}`);
+      env.push(`OPENAI_BASE_URL=${activeProvider.baseUrl}`);
+      env.push(`OPENAI_MODEL=${modelName}`);
+    }
   }
 
   if (telegramToken) env.push(`TELEGRAM_BOT_TOKEN=${telegramToken}`);
