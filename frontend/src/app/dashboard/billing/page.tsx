@@ -46,7 +46,7 @@ export default function BillingPage() {
           <h2 className="text-lg font-semibold text-[#f0f4ff] mb-2" style={{ fontFamily: '"Clash Display", system-ui, sans-serif' }}>Pro</h2>
           <p className="text-3xl font-bold text-[#f0f4ff] mb-1">$60<span className="text-sm font-normal text-[#5a6480]">/mo</span></p>
           <ul className="space-y-2.5 text-sm text-[#8892b0] mb-6 mt-4">
-            {['1 AI Agent', '1.5 GB RAM', 'BYOK', 'Discord & Telegram', 'Email Support'].map((item, i) => (
+            {['1 AI Agent', '2 GB RAM', 'BYOK', 'Discord & Telegram', 'Email Support'].map((item, i) => (
               <li key={i} className="flex items-center gap-2.5">
                 <svg className="w-4 h-4 text-[#00e5cc] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
@@ -74,7 +74,7 @@ export default function BillingPage() {
           <h2 className="text-lg font-semibold text-[#f0f4ff] mb-2" style={{ fontFamily: '"Clash Display", system-ui, sans-serif' }}>Premium</h2>
           <p className="text-3xl font-bold text-[#f0f4ff] mb-1">$100<span className="text-sm font-normal text-[#5a6480]">/mo</span></p>
           <ul className="space-y-2.5 text-sm text-[#8892b0] mb-6 mt-4">
-            {['3 AI Agents', '3 GB RAM each', 'BYOK', 'All Channels + Slack', 'Priority Support', 'Usage Analytics'].map((item, i) => (
+            {['3 AI Agents', '4 GB RAM each', 'BYOK', 'All Channels + Slack', 'Priority Support', 'Usage Analytics'].map((item, i) => (
               <li key={i} className="flex items-center gap-2.5">
                 <svg className="w-4 h-4 text-[#00e5cc] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />

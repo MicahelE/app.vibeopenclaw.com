@@ -192,7 +192,7 @@ export default function HomePage() {
                 <span className="text-[#5a6480]">/month</span>
               </div>
               <ul className="space-y-3 mb-8">
-                {['1 OpenClaw or Hermes Agent', '1.5 GB RAM', 'BYOK — Bring Your Own Keys', 'Telegram & Discord', 'Email Support'].map((item, i) => (
+                {['1 OpenClaw or Hermes Agent', '2 GB RAM', 'BYOK — Bring Your Own Keys', 'Telegram & Discord', 'Email Support'].map((item, i) => (
                   <li key={i} className="flex items-center gap-3 text-sm text-[#8892b0]">
                     <svg className="w-5 h-5 text-[#00e5cc] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
@@ -223,7 +223,7 @@ export default function HomePage() {
                 <span className="text-[#5a6480]">/month</span>
               </div>
               <ul className="space-y-3 mb-8">
-                {['3 OpenClaw or Hermes Agents', '3 GB RAM each', 'BYOK — Bring Your Own Keys', 'All Channels + Slack', 'Priority Support', 'Usage Analytics'].map((item, i) => (
+                {['3 OpenClaw or Hermes Agents', '4 GB RAM each', 'BYOK — Bring Your Own Keys', 'All Channels + Slack', 'Priority Support', 'Usage Analytics'].map((item, i) => (
                   <li key={i} className="flex items-center gap-3 text-sm text-[#8892b0]">
                     <svg className="w-5 h-5 text-[#00e5cc] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />

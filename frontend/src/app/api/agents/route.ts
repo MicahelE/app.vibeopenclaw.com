@@ -6,8 +6,8 @@ import { decrypt } from '@/lib/encrypt';
 import { v4 as uuidv4 } from 'uuid';
 
 const PLAN_LIMITS: Record<string, { agents: number; memory_mb: number }> = {
-  pro: { agents: 1, memory_mb: 1536 },
-  premium: { agents: 3, memory_mb: 3072 },
+  pro: { agents: 1, memory_mb: 2048 },
+  premium: { agents: 3, memory_mb: 4096 },
 };
 
 export async function GET(req: NextRequest) {

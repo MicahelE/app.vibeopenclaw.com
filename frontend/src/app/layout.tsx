@@ -87,7 +87,7 @@ export default function RootLayout({
                   price: "60",
                   priceCurrency: "USD",
                   billingIncrement: "P1M",
-                  description: "1 AI Agent, 1.5 GB RAM, BYOK, Telegram & Discord, Email Support",
+                  description: "1 AI Agent, 2 GB RAM, BYOK, Telegram & Discord, Email Support",
                 },
                 {
                   "@type": "Offer",
@@ -95,7 +95,7 @@ export default function RootLayout({
                   price: "100",
                   priceCurrency: "USD",
                   billingIncrement: "P1M",
-                  description: "3 AI Agents, 3 GB RAM each, BYOK, All Channels + Slack, Priority Support, Usage Analytics",
+                  description: "3 AI Agents, 4 GB RAM each, BYOK, All Channels + Slack, Priority Support, Usage Analytics",
                 },
               ],
               featureList: [
@@ -162,7 +162,7 @@ export default function RootLayout({
                   name: "How much does VibeOpenClaw cost?",
                   acceptedAnswer: {
                     "@type": "Answer",
-                    text: "The Pro plan is $60/month for 1 AI agent with 1.5 GB RAM, Telegram & Discord support. The Premium plan is $100/month for 3 AI agents with 3 GB RAM each, all channels including Slack, priority support, and usage analytics.",
+                    text: "The Pro plan is $60/month for 1 AI agent with 2 GB RAM, Telegram & Discord support. The Premium plan is $100/month for 3 AI agents with 4 GB RAM each, all channels including Slack, priority support, and usage analytics.",
                   },
                 },
               ],
