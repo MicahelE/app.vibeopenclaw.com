@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
     
     const id = uuidv4();
     await query(
-      'INSERT INTO api_keys (id, user_id, provider, encrypted_key) VALUES ($1, $2, $3, $4)',
+      'INSERT INTO api_keys (id, user_id, provider, encrypted_key, is_active) VALUES ($1, $2, $3, $4, true)',
       [id, user.id, provider, encryptedKey]
     );
     

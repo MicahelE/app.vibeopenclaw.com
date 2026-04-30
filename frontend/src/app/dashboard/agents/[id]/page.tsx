@@ -5,22 +5,22 @@ import { useParams, useRouter } from 'next/navigation';
 import { getAgents, startAgent, stopAgent } from '@/lib/api';
 
 const CHANNEL_FIELDS = [
-  { key: 'telegram_bot_token', label: 'Telegram Bot Token', provider: 'telegram', placeholder: '123456789:ABCdefGHIjklMNOpqrsTUVwxyz' },
-  { key: 'discord_bot_token', label: 'Discord Bot Token', provider: 'discord', placeholder: 'MTk4NjIyNjI5...' },
-  { key: 'slack_bot_token', label: 'Slack Bot Token', provider: 'slack', placeholder: 'xoxb-1234-abcdef...' },
+  { key: 'has_telegram', label: 'Telegram Bot Token', provider: 'telegram' },
+  { key: 'has_discord', label: 'Discord Bot Token', provider: 'discord' },
+  { key: 'has_slack', label: 'Slack Bot Token', provider: 'slack' },
 ] as const;
 
 interface AgentData {
   id: string;
   name: string;
-  agent_type: string;
+  type: string;
   status: string;
   port: number | null;
   model_provider: string;
   model_name: string;
-  telegram_bot_token: string | null;
-  discord_bot_token: string | null;
-  slack_bot_token: string | null;
+  has_telegram: boolean;
+  has_discord: boolean;
+  has_slack: boolean;
 }
 
 export default function AgentDetailPage() {
@@ -72,7 +72,7 @@ export default function AgentDetailPage() {
               {agent.name}
             </h1>
             <div className="flex items-center gap-3 mt-1.5 text-xs text-[#5a6480]">
-              <span className="uppercase tracking-wide">{agent.agent_type}</span>
+              <span className="uppercase tracking-wide">{agent.type}</span>
               <span className={`px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wide ${statusColor}`}>
                 {agent.status}
               </span>
@@ -142,7 +142,7 @@ export default function AgentDetailPage() {
                   <div>
                     <div className="text-sm font-medium text-[#f0f4ff]">{field.label}</div>
                     <div className="text-[10px] text-[#5a6480]">
-                      {hasToken ? '••••••••' + (agent as any)[field.key].slice(-4) : 'Not connected'}
+                      {hasToken ? 'Connected' : 'Not connected'}
                     </div>
                   </div>
                 </div>

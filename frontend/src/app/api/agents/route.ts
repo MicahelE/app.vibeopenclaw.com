@@ -53,23 +53,14 @@ export async function POST(req: NextRequest) {
     
     const limits = PLAN_LIMITS[user.plan_tier?.toLowerCase()] || PLAN_LIMITS.pro;
     const countResult = await query(
-      "SELECT COUNT(*) FROM agents WHERE user_id = $1 AND status != 'DELETED'",
+      "SELECT COUNT(*) FROM agents WHERE user_id = $1 AND status NOT IN ('DELETED', 'ERROR')",
       [user.id]
     );
     const currentCount = parseInt(countResult.rows[0].count);
     if (currentCount >= limits.agents) {
       return NextResponse.json({ detail: `Plan limit reached: ${limits.agents} agents max. Upgrade your plan for more.` }, { status: 403 });
     }
-    
-    const agentId = uuidv4();
-    const memoryLimit = `${limits.memory_mb}m`;
-    
-    await query(
-      `INSERT INTO agents (id, user_id, name, agent_type, status, model_provider, model_name, telegram_bot_token, discord_bot_token, slack_bot_token)
-       VALUES ($1, $2, $3, $4, 'CREATING', $5, $6, $7, $8, $9)`,
-      [agentId, user.id, name, agentType.toUpperCase(), modelProvider, modelName, telegramToken || null, discordToken || null, slackToken || null]
-    );
-    
+
     const keyResult = await query(
       'SELECT provider, encrypted_key FROM api_keys WHERE user_id = $1 AND is_active = true',
       [user.id]
@@ -82,11 +73,19 @@ export async function POST(req: NextRequest) {
         console.error(`Failed to decrypt ${row.provider} key for user ${user.id}`);
       }
     }
-    
+
     if (Object.keys(apiKeys).length === 0) {
-      await query("UPDATE agents SET status = 'ERROR' WHERE id = $1", [agentId]);
       return NextResponse.json({ detail: 'No API keys configured. Add at least one API key (OpenAI, Anthropic, or Google) before creating an agent.' }, { status: 400 });
     }
+
+    const agentId = uuidv4();
+    const memoryLimit = `${limits.memory_mb}m`;
+
+    await query(
+      `INSERT INTO agents (id, user_id, name, agent_type, status, model_provider, model_name, telegram_bot_token, discord_bot_token, slack_bot_token)
+       VALUES ($1, $2, $3, $4, 'CREATING', $5, $6, $7, $8, $9)`,
+      [agentId, user.id, name, agentType.toUpperCase(), modelProvider, modelName, telegramToken || null, discordToken || null, slackToken || null]
+    );
     
     try {
       await ensureNetwork();
