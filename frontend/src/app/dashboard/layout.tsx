@@ -34,6 +34,7 @@ export default function DashboardLayout({
     { href: '/dashboard', label: 'Agents' },
     { href: '/dashboard/keys', label: 'API Keys' },
     { href: '/dashboard/billing', label: 'Billing' },
+    ...(user.is_admin ? [{ href: '/admin', label: 'Admin' }] : []),
   ];
 
   return (

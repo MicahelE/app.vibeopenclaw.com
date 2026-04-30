@@ -118,3 +118,7 @@ export async function createCheckout(plan: string) {
 export async function createPortal() {
   return apiFetch('/api/billing/portal', { method: 'POST' });
 }
+
+export async function getAdminStats() {
+  return apiFetch('/api/admin');
+}
