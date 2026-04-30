@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { query } from '@/lib/db';
-import { polar, POLAR_WEBHOOK_SECRET } from '@/lib/polar';
 
 export async function POST(req: NextRequest) {
-  if (!POLAR_WEBHOOK_SECRET) {
-    return NextResponse.json({ detail: 'Webhook secret not configured' }, { status: 500 });
+  if (!process.env.POLAR_WEBHOOK_SECRET) {
+    return NextResponse.json({ status: 'skipped', detail: 'Webhook not configured — event acknowledged but not processed.' });
   }
+
+  const { polar, POLAR_WEBHOOK_SECRET } = await import('@/lib/polar');
 
   try {
     const body = await req.text();

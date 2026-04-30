@@ -12,12 +12,12 @@ export async function POST(req: NextRequest) {
     const plan = body.plan;
 
     if (!process.env.POLAR_ACCESS_TOKEN) {
-      return NextResponse.json({ detail: 'Polar not configured' }, { status: 500 });
+      return NextResponse.json({ detail: 'Billing is not configured yet. Please try again later.' }, { status: 503 });
     }
 
     const productId = plan === 'premium' ? POLAR_PRODUCT_PREMIUM : POLAR_PRODUCT_PRO;
     if (!productId) {
-      return NextResponse.json({ detail: 'Product ID not configured' }, { status: 500 });
+      return NextResponse.json({ detail: 'Product not configured' }, { status: 500 });
     }
 
     const checkout = await polar.checkouts.create({
@@ -31,6 +31,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ checkout_url: checkout.url });
   } catch (err: any) {
     console.error('Checkout error:', err);
-    return NextResponse.json({ detail: err.message }, { status: 500 });
+    const msg = err.message || 'Checkout failed';
+    if (msg.includes('not a valid email')) {
+      return NextResponse.json({ detail: 'Please use a real email address to subscribe.' }, { status: 400 });
+    }
+    return NextResponse.json({ detail: msg }, { status: 500 });
   }
 }

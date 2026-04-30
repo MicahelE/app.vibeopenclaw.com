@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
   if (!user) return NextResponse.json({ detail: 'Not authenticated' }, { status: 401 });
   
   const result = await query(
-    "SELECT id, name, agent_type, status, port FROM agents WHERE user_id = $1 AND status != 'DELETED'",
+    "SELECT id, name, agent_type, status, port, model_provider, model_name, telegram_bot_token IS NOT NULL AS has_telegram, discord_bot_token IS NOT NULL AS has_discord, slack_bot_token IS NOT NULL AS has_slack FROM agents WHERE user_id = $1 AND status != 'DELETED'",
     [user.id]
   );
   
@@ -25,6 +25,11 @@ export async function GET(req: NextRequest) {
     type: a.agent_type,
     status: a.status,
     port: a.port,
+    model_provider: a.model_provider,
+    model_name: a.model_name,
+    has_telegram: a.has_telegram,
+    has_discord: a.has_discord,
+    has_slack: a.has_slack,
   })));
 }
 
@@ -33,14 +38,14 @@ export async function POST(req: NextRequest) {
   if (!user) return NextResponse.json({ detail: 'Not authenticated' }, { status: 401 });
   
   try {
-    const { searchParams } = new URL(req.url);
-    const name = searchParams.get('name');
-    const agentType = searchParams.get('agent_type');
-    const modelProvider = searchParams.get('model_provider') || 'openai';
-    const modelName = searchParams.get('model_name') || 'gpt-4o';
-    const telegramToken = searchParams.get('telegram_token') || undefined;
-    const discordToken = searchParams.get('discord_token') || undefined;
-    const slackToken = searchParams.get('slack_token') || undefined;
+    const body = await req.json();
+    const name = body.name;
+    const agentType = body.agent_type;
+    const modelProvider = body.model_provider || 'openai';
+    const modelName = body.model_name || 'gpt-4o';
+    const telegramToken = body.telegram_token || undefined;
+    const discordToken = body.discord_token || undefined;
+    const slackToken = body.slack_token || undefined;
     
     if (!name || !agentType) {
       return NextResponse.json({ detail: 'Name and agent_type required' }, { status: 400 });
@@ -53,7 +58,7 @@ export async function POST(req: NextRequest) {
     );
     const currentCount = parseInt(countResult.rows[0].count);
     if (currentCount >= limits.agents) {
-      return NextResponse.json({ detail: `Plan limit reached: ${limits.agents} agents max` }, { status: 403 });
+      return NextResponse.json({ detail: `Plan limit reached: ${limits.agents} agents max. Upgrade your plan for more.` }, { status: 403 });
     }
     
     const agentId = uuidv4();
@@ -78,6 +83,11 @@ export async function POST(req: NextRequest) {
       }
     }
     
+    if (Object.keys(apiKeys).length === 0) {
+      await query("UPDATE agents SET status = 'ERROR' WHERE id = $1", [agentId]);
+      return NextResponse.json({ detail: 'No API keys configured. Add at least one API key (OpenAI, Anthropic, or Google) before creating an agent.' }, { status: 400 });
+    }
+    
     try {
       await ensureNetwork();
       const containerId = await createAgentContainer(
@@ -90,7 +100,7 @@ export async function POST(req: NextRequest) {
       
       if (!healthy) {
         await query("UPDATE agents SET status = 'ERROR' WHERE id = $1", [agentId]);
-        return NextResponse.json({ detail: 'Agent container started but health check timed out' }, { status: 504 });
+        return NextResponse.json({ detail: 'Agent container started but health check timed out. It may need more time to initialize — check back in a minute.' }, { status: 504 });
       }
       
       const hostPort = await getContainerPort(containerId, config.port);

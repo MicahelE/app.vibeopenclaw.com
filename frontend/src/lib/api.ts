@@ -75,15 +75,10 @@ export async function createAgent(data: {
   discord_token?: string;
   slack_token?: string;
 }) {
-  const params = new URLSearchParams();
-  params.append('name', data.name);
-  params.append('agent_type', data.agent_type);
-  if (data.model_provider) params.append('model_provider', data.model_provider);
-  if (data.model_name) params.append('model_name', data.model_name);
-  if (data.telegram_token) params.append('telegram_token', data.telegram_token);
-  if (data.discord_token) params.append('discord_token', data.discord_token);
-  if (data.slack_token) params.append('slack_token', data.slack_token);
-  return apiFetch(`/api/agents/?${params}`, { method: 'POST' });
+  return apiFetch('/api/agents/', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
 }
 
 export async function deleteAgent(id: string) {
