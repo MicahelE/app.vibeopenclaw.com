@@ -1,6 +1,6 @@
 import Docker from 'dockerode';
-import { mkdir } from 'fs/promises';
-import { getProvider } from './providers';
+import { mkdir, writeFile } from 'fs/promises';
+import { getProvider, ProviderConfig } from './providers';
 
 const docker = new Docker();
 const AGENT_NETWORK = process.env.AGENT_NETWORK || 'voc-agents';
@@ -66,6 +66,12 @@ export async function createAgentContainer(
 
   await ensureImage(config.image);
 
+  const activeProvider = getProvider(modelProvider);
+
+  if (!isHermes && activeProvider && apiKeys[activeProvider.id]) {
+    await writeOpenclawConfig(agentDir, activeProvider, modelName, apiKeys[activeProvider.id]);
+  }
+
   const env: string[] = [];
   if (isHermes) {
     env.push(`HERMES_HOME=/data`);
@@ -81,7 +87,6 @@ export async function createAgentContainer(
     env.push(`${envVar}=${key}`);
   }
 
-  const activeProvider = getProvider(modelProvider);
   if (isHermes) {
     env.push(`DEFAULT_MODEL=${modelProvider}/${modelName}`);
   } else if (activeProvider) {
@@ -104,7 +109,7 @@ export async function createAgentContainer(
     name: containerName,
     Env: env,
     HostConfig: {
-      Binds: [`${agentDir}:/data`],
+      Binds: [isHermes ? `${agentDir}:/data` : `${agentDir}:/home/node/.openclaw`],
       Memory: parseMemory(memoryLimit),
       MemorySwap: parseMemory(memoryLimit),
       RestartPolicy: { Name: 'unless-stopped' },
@@ -125,6 +130,44 @@ export async function createAgentContainer(
 
   await container.start();
   return container.id;
+}
+
+async function writeOpenclawConfig(
+  agentDir: string,
+  provider: ProviderConfig,
+  modelName: string,
+  apiKey: string
+) {
+  const config = {
+    models: {
+      mode: 'merge',
+      providers: {
+        [provider.id]: {
+          baseUrl: provider.openclawBaseUrl,
+          apiKey,
+          api: provider.openclawApi,
+          models: [
+            {
+              id: modelName,
+              name: modelName,
+              reasoning: false,
+              input: ['text'],
+              cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
+              contextWindow: 128000,
+              contextTokens: 96000,
+              maxTokens: 8192,
+            },
+          ],
+        },
+      },
+    },
+    agents: {
+      defaults: {
+        model: { primary: `${provider.id}/${modelName}` },
+      },
+    },
+  };
+  await writeFile(`${agentDir}/openclaw.json`, JSON.stringify(config, null, 2));
 }
 
 function parseMemory(limit: string): number {
