@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { getApiKeys, addApiKey, deleteApiKey } from '@/lib/api';
+import { PROVIDERS, getProvider } from '@/lib/providers';
 
 interface ApiKey {
   id: string;
@@ -62,7 +63,7 @@ export default function KeysPage() {
   return (
     <div>
       <h1 className="text-xl font-bold text-[#f0f4ff] mb-2" style={{ fontFamily: '"Clash Display", system-ui, sans-serif' }}>API Keys</h1>
-      <p className="text-sm text-[#5a6480] mb-6">Add your own API keys for OpenAI, Anthropic, or Google. Your keys are encrypted at rest.</p>
+      <p className="text-sm text-[#5a6480] mb-6">Bring your own keys for any supported provider. Keys are encrypted at rest with AES-256-GCM.</p>
 
       {error && (
         <div className="bg-[rgba(255,77,77,0.15)] text-[#ff4d4d] p-3 rounded-xl mb-4 text-sm border border-[rgba(255,77,77,0.3)]">{error}</div>
@@ -78,10 +79,18 @@ export default function KeysPage() {
               onChange={(e) => setProvider(e.target.value)}
               className="w-full px-4 py-2.5 rounded-xl bg-[rgba(255,255,255,0.05)] border border-[rgba(136,146,176,0.15)] text-[#f0f4ff] text-sm outline-none transition-all focus:border-[#ff4d4d]"
             >
-              <option value="openai" className="bg-[#0a0f1a]">OpenAI</option>
-              <option value="anthropic" className="bg-[#0a0f1a]">Anthropic</option>
-              <option value="google" className="bg-[#0a0f1a]">Google</option>
+              {PROVIDERS.map((p) => (
+                <option key={p.id} value={p.id} className="bg-[#0a0f1a]">{p.label}</option>
+              ))}
             </select>
+            <a
+              href={getProvider(provider)?.docsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block mt-1.5 text-[10px] text-[#00e5cc] hover:text-[#00ffd5] transition-colors"
+            >
+              Get a {getProvider(provider)?.label} key →
+            </a>
           </div>
           <div className="md:col-span-2">
             <label className="block text-xs text-[#8892b0] mb-1.5">API Key</label>
@@ -91,7 +100,7 @@ export default function KeysPage() {
               value={keyValue}
               onChange={(e) => setKeyValue(e.target.value)}
               className="w-full px-4 py-2.5 rounded-xl bg-[rgba(255,255,255,0.05)] border border-[rgba(136,146,176,0.15)] text-[#f0f4ff] placeholder-[#5a6480] text-sm outline-none transition-all focus:border-[#ff4d4d]"
-              placeholder="sk-..."
+              placeholder={getProvider(provider)?.placeholder || 'sk-...'}
             />
           </div>
         </div>

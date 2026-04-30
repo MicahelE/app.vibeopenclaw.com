@@ -3,12 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createAgent } from '@/lib/api';
-
-const MODEL_OPTIONS: Record<string, string[]> = {
-  openai: ['gpt-4o', 'gpt-4o-mini', 'gpt-4-turbo', 'o1', 'o1-mini', 'o3-mini'],
-  anthropic: ['claude-sonnet-4-20250514', 'claude-3.5-sonnet-20241022', 'claude-3.5-haiku-20241022', 'claude-3-opus-20240229'],
-  google: ['gemini-2.5-pro', 'gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-pro'],
-};
+import { PROVIDERS, getProvider } from '@/lib/providers';
 
 const CHANNEL_GUIDES = {
   telegram: {
@@ -237,18 +232,18 @@ export default function NewAgentPage() {
             <div>
               <label className="block text-xs text-[#8892b0] mb-1.5">Provider</label>
               <div className="grid grid-cols-3 gap-2">
-                {(['openai', 'anthropic', 'google'] as const).map((p) => (
+                {PROVIDERS.map((p) => (
                   <button
-                    key={p}
+                    key={p.id}
                     type="button"
-                    onClick={() => { setModelProvider(p); setModelName(MODEL_OPTIONS[p][0]); }}
+                    onClick={() => { setModelProvider(p.id); setModelName(p.models[0]); }}
                     className={`px-3 py-2.5 rounded-xl border text-sm font-medium transition-all ${
-                      modelProvider === p
+                      modelProvider === p.id
                         ? 'border-[#ff4d4d] bg-[rgba(255,77,77,0.08)] text-[#f0f4ff]'
                         : 'border-[rgba(136,146,176,0.15)] bg-[rgba(255,255,255,0.02)] text-[#8892b0] hover:border-[rgba(136,146,176,0.3)]'
                     }`}
                   >
-                    {p === 'openai' ? 'OpenAI' : p === 'anthropic' ? 'Anthropic' : 'Google'}
+                    {p.label}
                   </button>
                 ))}
               </div>
@@ -260,7 +255,7 @@ export default function NewAgentPage() {
                 onChange={(e) => setModelName(e.target.value)}
                 className="w-full px-4 py-3 rounded-xl bg-[rgba(255,255,255,0.05)] border border-[rgba(136,146,176,0.15)] text-[#f0f4ff] text-sm outline-none focus:border-[#ff4d4d]"
               >
-                {MODEL_OPTIONS[modelProvider]?.map((m) => (
+                {getProvider(modelProvider)?.models.map((m) => (
                   <option key={m} value={m} className="bg-[#0a0f1a]">{m}</option>
                 ))}
               </select>
