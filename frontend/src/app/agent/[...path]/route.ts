@@ -45,21 +45,31 @@ async function proxyRequest(req: NextRequest, paramsPromise: Promise<{ path: str
   const url = new URL(req.url);
   const search = url.search;
   
+  const forwardHeaders: Record<string, string> = {};
+  for (const name of ['content-type', 'accept', 'authorization', 'x-api-key', 'anthropic-version']) {
+    const v = req.headers.get(name);
+    if (v) forwardHeaders[name] = v;
+  }
+
   try {
     const response = await fetch(targetUrl + search, {
       method: req.method,
-      headers: {
-        'Content-Type': req.headers.get('content-type') || 'application/json',
-      },
-      body: req.method !== 'GET' && req.method !== 'HEAD' ? await req.arrayBuffer() : undefined,
-      // @ts-ignore
+      headers: forwardHeaders,
+      body: req.method !== 'GET' && req.method !== 'HEAD' ? req.body : undefined,
+      // @ts-expect-error duplex required for streaming bodies
       duplex: 'half',
     });
-    
-    const body = await response.arrayBuffer();
-    return new NextResponse(body, {
+
+    const respHeaders = new Headers();
+    response.headers.forEach((value, key) => {
+      const lower = key.toLowerCase();
+      if (lower === 'content-encoding' || lower === 'content-length' || lower === 'transfer-encoding') return;
+      respHeaders.set(key, value);
+    });
+
+    return new NextResponse(response.body, {
       status: response.status,
-      headers: Object.fromEntries(response.headers),
+      headers: respHeaders,
     });
   } catch (err: any) {
     return NextResponse.json({ detail: `Agent unreachable: ${err.message}` }, { status: 502 });
