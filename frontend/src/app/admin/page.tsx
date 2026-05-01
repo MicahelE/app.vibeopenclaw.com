@@ -22,7 +22,8 @@ interface AdminData {
     model: string;
     user_email: string;
     created_at: string;
-    container: { running: boolean; status: string; started_at: string } | null;
+    container: { running: boolean; status: string; started_at: string; restart_count: number } | null;
+    restart_count: number;
   }[];
   top_users_7d: { email: string; api_calls: number }[];
 }
@@ -123,6 +124,7 @@ export default function AdminPage() {
                   <th className="text-left py-2 pr-3">Type</th>
                   <th className="text-left py-2 pr-3">Status</th>
                   <th className="text-left py-2 pr-3">Container</th>
+                  <th className="text-left py-2 pr-3">Restarts</th>
                   <th className="text-left py-2 pr-3">Model</th>
                   <th className="text-left py-2 pr-3">Port</th>
                   <th className="text-left py-2">Created</th>
@@ -139,6 +141,9 @@ export default function AdminPage() {
                     </td>
                     <td className="py-1.5 pr-3 text-[#5a6480]">
                       {a.container ? (a.container.running ? 'up' : a.container.status) : '—'}
+                    </td>
+                    <td className={`py-1.5 pr-3 ${a.restart_count >= 3 ? 'text-[#ff4d4d] font-semibold' : 'text-[#5a6480]'}`}>
+                      {a.restart_count}
                     </td>
                     <td className="py-1.5 pr-3 text-[#5a6480]">{a.model}</td>
                     <td className="py-1.5 pr-3 text-[#5a6480]">{a.port ?? '—'}</td>

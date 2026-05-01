@@ -75,6 +75,7 @@ export async function GET(req: NextRequest) {
         user_email: a.user_email,
         created_at: a.created_at,
         container,
+        restart_count: container?.restart_count ?? 0,
       };
     })
   );
