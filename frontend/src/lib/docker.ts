@@ -290,6 +290,7 @@ export async function getContainerStatus(containerId: string) {
       status: info.State.Status,
       running: info.State.Running,
       started_at: info.State.StartedAt,
+      restart_count: (info as { RestartCount?: number }).RestartCount ?? 0,
     };
   } catch {
     return null;
