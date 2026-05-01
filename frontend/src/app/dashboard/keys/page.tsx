@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { getApiKeys, addApiKey, deleteApiKey } from '@/lib/api';
+import { getApiKeys, addApiKey, deleteApiKey, testApiKey } from '@/lib/api';
 import { PROVIDERS, getProvider } from '@/lib/providers';
 
 interface ApiKey {
@@ -11,6 +11,13 @@ interface ApiKey {
   created_at: string;
 }
 
+interface TestResult {
+  ok: boolean;
+  model?: string;
+  latency_ms?: number;
+  detail?: string;
+}
+
 export default function KeysPage() {
   const [keys, setKeys] = useState<ApiKey[]>([]);
   const [provider, setProvider] = useState('openai');
@@ -18,6 +25,8 @@ export default function KeysPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  const [testing, setTesting] = useState<string | null>(null);
+  const [testResults, setTestResults] = useState<Record<string, TestResult>>({});
 
   async function loadKeys() {
     try {
@@ -57,6 +66,19 @@ export default function KeysPage() {
       loadKeys();
     } catch (err: any) {
       setError(err.message);
+    }
+  }
+
+  async function handleTest(id: string) {
+    setTesting(id);
+    setTestResults((r) => ({ ...r, [id]: { ok: false } }));
+    try {
+      const res = await testApiKey(id);
+      setTestResults((r) => ({ ...r, [id]: res }));
+    } catch (err: any) {
+      setTestResults((r) => ({ ...r, [id]: { ok: false, detail: err?.message || 'Request failed' } }));
+    } finally {
+      setTesting(null);
     }
   }
 
@@ -126,24 +148,48 @@ export default function KeysPage() {
           <div className="p-5 text-center text-[#5a6480] text-sm">No API keys saved yet</div>
         ) : (
           <div className="divide-y divide-[rgba(136,146,176,0.1)]">
-            {keys.map((k) => (
-              <div key={k.id} className="p-4 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <span className="font-medium text-[#f0f4ff] text-sm capitalize">{k.provider}</span>
-                  <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold uppercase tracking-wide ${
-                    k.is_active ? 'bg-[rgba(0,229,204,0.15)] text-[#00e5cc]' : 'bg-[rgba(136,146,176,0.15)] text-[#8892b0]'
-                  }`}>
-                    {k.is_active ? 'Active' : 'Inactive'}
-                  </span>
+            {keys.map((k) => {
+              const result = testResults[k.id];
+              const isTesting = testing === k.id;
+              return (
+                <div key={k.id} className="p-4 flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-3 flex-wrap min-w-0">
+                    <span className="font-medium text-[#f0f4ff] text-sm capitalize">{k.provider}</span>
+                    <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold uppercase tracking-wide ${
+                      k.is_active ? 'bg-[rgba(0,229,204,0.15)] text-[#00e5cc]' : 'bg-[rgba(136,146,176,0.15)] text-[#8892b0]'
+                    }`}>
+                      {k.is_active ? 'Active' : 'Inactive'}
+                    </span>
+                    {isTesting ? (
+                      <span className="text-[10px] text-[#5a6480]">Testing…</span>
+                    ) : result?.ok ? (
+                      <span className="text-[10px] text-[#00e5cc]">
+                        ✓ {result.model} · {result.latency_ms}ms
+                      </span>
+                    ) : result ? (
+                      <span className="text-[10px] text-[#ff4d4d] truncate" title={result.detail}>
+                        ✗ {result.detail}
+                      </span>
+                    ) : null}
+                  </div>
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    <button
+                      onClick={() => handleTest(k.id)}
+                      disabled={isTesting}
+                      className="text-xs text-[#00e5cc] hover:text-[#00ffd5] transition-colors disabled:opacity-50"
+                    >
+                      {isTesting ? '…' : 'Test'}
+                    </button>
+                    <button
+                      onClick={() => handleDelete(k.id)}
+                      className="text-xs text-[#ff4d4d] hover:text-[#ff6b6b] transition-colors"
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </div>
-                <button
-                  onClick={() => handleDelete(k.id)}
-                  className="text-xs text-[#ff4d4d] hover:text-[#ff6b6b] transition-colors"
-                >
-                  Delete
-                </button>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>

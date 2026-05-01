@@ -120,6 +120,10 @@ export async function deleteApiKey(id: string) {
   return apiFetch(`/api/keys/${id}`, { method: 'DELETE' });
 }
 
+export async function testApiKey(id: string) {
+  return apiFetch(`/api/keys/${id}/test`, { method: 'POST' });
+}
+
 export async function createCheckout(plan: string) {
   return apiFetch('/api/billing/checkout', {
     method: 'POST',
