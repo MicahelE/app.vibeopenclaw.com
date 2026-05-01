@@ -7,7 +7,7 @@ import { useAuth } from '@/lib/auth';
 import { getAdminStats } from '@/lib/api';
 
 interface AdminData {
-  totals: { users: number; agents_active: number; agents_error: number; api_keys: number };
+  totals: { users: number; agents_active: number; agents_error: number; api_keys: number; api_calls_24h: number };
   breakdown: {
     users: { plan_tier: string; subscription_status: string; count: number }[];
     agents: { agent_type: string; status: string; count: number }[];
@@ -24,6 +24,7 @@ interface AdminData {
     created_at: string;
     container: { running: boolean; status: string; started_at: string } | null;
   }[];
+  top_users_7d: { email: string; api_calls: number }[];
 }
 
 export default function AdminPage() {
@@ -95,8 +96,9 @@ export default function AdminPage() {
           </Link>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
           <Stat label="Users" value={data.totals.users} />
+          <Stat label="Calls (24h)" value={data.totals.api_calls_24h} />
           <Stat label="Agents (running/stopped)" value={data.totals.agents_active} />
           <Stat label="Agents (errored)" value={data.totals.agents_error} accent={data.totals.agents_error > 0 ? 'error' : undefined} />
           <Stat label="API keys" value={data.totals.api_keys} />
@@ -150,6 +152,22 @@ export default function AdminPage() {
             )}
           </div>
         </div>
+
+        {data.top_users_7d?.length > 0 && (
+          <div className="glass-card rounded-2xl p-5 border border-[rgba(136,146,176,0.15)] mt-6">
+            <h2 className="text-sm font-semibold mb-3" style={{ fontFamily: '"Clash Display", system-ui, sans-serif' }}>
+              Top users by API calls (last 7 days)
+            </h2>
+            <div className="space-y-1.5">
+              {data.top_users_7d.map((u) => (
+                <div key={u.email} className="flex justify-between text-xs">
+                  <span className="text-[#8892b0]">{u.email}</span>
+                  <span className="text-[#f0f4ff] font-medium">{u.api_calls.toLocaleString()}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         <div className="text-[10px] text-[#5a6480] mt-4">Auto-refreshes every 15s</div>
       </div>

@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
   if (!user) return NextResponse.json({ detail: 'Not authenticated' }, { status: 401 });
   if (!isAdmin(user.email)) return NextResponse.json({ detail: 'Forbidden' }, { status: 403 });
 
-  const [users, agents, keys, recentAgents] = await Promise.all([
+  const [users, agents, keys, recentAgents, usageToday, usage7d] = await Promise.all([
     query(
       `SELECT plan_tier, COALESCE(subscription_status, 'none') AS subscription_status, COUNT(*)::int AS count
        FROM users
@@ -37,6 +37,23 @@ export async function GET(req: NextRequest) {
        WHERE a.status != 'DELETED'
        ORDER BY a.created_at DESC
        LIMIT 30`
+    ),
+    query(
+      `SELECT COALESCE(SUM(api_calls), 0)::int AS api_calls,
+              COALESCE(SUM(messages_sent), 0)::int AS messages_sent
+         FROM usage_logs
+        WHERE date >= NOW() - INTERVAL '24 hours'`
+    ),
+    query(
+      `SELECT u.email,
+              COALESCE(SUM(l.api_calls), 0)::int AS api_calls
+         FROM users u
+         LEFT JOIN usage_logs l
+           ON l.user_id = u.id AND l.date >= NOW() - INTERVAL '7 days'
+        GROUP BY u.email
+       HAVING COALESCE(SUM(l.api_calls), 0) > 0
+        ORDER BY api_calls DESC
+        LIMIT 10`
     ),
   ]);
 
@@ -69,6 +86,7 @@ export async function GET(req: NextRequest) {
       .reduce((sum, r) => sum + r.count, 0),
     agents_error: agents.rows.filter((r) => r.status === 'ERROR').reduce((sum, r) => sum + r.count, 0),
     api_keys: keys.rows.reduce((sum, r) => sum + r.count, 0),
+    api_calls_24h: usageToday.rows[0]?.api_calls ?? 0,
   };
 
   return NextResponse.json({
@@ -79,5 +97,6 @@ export async function GET(req: NextRequest) {
       keys: keys.rows,
     },
     recent_agents: recent,
+    top_users_7d: usage7d.rows,
   });
 }

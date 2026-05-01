@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { query } from '@/lib/db';
+import { logProxyCall } from '@/lib/usage';
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ path: string[] }> }) {
   return proxyRequest(req, params);
@@ -31,15 +32,17 @@ async function proxyRequest(req: NextRequest, paramsPromise: Promise<{ path: str
   }
   
   const result = await query(
-    'SELECT status, port, agent_type FROM agents WHERE id = $1',
+    'SELECT user_id, status, port, agent_type FROM agents WHERE id = $1',
     [agentId]
   );
   const agent = result.rows[0];
-  
+
   if (!agent) return NextResponse.json({ detail: 'Agent not found' }, { status: 404 });
   if (agent.status !== 'RUNNING' || !agent.port) {
     return NextResponse.json({ detail: 'Agent is not running' }, { status: 503 });
   }
+
+  void logProxyCall(agent.user_id, agentId);
   
   const targetUrl = `http://localhost:${agent.port}/${subPath}`;
   const url = new URL(req.url);
