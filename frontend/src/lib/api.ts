@@ -97,6 +97,10 @@ export async function updateAgent(id: string, data: {
   });
 }
 
+export async function getAgentLogs(id: string, tail = 200): Promise<{ logs: string; tail?: number; detail?: string }> {
+  return apiFetch(`/api/agents/${id}/logs?tail=${tail}`);
+}
+
 export async function startAgent(id: string) {
   return apiFetch(`/api/agents/${id}/start`, { method: 'POST' });
 }

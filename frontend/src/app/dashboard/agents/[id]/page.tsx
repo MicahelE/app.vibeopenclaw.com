@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { getAgents, startAgent, stopAgent, deleteAgent, updateAgent } from '@/lib/api';
+import { getAgents, startAgent, stopAgent, deleteAgent, updateAgent, getAgentLogs } from '@/lib/api';
 
 const CHANNELS = [
   { key: 'telegram', tokenKey: 'telegram_bot_token', has: 'has_telegram', label: 'Telegram', placeholder: '123456789:ABCdef...', guide: 'https://t.me/BotFather' },
@@ -307,6 +307,8 @@ export default function AgentDetailPage() {
         </div>
       </div>
 
+      <AgentLogs agentId={agent.id} />
+
       <div className="mt-4">
         <button
           onClick={async () => {
@@ -324,6 +326,87 @@ export default function AgentDetailPage() {
           Delete this agent
         </button>
       </div>
+    </div>
+  );
+}
+
+function AgentLogs({ agentId }: { agentId: string }) {
+  const [logs, setLogs] = useState<string>('');
+  const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [autoRefresh, setAutoRefresh] = useState(false);
+  const [err, setErr] = useState<string>('');
+
+  async function load() {
+    setLoading(true);
+    setErr('');
+    try {
+      const data = await getAgentLogs(agentId, 200);
+      setLogs(data.logs || data.detail || '');
+    } catch (e: any) {
+      setErr(e?.message || 'Failed to load logs');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    if (open) load();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, agentId]);
+
+  useEffect(() => {
+    if (!open || !autoRefresh) return;
+    const t = setInterval(load, 5000);
+    return () => clearInterval(t);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, autoRefresh, agentId]);
+
+  return (
+    <div className="mt-6 glass-card rounded-2xl border border-[rgba(136,146,176,0.15)] overflow-hidden">
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-full px-6 py-4 flex items-center justify-between hover:bg-[rgba(255,255,255,0.02)] transition-colors"
+      >
+        <div className="flex items-center gap-2">
+          <h2 className="text-sm font-semibold text-[#f0f4ff]" style={{ fontFamily: '"Clash Display", system-ui, sans-serif' }}>
+            Container logs
+          </h2>
+          <span className="text-[10px] text-[#5a6480]">last 200 lines</span>
+        </div>
+        <svg className={`w-4 h-4 text-[#5a6480] transition-transform ${open ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+      {open && (
+        <div className="px-6 pb-5 border-t border-[rgba(136,146,176,0.1)]">
+          <div className="flex items-center justify-between mt-3 mb-2 gap-2">
+            <label className="flex items-center gap-1.5 text-[10px] text-[#8892b0] cursor-pointer">
+              <input
+                type="checkbox"
+                checked={autoRefresh}
+                onChange={(e) => setAutoRefresh(e.target.checked)}
+                className="accent-[#ff4d4d]"
+              />
+              Auto-refresh every 5s
+            </label>
+            <button
+              onClick={load}
+              disabled={loading}
+              className="text-[10px] text-[#00e5cc] hover:text-[#00ffd5] transition-colors disabled:opacity-50"
+            >
+              {loading ? 'Loading…' : 'Refresh'}
+            </button>
+          </div>
+          {err ? (
+            <div className="text-[11px] text-[#ff4d4d]">{err}</div>
+          ) : (
+            <pre className="text-[10px] text-[#8892b0] bg-[rgba(0,0,0,0.4)] rounded-lg p-3 max-h-[420px] overflow-auto whitespace-pre-wrap break-all font-mono">
+              {logs || (loading ? 'Loading…' : 'No logs yet')}
+            </pre>
+          )}
+        </div>
+      )}
     </div>
   );
 }

@@ -293,6 +293,33 @@ export async function deleteContainer(containerId: string) {
   }
 }
 
+export async function getContainerLogs(containerId: string, tail = 200): Promise<string> {
+  const stream = (await docker.getContainer(containerId).logs({
+    stdout: true,
+    stderr: true,
+    tail,
+    timestamps: true,
+  })) as unknown as Buffer;
+  if (!stream) return '';
+  const buf = Buffer.isBuffer(stream) ? stream : Buffer.from(stream as ArrayBuffer);
+  return demuxDockerLogs(buf);
+}
+
+function demuxDockerLogs(buf: Buffer): string {
+  const out: string[] = [];
+  let offset = 0;
+  while (offset + 8 <= buf.length) {
+    const size = buf.readUInt32BE(offset + 4);
+    const start = offset + 8;
+    const end = start + size;
+    if (end > buf.length) break;
+    out.push(buf.slice(start, end).toString('utf8'));
+    offset = end;
+  }
+  if (out.length === 0) return buf.toString('utf8');
+  return out.join('');
+}
+
 export async function getContainerStatus(containerId: string) {
   try {
     const info = await docker.getContainer(containerId).inspect();
