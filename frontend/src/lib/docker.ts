@@ -7,6 +7,7 @@ const AGENT_NETWORK = process.env.AGENT_NETWORK || 'voc-agents';
 const DATA_DIR = process.env.DATA_DIR || '/opt/vibeopenclaw/data/agents';
 const OPENCLAW_IMAGE = process.env.OPENCLAW_IMAGE || 'ghcr.io/openclaw/openclaw:latest';
 const HERMES_IMAGE = process.env.HERMES_IMAGE || 'hermes-agent:latest';
+const OPENCLAW_PLUGIN_CACHE = process.env.OPENCLAW_PLUGIN_CACHE || '/opt/vibeopenclaw/data/openclaw-plugin-cache';
 
 type HealthMode = 'http' | 'container';
 type AgentRuntime = {
@@ -83,6 +84,11 @@ export async function createAgentContainer(
   await mkdir(agentDir, { recursive: true });
   await chmod(agentDir, 0o777);
 
+  if (!isHermes) {
+    await mkdir(OPENCLAW_PLUGIN_CACHE, { recursive: true });
+    try { await chmod(OPENCLAW_PLUGIN_CACHE, 0o777); } catch {}
+  }
+
   await ensureImage(config.image);
 
   const activeProvider = getProvider(modelProvider);
@@ -128,13 +134,19 @@ export async function createAgentContainer(
   if (slackToken) env.push(`SLACK_BOT_TOKEN=${slackToken}`);
 
   const portKey = config.port ? `${config.port}/tcp` : null;
+  const binds = isHermes
+    ? [`${agentDir}:/data`]
+    : [
+        `${agentDir}:/home/node/.openclaw`,
+        `${OPENCLAW_PLUGIN_CACHE}:/home/node/.openclaw/plugin-runtime-deps`,
+      ];
   const container = await docker.createContainer({
     Image: config.image,
     name: containerName,
     Env: env,
     Cmd: config.cmd,
     HostConfig: {
-      Binds: [isHermes ? `${agentDir}:/data` : `${agentDir}:/home/node/.openclaw`],
+      Binds: binds,
       Memory: parseMemory(memoryLimit),
       MemorySwap: parseMemory(memoryLimit),
       RestartPolicy: { Name: 'unless-stopped' },
