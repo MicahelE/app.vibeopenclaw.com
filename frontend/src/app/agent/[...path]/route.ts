@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { query } from '@/lib/db';
 import { logProxyCall } from '@/lib/usage';
+import { rateLimit, rateLimitResponse, clientId } from '@/lib/rate-limit';
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ path: string[] }> }) {
   return proxyRequest(req, params);
@@ -30,7 +31,10 @@ async function proxyRequest(req: NextRequest, paramsPromise: Promise<{ path: str
   if (!agentId) {
     return NextResponse.json({ detail: 'Agent ID required' }, { status: 400 });
   }
-  
+
+  const limit = rateLimit(`proxy:${agentId}:${clientId(req)}`, 120, 60_000);
+  if (!limit.ok) return rateLimitResponse(limit);
+
   const result = await query(
     'SELECT user_id, status, port, agent_type FROM agents WHERE id = $1',
     [agentId]
