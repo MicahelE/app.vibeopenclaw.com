@@ -2,8 +2,12 @@ import { NextRequest, NextResponse } from 'next/server';
 import { query } from '@/lib/db';
 import { hashPassword, createToken } from '@/lib/jwt';
 import { v4 as uuidv4 } from 'uuid';
+import { rateLimit, rateLimitResponse, clientId } from '@/lib/rate-limit';
 
 export async function POST(req: NextRequest) {
+  const limit = rateLimit(`register:${clientId(req)}`, 5, 60 * 60_000);
+  if (!limit.ok) return rateLimitResponse(limit);
+
   try {
     const { searchParams } = new URL(req.url);
     const email = searchParams.get('email');

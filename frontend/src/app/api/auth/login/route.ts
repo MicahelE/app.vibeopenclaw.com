@@ -1,13 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { query } from '@/lib/db';
 import { verifyPassword, createToken } from '@/lib/jwt';
+import { rateLimit, rateLimitResponse, clientId } from '@/lib/rate-limit';
 
 export async function POST(req: NextRequest) {
+  const limit = rateLimit(`login:${clientId(req)}`, 10, 60_000);
+  if (!limit.ok) return rateLimitResponse(limit);
+
   try {
     const formData = await req.formData();
     const email = formData.get('username') as string;
     const password = formData.get('password') as string;
-    
+
     if (!email || !password) {
       return NextResponse.json({ detail: 'Email and password required' }, { status: 400 });
     }

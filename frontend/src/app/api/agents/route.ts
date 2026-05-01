@@ -4,6 +4,7 @@ import { getCurrentUser } from '@/lib/session';
 import { createAgentContainer, getContainerPort, ensureNetwork, waitForHealthy, getAgentConfig } from '@/lib/docker';
 import { decrypt } from '@/lib/encrypt';
 import { v4 as uuidv4 } from 'uuid';
+import { rateLimit, rateLimitResponse } from '@/lib/rate-limit';
 
 const PLAN_LIMITS: Record<string, { agents: number; memory_mb: number }> = {
   pro: { agents: 1, memory_mb: 2048 },
@@ -36,7 +37,10 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   const user = await getCurrentUser(req);
   if (!user) return NextResponse.json({ detail: 'Not authenticated' }, { status: 401 });
-  
+
+  const limit = rateLimit(`agent-create:${user.id}`, 10, 60 * 60_000);
+  if (!limit.ok) return rateLimitResponse(limit);
+
   try {
     const body = await req.json();
     const name = body.name;
