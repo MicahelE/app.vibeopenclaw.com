@@ -426,7 +426,9 @@ export default function NewAgentPage() {
           {!telegramToken && !discordToken && !slackToken && (
             <div className="mt-3 p-3 rounded-lg bg-[rgba(255,77,77,0.08)] border border-[rgba(255,77,77,0.15)]">
               <p className="text-xs text-[#ff8a8a]">
-                No channels connected — your agent will be accessible via HTTP only. You can add channels later from the agent settings.
+                {agentType === 'HERMES'
+                  ? 'No channels connected — Hermes uses messaging integrations, so your agent will sit idle until you add a Telegram, Discord, or Slack token from the agent page.'
+                  : 'No channels connected — your agent will be accessible via its unique HTTP endpoint. You can add channels later from the agent page.'}
               </p>
             </div>
           )}
