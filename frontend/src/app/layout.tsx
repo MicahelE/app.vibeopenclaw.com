@@ -101,7 +101,7 @@ export default function RootLayout({
               featureList: [
                 "Deploy OpenClaw (Node.js) and Hermes (Python) AI agents",
                 "Docker-isolated containers with dedicated RAM",
-                "BYOK — Bring Your Own API Keys (OpenAI, Anthropic, Google)",
+                "BYOK — Bring Your Own API Keys (OpenAI, Anthropic, Google, NVIDIA)",
                 "Telegram, Discord, and Slack bot integrations",
                 "HTTPS endpoints with automatic SSL",
                 "One-click agent creation and management",
@@ -146,7 +146,7 @@ export default function RootLayout({
                   name: "How do I deploy an AI agent on VibeOpenClaw?",
                   acceptedAnswer: {
                     "@type": "Answer",
-                    text: "Sign up, choose OpenClaw or Hermes agent type, select your model provider (OpenAI, Anthropic, or Google), optionally add Telegram/Discord/Slack tokens, and click Create. Your agent starts in a Docker container within seconds.",
+                    text: "Sign up, choose OpenClaw or Hermes agent type, select your model provider, optionally add Telegram/Discord/Slack tokens, and click Create. Your agent starts in a Docker container within seconds.",
                   },
                 },
                 {
@@ -154,7 +154,7 @@ export default function RootLayout({
                   name: "What does BYOK mean?",
                   acceptedAnswer: {
                     "@type": "Answer",
-                    text: "BYOK stands for Bring Your Own Keys. Instead of paying for API calls through us, you add your own OpenAI, Anthropic, or Google API keys. You control your LLM spend directly — we never mark up API costs.",
+                    text: "BYOK stands for Bring Your Own Keys. Instead of paying for API calls through us, you add your own supported provider API keys. You control your LLM spend directly — we never mark up API costs.",
                   },
                 },
                 {

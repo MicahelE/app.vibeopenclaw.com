@@ -58,7 +58,7 @@ export default function OpengraphImage() {
           Host AI Agents in One Click
         </div>
         <div style={{ fontSize: 22, color: '#5a6480', textAlign: 'center', maxWidth: 900 }}>
-          Managed hosting for OpenClaw &amp; Hermes — BYOK, Docker-isolated, 12 LLM providers, instant HTTPS
+          Managed hosting for OpenClaw &amp; Hermes — BYOK, Docker-isolated, 13 LLM providers, instant HTTPS
         </div>
         <div style={{ display: 'flex', gap: 36, marginTop: 48, fontSize: 18, color: '#5a6480' }}>
           <span>● Docker Isolated</span>

@@ -142,7 +142,7 @@ export default function HomePage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             {[
               { title: 'OpenClaw & Hermes Agents', desc: 'Deploy OpenClaw (366k+ GitHub stars, Node.js) or Hermes Agent (self-improving, Python) with one click. Both agents support 20+ messaging channels including Telegram, Discord, Slack, and WhatsApp.', accent: 'coral' },
-              { title: 'BYOK Model Support', desc: 'Bring Your Own Keys for OpenAI, Anthropic, or Google. Connect your API keys directly — no middleman, no markup on LLM costs. Switch providers anytime.', accent: 'cyan' },
+              { title: 'BYOK Model Support', desc: 'Bring Your Own Keys for OpenAI, Anthropic, Google, NVIDIA, and more. Connect your API keys directly — no middleman, no markup on LLM costs. Switch providers anytime.', accent: 'cyan' },
               { title: 'One-Click Deploy', desc: 'Provision isolated Docker containers for each agent. Dedicated RAM and CPU limits, automatic health checks, and instant HTTPS endpoints at app.vibeopenclaw.com/agent/your-id.', accent: 'coral' },
               { title: 'Channel Integrations', desc: 'Connect your agents to Telegram, Discord, and Slack with just a bot token. OpenClaw also supports WhatsApp, Signal, iMessage, and Matrix. Go live in minutes.', accent: 'cyan' },
               { title: 'Unique Agent URLs', desc: 'Every agent gets a unique subpath URL at app.vibeopenclaw.com/agent/your-id. Share it instantly — no port forwarding, no DNS configuration needed.', accent: 'coral' },

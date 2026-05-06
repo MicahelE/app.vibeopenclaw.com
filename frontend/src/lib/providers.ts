@@ -198,6 +198,18 @@ export const PROVIDERS: ProviderConfig[] = [
     placeholder: '...',
     docsUrl: 'https://dashboard.cohere.com/api-keys',
   },
+  {
+    id: 'nvidia',
+    label: 'NVIDIA',
+    envKeyName: 'NVIDIA_API_KEY',
+    baseUrl: 'https://integrate.api.nvidia.com/v1',
+    openclawApi: 'openai-completions',
+    openclawBaseUrl: 'https://integrate.api.nvidia.com/v1',
+    hermesProvider: 'custom',
+    models: ['z-ai/glm-5.1'],
+    placeholder: 'nvapi-...',
+    docsUrl: 'https://build.nvidia.com/z-ai/glm5_1',
+  },
 ];
 
 export const PROVIDER_BY_ID: Record<string, ProviderConfig> = Object.fromEntries(

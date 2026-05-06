@@ -39,7 +39,7 @@ If you change these, also update the marketing copy in `app/page.tsx`, `app/dash
 
 The Sept-2026 / April-2026 work cycle shipped **18 PRs**. Highlights you should know are live:
 
-- **12-provider BYOK** with config in `lib/providers.ts` (OpenAI, Anthropic, Google, Groq, xAI, Mistral, DeepSeek, Together, Fireworks, Perplexity, OpenRouter, Cohere). Each has an `openclawApi` + `openclawBaseUrl` for OpenClaw's `pi-ai` adapter routing, and a `hermesProvider` for Hermes' inference taxonomy.
+- **13-provider BYOK** with config in `lib/providers.ts` (OpenAI, Anthropic, Google, Groq, xAI, Mistral, DeepSeek, Together, Fireworks, Perplexity, OpenRouter, Cohere, NVIDIA). Each has an `openclawApi` + `openclawBaseUrl` for OpenClaw's `pi-ai` adapter routing, and a `hermesProvider` for Hermes' inference taxonomy.
 - **OpenClaw config seeding**: `docker.ts` writes `${agentDir}/openclaw.json` with `models.providers` + `agents.defaults.model.primary` before container start, then bind-mounts `${agentDir}` to `/home/node/.openclaw`. Plus a shared plugin cache at `/opt/vibeopenclaw/data/openclaw-plugin-cache` so the second OpenClaw container onwards starts in seconds instead of ~90s.
 - **Hermes config seeding**: writes `${agentDir}/config.yaml` with `model.default` + `model.provider` (+ `base_url`/`api_key` for `custom`). Hermes containers run `gateway run` only — **no public HTTP exposure** because the Hermes dashboard would expose key management. `HERMES_UID=1001`/`HERMES_GID=1001` chowns the bind cleanly.
 - **Status reconciler** in `instrumentation.ts` → `lib/reconciler.ts`: every 30s, reconciles `agents.status` against actual Docker state. Marks `ERROR` if the container is missing, exited non-zero, or flapping (RestartCount ≥ 3 or `State.Restarting`).
