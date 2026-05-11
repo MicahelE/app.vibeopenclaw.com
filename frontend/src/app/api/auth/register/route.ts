@@ -3,6 +3,7 @@ import { query } from '@/lib/db';
 import { hashPassword, createToken } from '@/lib/jwt';
 import { v4 as uuidv4 } from 'uuid';
 import { rateLimit, rateLimitResponse, clientId } from '@/lib/rate-limit';
+import { normalizePlan, planTier } from '@/lib/billing';
 
 export async function POST(req: NextRequest) {
   const limit = rateLimit(`register:${clientId(req)}`, 5, 60 * 60_000);
@@ -10,9 +11,12 @@ export async function POST(req: NextRequest) {
 
   try {
     const { searchParams } = new URL(req.url);
-    const email = searchParams.get('email');
-    const password = searchParams.get('password');
-    const name = searchParams.get('name');
+    const contentType = req.headers.get('content-type') || '';
+    const body = contentType.includes('application/json') ? await req.json().catch(() => ({})) : {};
+    const email = body.email || searchParams.get('email');
+    const password = body.password || searchParams.get('password');
+    const name = body.name || searchParams.get('name');
+    const plan = normalizePlan(body.plan || searchParams.get('plan'));
     
     if (!email || !password) {
       return NextResponse.json({ detail: 'Email and password required' }, { status: 400 });
@@ -27,14 +31,15 @@ export async function POST(req: NextRequest) {
     const passwordHash = await hashPassword(password);
     
     await query(
-      'INSERT INTO users (id, email, password_hash, name, plan_tier) VALUES ($1, $2, $3, $4, $5)',
-      [id, email, passwordHash, name || null, 'PRO']
+      `INSERT INTO users (id, email, password_hash, name, plan_tier, subscription_status)
+       VALUES ($1, $2, $3, $4, $5, 'UNPAID')`,
+      [id, email, passwordHash, name || null, planTier(plan)]
     );
     
     const token = await createToken({ sub: id });
-    return NextResponse.json({ access_token: token, token_type: 'bearer', user_id: id });
-  } catch (err: any) {
+    return NextResponse.json({ access_token: token, token_type: 'bearer', user_id: id, plan });
+  } catch (err: unknown) {
     console.error('Register error:', err);
-    return NextResponse.json({ detail: err.message || 'Registration failed' }, { status: 500 });
+    return NextResponse.json({ detail: err instanceof Error ? err.message : 'Registration failed' }, { status: 500 });
   }
 }

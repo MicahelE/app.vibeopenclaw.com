@@ -2,10 +2,13 @@
 
 import { useState } from 'react';
 import { createCheckout, createPortal } from '@/lib/api';
+import { useAuth } from '@/lib/auth';
 
 export default function BillingPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const { user } = useAuth();
+  const isActive = user?.subscription_status === 'ACTIVE';
 
   async function handleSubscribe(plan: string) {
     setError('');
@@ -13,8 +16,8 @@ export default function BillingPage() {
     try {
       const data = await createCheckout(plan);
       if (data.checkout_url) window.location.href = data.checkout_url;
-    } catch (err: any) {
-      setError(err.message || 'Failed to start checkout');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Failed to start checkout');
     } finally {
       setLoading(false);
     }
@@ -26,8 +29,8 @@ export default function BillingPage() {
     try {
       const data = await createPortal();
       if (data.portal_url) window.location.href = data.portal_url;
-    } catch (err: any) {
-      setError(err.message || 'Failed to open portal');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Failed to open portal');
     } finally {
       setLoading(false);
     }
@@ -35,10 +38,20 @@ export default function BillingPage() {
 
   return (
     <div>
-      <h1 className="text-xl font-bold text-[#f0f4ff] mb-6" style={{ fontFamily: '"Clash Display", system-ui, sans-serif' }}>Billing</h1>
+      <h1 className="text-xl font-bold text-[#f0f4ff] mb-2" style={{ fontFamily: '"Clash Display", system-ui, sans-serif' }}>Billing</h1>
+      <p className="text-sm text-[#5a6480] mb-6">
+        {isActive
+          ? `Your ${user?.plan_tier?.toLowerCase()} subscription is active.`
+          : 'Payment is required before you can create or manage agents.'}
+      </p>
 
       {error && (
         <div className="bg-[rgba(255,77,77,0.15)] text-[#ff4d4d] p-3 rounded-xl mb-4 text-sm border border-[rgba(255,77,77,0.3)]">{error}</div>
+      )}
+      {!isActive && (
+        <div className="bg-[rgba(255,193,7,0.12)] text-[#ffd166] p-3 rounded-xl mb-4 text-sm border border-[rgba(255,193,7,0.25)]">
+          Choose a plan and complete Polar checkout to unlock agent creation.
+        </div>
       )}
 
       <div className="grid md:grid-cols-2 gap-5 mb-8 max-w-2xl">
@@ -65,7 +78,7 @@ export default function BillingPage() {
               boxShadow: '0 4px 20px rgba(255,77,77,0.25)',
             }}
           >
-            Subscribe to Pro
+            {isActive && user?.plan_tier === 'PRO' ? 'Current Plan' : 'Subscribe to Pro'}
           </button>
         </div>
 
@@ -89,22 +102,24 @@ export default function BillingPage() {
             className="w-full py-3 rounded-xl text-[#050810] font-semibold text-sm transition-all hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(255,255,255,0.2)] active:translate-y-0 bg-white"
             style={{ fontFamily: '"Clash Display", system-ui, sans-serif' }}
           >
-            Subscribe to Premium
+            {isActive && user?.plan_tier === 'PREMIUM' ? 'Current Plan' : 'Subscribe to Premium'}
           </button>
         </div>
       </div>
 
-      <div className="glass-card rounded-2xl p-6 border border-[rgba(136,146,176,0.15)]">
-        <h2 className="text-base font-semibold text-[#f0f4ff] mb-1" style={{ fontFamily: '"Clash Display", system-ui, sans-serif' }}>Manage Subscription</h2>
-        <p className="text-sm text-[#5a6480] mb-4">Update payment method, view invoices, or cancel your subscription.</p>
-        <button
-          onClick={handlePortal}
-          disabled={loading}
-          className="px-4 py-2.5 border border-[rgba(136,146,176,0.2)] rounded-xl text-[#8892b0] text-sm hover:text-[#f0f4ff] hover:border-[rgba(136,146,176,0.4)] transition-colors"
-        >
-          Open Customer Portal
-        </button>
-      </div>
+      {isActive && (
+        <div className="glass-card rounded-2xl p-6 border border-[rgba(136,146,176,0.15)]">
+          <h2 className="text-base font-semibold text-[#f0f4ff] mb-1" style={{ fontFamily: '"Clash Display", system-ui, sans-serif' }}>Manage Subscription</h2>
+          <p className="text-sm text-[#5a6480] mb-4">Update payment method, view invoices, or cancel your subscription.</p>
+          <button
+            onClick={handlePortal}
+            disabled={loading}
+            className="px-4 py-2.5 border border-[rgba(136,146,176,0.2)] rounded-xl text-[#8892b0] text-sm hover:text-[#f0f4ff] hover:border-[rgba(136,146,176,0.4)] transition-colors"
+          >
+            Open Customer Portal
+          </button>
+        </div>
+      )}
     </div>
   );
 }

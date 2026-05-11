@@ -1,8 +1,6 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { getMe } from './api';
-
 interface User {
   id: string;
   email: string;
@@ -17,6 +15,7 @@ interface AuthContextType {
   token: string | null;
   login: (token: string) => Promise<void>;
   logout: () => void;
+  refreshUser: () => Promise<User | null>;
   isLoading: boolean;
 }
 
@@ -67,6 +66,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const refreshUser = async () => {
+    const activeToken = token || localStorage.getItem('voc_token');
+    if (!activeToken) return null;
+    const fullUser = await fetchUser(activeToken);
+    if (fullUser) {
+      localStorage.setItem('voc_user', JSON.stringify(fullUser));
+      setUser(fullUser);
+    }
+    return fullUser;
+  };
+
   const logout = () => {
     localStorage.removeItem('voc_token');
     localStorage.removeItem('voc_user');
@@ -75,7 +85,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, login, logout, isLoading }}>
+    <AuthContext.Provider value={{ user, token, login, logout, refreshUser, isLoading }}>
       {children}
     </AuthContext.Provider>
   );

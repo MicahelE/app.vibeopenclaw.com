@@ -11,7 +11,7 @@ export async function getCurrentUser(req: NextRequest) {
   if (!payload?.sub) return null;
 
   const result = await query(
-    'SELECT id, email, name, plan_tier, subscription_status, subscription_id FROM users WHERE id = $1',
+    'SELECT id, email, name, plan_tier, subscription_status, subscription_id, polar_customer_id FROM users WHERE id = $1',
     [payload.sub]
   );
 

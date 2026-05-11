@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth';
-import { login, register } from '@/lib/api';
+import { createCheckout, login, register } from '@/lib/api';
 
 export default function HomePage() {
   const [showAuth, setShowAuth] = useState(false);
@@ -13,8 +13,15 @@ export default function HomePage() {
   const [name, setName] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState<'pro' | 'premium'>('pro');
   const { login: authLogin } = useAuth();
   const router = useRouter();
+
+  function openSignup(plan: 'pro' | 'premium' = 'pro') {
+    setSelectedPlan(plan);
+    setShowAuth(true);
+    setIsLogin(false);
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -24,13 +31,20 @@ export default function HomePage() {
       let res;
       if (isLogin) {
         res = await login(email, password);
+        await authLogin(res.access_token);
+        router.push('/dashboard');
       } else {
-        res = await register(email, password, name || undefined);
+        res = await register(email, password, name || undefined, selectedPlan);
+        await authLogin(res.access_token);
+        const checkout = await createCheckout(selectedPlan);
+        if (checkout.checkout_url) {
+          window.location.href = checkout.checkout_url;
+          return;
+        }
+        router.push('/dashboard/billing');
       }
-      await authLogin(res.access_token);
-      router.push('/dashboard');
-    } catch (err: any) {
-      setError(err.message || 'Something went wrong');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Something went wrong');
     } finally {
       setLoading(false);
     }
@@ -89,7 +103,7 @@ export default function HomePage() {
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
             <button
-              onClick={() => { setShowAuth(true); setIsLogin(false); }}
+              onClick={() => openSignup('pro')}
               className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl text-white font-semibold text-base transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(255,77,77,0.35)] active:translate-y-0"
               style={{
                 fontFamily: '"Clash Display", system-ui, sans-serif',
@@ -202,7 +216,7 @@ export default function HomePage() {
                 ))}
               </ul>
               <button
-                onClick={() => { setShowAuth(true); setIsLogin(false); }}
+                onClick={() => openSignup('pro')}
                 className="w-full py-3 rounded-xl text-white font-semibold text-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(255,77,77,0.35)] active:translate-y-0"
                 style={{
                   fontFamily: '"Clash Display", system-ui, sans-serif',
@@ -233,7 +247,7 @@ export default function HomePage() {
                 ))}
               </ul>
               <button
-                onClick={() => { setShowAuth(true); setIsLogin(false); }}
+                onClick={() => openSignup('premium')}
                 className="w-full py-3 rounded-xl text-[#050810] font-semibold text-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(255,255,255,0.2)] active:translate-y-0 bg-white"
                 style={{ fontFamily: '"Clash Display", system-ui, sans-serif' }}
               >
@@ -262,7 +276,7 @@ export default function HomePage() {
               Host AI agents with Docker isolation, BYOK model support, and instant channel integrations. No infrastructure setup required.
             </p>
             <button
-              onClick={() => { setShowAuth(true); setIsLogin(false); }}
+              onClick={() => openSignup('pro')}
               className="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-xl text-white font-semibold text-base transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(255,77,77,0.35)] active:translate-y-0"
               style={{
                 fontFamily: '"Clash Display", system-ui, sans-serif',
@@ -315,7 +329,7 @@ export default function HomePage() {
               {isLogin ? 'Welcome Back' : 'Get Started'}
             </h2>
             <p className="text-[#5a6480] text-center text-sm mb-6">
-              {isLogin ? 'Sign in to manage your agents' : 'Create your account to deploy agents'}
+              {isLogin ? 'Sign in to manage your agents' : 'Create your account, then complete Polar checkout'}
             </p>
 
             {error && (
@@ -325,6 +339,31 @@ export default function HomePage() {
             )}
 
             <form onSubmit={handleSubmit} className="space-y-4">
+              {!isLogin && (
+                <div>
+                  <label className="block text-sm text-[#8892b0] mb-1.5">Plan</label>
+                  <div className="grid grid-cols-2 gap-2">
+                    {[
+                      { id: 'pro' as const, label: 'Pro', price: '$60/mo' },
+                      { id: 'premium' as const, label: 'Premium', price: '$100/mo' },
+                    ].map((plan) => (
+                      <button
+                        key={plan.id}
+                        type="button"
+                        onClick={() => setSelectedPlan(plan.id)}
+                        className={`rounded-xl border px-3 py-2 text-left transition-all ${
+                          selectedPlan === plan.id
+                            ? 'border-[#ff4d4d] bg-[rgba(255,77,77,0.08)]'
+                            : 'border-[rgba(136,146,176,0.15)] bg-[rgba(255,255,255,0.03)]'
+                        }`}
+                      >
+                        <span className="block text-sm font-semibold text-[#f0f4ff]">{plan.label}</span>
+                        <span className="block text-xs text-[#5a6480]">{plan.price}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
               {!isLogin && (
                 <div>
                   <label className="block text-sm text-[#8892b0] mb-1.5">Name</label>
@@ -369,7 +408,7 @@ export default function HomePage() {
                   boxShadow: '0 4px 20px rgba(255,77,77,0.25)',
                 }}
               >
-                {loading ? 'Please wait...' : isLogin ? 'Sign In' : 'Create Account'}
+                {loading ? 'Please wait...' : isLogin ? 'Sign In' : 'Create Account & Pay'}
               </button>
             </form>
 

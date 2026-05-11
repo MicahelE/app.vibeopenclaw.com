@@ -17,8 +17,12 @@ export default function DashboardLayout({
   useEffect(() => {
     if (!isLoading && !user) {
       router.push('/');
+      return;
     }
-  }, [isLoading, user, router]);
+    if (!isLoading && user && user.subscription_status !== 'ACTIVE' && !pathname.startsWith('/dashboard/billing')) {
+      router.push('/dashboard/billing');
+    }
+  }, [isLoading, pathname, user, router]);
 
   if (isLoading) {
     return (

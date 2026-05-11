@@ -43,13 +43,11 @@ export async function login(email: string, password: string) {
   return res.json();
 }
 
-export async function register(email: string, password: string, name?: string) {
-  const params = new URLSearchParams();
-  params.append('email', email);
-  params.append('password', password);
-  if (name) params.append('name', name);
-  const res = await fetch(`${API_BASE}/api/auth/register?${params}`, {
+export async function register(email: string, password: string, name?: string, plan = 'pro') {
+  const res = await fetch(`${API_BASE}/api/auth/register`, {
     method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password, name, plan }),
   });
   if (!res.ok) {
     const err = await res.json().catch(() => ({ detail: 'Registration failed' }));
@@ -133,6 +131,10 @@ export async function createCheckout(plan: string) {
     method: 'POST',
     body: JSON.stringify({ plan }),
   });
+}
+
+export async function confirmCheckout(checkoutId: string) {
+  return apiFetch(`/api/billing/confirm?checkout_id=${encodeURIComponent(checkoutId)}`);
 }
 
 export async function createPortal() {
