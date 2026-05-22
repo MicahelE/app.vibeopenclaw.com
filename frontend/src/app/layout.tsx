@@ -3,7 +3,10 @@ import { GoogleAnalytics } from "@next/third-parties/google";
 import "./globals.css";
 import { AuthProvider } from "@/lib/auth";
 
+const SITE_URL = process.env.NEXT_PUBLIC_APP_URL || "https://app.vibeopenclaw.com";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: "VibeOpenClaw — Host and Deploy AI Agents | OpenClaw & Hermes Managed SaaS",
   description:
     "Deploy OpenClaw and Hermes AI agents in one click. Managed hosting with Docker isolation, BYOK model support, Telegram/Discord/Slack integrations, and automatic SSL. Start at $60/mo.",
@@ -37,7 +40,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://app.vibeopenclaw.com",
+    url: SITE_URL,
     siteName: "VibeOpenClaw",
     title: "VibeOpenClaw — Host and Deploy AI Agents",
     description:
@@ -54,7 +57,7 @@ export const metadata: Metadata = {
     follow: true,
   },
   alternates: {
-    canonical: "https://app.vibeopenclaw.com",
+    canonical: SITE_URL,
   },
 };
 
@@ -167,7 +170,61 @@ export default function RootLayout({
                     text: "The Pro plan is $60/month for 1 AI agent with 2 GB RAM, Telegram & Discord support. The Premium plan is $100/month for 3 AI agents with 4 GB RAM each, all channels including Slack, priority support, and usage analytics.",
                   },
                 },
+                {
+                  "@type": "Question",
+                  name: "Which AI model providers does VibeOpenClaw support?",
+                  acceptedAnswer: {
+                    "@type": "Answer",
+                    text: "VibeOpenClaw supports 13 LLM providers via BYOK: OpenAI, Anthropic, Google, Groq, xAI, Mistral, DeepSeek, Together, Fireworks, Perplexity, OpenRouter, Cohere, and NVIDIA. You bring your own API keys and control your model spend directly.",
+                  },
+                },
+                {
+                  "@type": "Question",
+                  name: "What is the difference between OpenClaw and Hermes agents?",
+                  acceptedAnswer: {
+                    "@type": "Answer",
+                    text: "OpenClaw is a Node.js personal-assistant platform with 20+ messaging channels and a skills marketplace, exposing an HTTP endpoint. Hermes is a Python self-improving agent by Nous Research that learns skills from experience and runs as a messaging gateway (no public HTTP endpoint). Both deploy in one click on VibeOpenClaw.",
+                  },
+                },
+                {
+                  "@type": "Question",
+                  name: "Is my data and API key secure on VibeOpenClaw?",
+                  acceptedAnswer: {
+                    "@type": "Answer",
+                    text: "Each agent runs in its own isolated Docker container with dedicated RAM. Your provider API keys are encrypted at rest with AES-256-GCM and are never marked up or proxied for billing — you pay your provider directly.",
+                  },
+                },
               ],
+            }),
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              name: "VibeOpenClaw",
+              url: SITE_URL,
+              logo: `${SITE_URL}/icon.svg`,
+              description:
+                "Managed SaaS platform for deploying OpenClaw and Hermes AI agents with Docker-isolated hosting, BYOK model support, and channel integrations.",
+              sameAs: [
+                "https://github.com/openclaw/openclaw",
+                "https://github.com/NousResearch/hermes-agent",
+                "https://clawhub.com",
+              ],
+            }),
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              name: "VibeOpenClaw",
+              url: SITE_URL,
             }),
           }}
         />
