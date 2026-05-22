@@ -30,6 +30,9 @@ Thumbs.db
 *.swp
 *.swo
 
+# Claude Code local settings (contains personal permissions + SSH host)
+.claude/settings.local.json
+
 # Playwright
 test-results/
 playwright-report/

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import "./globals.css";
 import { AuthProvider } from "@/lib/auth";
 
@@ -62,6 +63,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const gaId = process.env.NEXT_PUBLIC_GA_ID;
   return (
     <html lang="en">
       <head>
@@ -87,7 +89,7 @@ export default function RootLayout({
                   price: "60",
                   priceCurrency: "USD",
                   billingIncrement: "P1M",
-                  description: "1 AI Agent, 2 GB RAM, BYOK, Telegram & Discord, Email Support",
+                  description: "1 OpenClaw Agent, 2 GB RAM, BYOK, Telegram & Discord, Email Support",
                 },
                 {
                   "@type": "Offer",
@@ -95,7 +97,7 @@ export default function RootLayout({
                   price: "100",
                   priceCurrency: "USD",
                   billingIncrement: "P1M",
-                  description: "3 AI Agents, 4 GB RAM each, BYOK, All Channels + Slack, Priority Support, Usage Analytics",
+                  description: "3 OpenClaw or Hermes Agents, 4 GB RAM each, BYOK, All Channels + Slack, Priority Support, Usage Analytics",
                 },
               ],
               featureList: [
@@ -175,6 +177,7 @@ export default function RootLayout({
           {children}
         </AuthProvider>
       </body>
+      {gaId ? <GoogleAnalytics gaId={gaId} /> : null}
     </html>
   );
 }
