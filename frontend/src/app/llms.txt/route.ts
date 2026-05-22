@@ -1,4 +1,4 @@
-# VibeOpenClaw
+const BODY = `# VibeOpenClaw
 
 > VibeOpenClaw is a managed SaaS platform for deploying and hosting AI agents powered by OpenClaw and Hermes. Agents run in Docker-isolated containers with BYOK (bring-your-own-keys) model support, messaging-channel integrations, and automatic HTTPS. Plans start at $60/month.
 
@@ -29,3 +29,15 @@ Telegram, Discord, and Slack bot integrations.
 - OpenClaw (GitHub): https://github.com/openclaw/openclaw
 - Hermes Agent (GitHub): https://github.com/NousResearch/hermes-agent
 - Skills Marketplace: https://clawhub.com
+`;
+
+export const dynamic = 'force-static';
+
+export function GET() {
+  return new Response(BODY, {
+    headers: {
+      'Content-Type': 'text/plain; charset=utf-8',
+      'Cache-Control': 'public, max-age=3600',
+    },
+  });
+}
