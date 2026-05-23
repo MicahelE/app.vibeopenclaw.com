@@ -5,6 +5,56 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth';
 import { createCheckout, login, register } from '@/lib/api';
 
+// FAQ entries — visible HTML below and JSON-LD must stay in sync (Google rich snippet rule).
+const FAQ: { q: string; a: string; href?: string; hrefText?: string }[] = [
+  {
+    q: "What is VibeOpenClaw?",
+    a: "VibeOpenClaw is a managed SaaS platform for deploying AI agents powered by OpenClaw and Hermes. It provides Docker-isolated hosting, BYOK model support, and integrations with Telegram, Discord, and Slack — all from $60/month.",
+  },
+  {
+    q: "What is OpenClaw?",
+    a: "OpenClaw is an open-source personal AI assistant platform (Node.js) with 366k+ GitHub stars. It supports 20+ messaging channels including Telegram, Discord, Slack, WhatsApp, and iMessage, with multi-agent routing and a skills marketplace at clawhub.com.",
+  },
+  {
+    q: "What is Hermes Agent?",
+    a: "Hermes Agent is an open-source self-improving AI agent by Nous Research (Python). It features a learning loop that creates and improves skills from experience, supports messaging platforms, MCP integration, cron scheduling, and can migrate from OpenClaw.",
+  },
+  {
+    q: "How do I deploy an AI agent on VibeOpenClaw?",
+    a: "Sign up, choose OpenClaw or Hermes agent type, select your model provider, optionally add Telegram/Discord/Slack tokens, and click Create. Your agent starts in a Docker container within seconds.",
+  },
+  {
+    q: "What does BYOK mean?",
+    a: "BYOK stands for Bring Your Own Keys. Instead of paying for API calls through us, you add your own supported provider API keys. You control your LLM spend directly — we never mark up API costs.",
+  },
+  {
+    q: "How much does VibeOpenClaw cost?",
+    a: "The Pro plan is $60/month for 1 AI agent with 2 GB RAM, Telegram & Discord support. The Premium plan is $100/month for 3 AI agents with 4 GB RAM each, all channels including Slack, priority support, and usage analytics.",
+  },
+  {
+    q: "Which AI model providers does VibeOpenClaw support?",
+    a: "VibeOpenClaw supports 13 LLM providers via BYOK: OpenAI, Anthropic, Google, Groq, xAI, Mistral, DeepSeek, Together, Fireworks, Perplexity, OpenRouter, Cohere, and NVIDIA. You bring your own API keys and control your model spend directly.",
+  },
+  {
+    q: "What is the difference between OpenClaw and Hermes agents?",
+    a: "OpenClaw is a Node.js personal-assistant platform with 20+ messaging channels and a skills marketplace, exposing an HTTP endpoint. Hermes is a Python self-improving agent by Nous Research that learns skills from experience and runs as a messaging gateway (no public HTTP endpoint). Both deploy in one click on VibeOpenClaw.",
+    href: "/compare/openclaw-vs-hermes",
+    hrefText: "Read the full comparison →",
+  },
+  {
+    q: "Is my data and API key secure on VibeOpenClaw?",
+    a: "Each agent runs in its own isolated Docker container with dedicated RAM. Your provider API keys are encrypted at rest with AES-256-GCM and are never marked up or proxied for billing — you pay your provider directly.",
+  },
+  {
+    q: "How do I host an OpenClaw agent?",
+    a: "Create an account on VibeOpenClaw, choose OpenClaw as the agent type, paste your provider API key, optionally add a Telegram/Discord/Slack bot token, and click Create. VibeOpenClaw provisions an isolated Docker container with HTTPS in about 30 seconds — no VPS or server setup required.",
+  },
+  {
+    q: "Can I deploy a Hermes agent in Docker without setting up a VPS?",
+    a: "Yes. VibeOpenClaw runs each Hermes agent in its own managed Docker container with dedicated RAM. You don't need to provision a VPS, write a Dockerfile, or manage systemd — pick Hermes in the wizard and it deploys in seconds.",
+  },
+];
+
 export default function HomePage() {
   const [showAuth, setShowAuth] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
@@ -289,6 +339,59 @@ export default function HomePage() {
           </div>
         </section>
 
+        {/* FAQ — visible content (mirrors FAQPage JSON-LD below for Google rich snippets) */}
+        <section id="faq" aria-labelledby="faq-heading" className="mb-14">
+          <h2
+            id="faq-heading"
+            className="text-2xl md:text-3xl font-bold text-[#f0f4ff] mb-6 text-center"
+            style={{ fontFamily: '"Clash Display", system-ui, sans-serif' }}
+          >
+            Frequently asked questions
+          </h2>
+          <div className="space-y-3 max-w-2xl mx-auto">
+            {FAQ.map((f) => (
+              <details
+                key={f.q}
+                className="group rounded-xl border border-[rgba(136,146,176,0.15)] bg-[rgba(10,15,26,0.4)] p-5 open:border-[rgba(136,146,176,0.3)]"
+              >
+                <summary className="cursor-pointer list-none flex items-start justify-between gap-4">
+                  <span className="font-semibold text-[#f0f4ff]" style={{ fontFamily: '"Clash Display", system-ui, sans-serif' }}>
+                    {f.q}
+                  </span>
+                  <span className="text-[#8892b0] text-xl leading-none mt-0.5 transition-transform group-open:rotate-45">+</span>
+                </summary>
+                <p className="mt-3 text-[#c8d0e0] text-sm leading-relaxed">
+                  {f.a}
+                  {f.href && (
+                    <>
+                      {' '}
+                      <a href={f.href} className="text-[#00e5cc] hover:text-[#33ebd6] underline underline-offset-2">
+                        {f.hrefText}
+                      </a>
+                    </>
+                  )}
+                </p>
+              </details>
+            ))}
+          </div>
+        </section>
+
+        {/* JSON-LD: FAQPage — answers must match visible <details> text above */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "FAQPage",
+              mainEntity: FAQ.map(({ q, a }) => ({
+                "@type": "Question",
+                name: q,
+                acceptedAnswer: { "@type": "Answer", text: a },
+              })),
+            }),
+          }}
+        />
+
         {/* Footer */}
         <footer className="mt-auto text-center py-8 border-t border-[rgba(136,146,176,0.15)]">
           <div className="flex items-center justify-center gap-2 mb-4">
@@ -299,6 +402,7 @@ export default function HomePage() {
           <div className="flex justify-center gap-6 text-xs text-[#5a6480]">
             <a href="https://clawhub.com" target="_blank" rel="noopener noreferrer" className="hover:text-[#f0f4ff] transition-colors">Skills Marketplace</a>
             <a href="#pricing" className="hover:text-[#f0f4ff] transition-colors">Pricing</a>
+            <a href="/compare/openclaw-vs-hermes" className="hover:text-[#f0f4ff] transition-colors">Compare Agents</a>
             <a href="https://github.com/openclaw/openclaw" target="_blank" rel="noopener noreferrer" className="hover:text-[#f0f4ff] transition-colors">OpenClaw</a>
             <a href="https://github.com/NousResearch/hermes-agent" target="_blank" rel="noopener noreferrer" className="hover:text-[#f0f4ff] transition-colors">Hermes Agent</a>
           </div>

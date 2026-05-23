@@ -36,6 +36,14 @@ export const metadata: Metadata = {
     "hermes managed hosting",
     "AI chatbot hosting",
     "agent hosting platform",
+    "openclaw vs hermes",
+    "how to host openclaw",
+    "deploy hermes agent docker",
+    "byok ai agent platform",
+    "managed openclaw hosting",
+    "self-hosted ai agent telegram",
+    "bring your own key ai agent",
+    "hermes agent telegram setup",
   ],
   openGraph: {
     type: "website",
@@ -110,89 +118,6 @@ export default function RootLayout({
                 "HTTPS endpoints with automatic SSL",
                 "One-click agent creation and management",
                 "Path-based routing for each agent",
-              ],
-            }),
-          }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "FAQPage",
-              mainEntity: [
-                {
-                  "@type": "Question",
-                  name: "What is VibeOpenClaw?",
-                  acceptedAnswer: {
-                    "@type": "Answer",
-                    text: "VibeOpenClaw is a managed SaaS platform for deploying AI agents powered by OpenClaw and Hermes. It provides Docker-isolated hosting, BYOK model support, and integrations with Telegram, Discord, and Slack — all from $60/month.",
-                  },
-                },
-                {
-                  "@type": "Question",
-                  name: "What is OpenClaw?",
-                  acceptedAnswer: {
-                    "@type": "Answer",
-                    text: "OpenClaw is an open-source personal AI assistant platform (Node.js) with 366k+ GitHub stars. It supports 20+ messaging channels including Telegram, Discord, Slack, WhatsApp, and iMessage, with multi-agent routing and a skills marketplace at clawhub.com.",
-                  },
-                },
-                {
-                  "@type": "Question",
-                  name: "What is Hermes Agent?",
-                  acceptedAnswer: {
-                    "@type": "Answer",
-                    text: "Hermes Agent is an open-source self-improving AI agent by Nous Research (Python). It features a learning loop that creates and improves skills from experience, supports messaging platforms, MCP integration, cron scheduling, and can migrate from OpenClaw.",
-                  },
-                },
-                {
-                  "@type": "Question",
-                  name: "How do I deploy an AI agent on VibeOpenClaw?",
-                  acceptedAnswer: {
-                    "@type": "Answer",
-                    text: "Sign up, choose OpenClaw or Hermes agent type, select your model provider, optionally add Telegram/Discord/Slack tokens, and click Create. Your agent starts in a Docker container within seconds.",
-                  },
-                },
-                {
-                  "@type": "Question",
-                  name: "What does BYOK mean?",
-                  acceptedAnswer: {
-                    "@type": "Answer",
-                    text: "BYOK stands for Bring Your Own Keys. Instead of paying for API calls through us, you add your own supported provider API keys. You control your LLM spend directly — we never mark up API costs.",
-                  },
-                },
-                {
-                  "@type": "Question",
-                  name: "How much does VibeOpenClaw cost?",
-                  acceptedAnswer: {
-                    "@type": "Answer",
-                    text: "The Pro plan is $60/month for 1 AI agent with 2 GB RAM, Telegram & Discord support. The Premium plan is $100/month for 3 AI agents with 4 GB RAM each, all channels including Slack, priority support, and usage analytics.",
-                  },
-                },
-                {
-                  "@type": "Question",
-                  name: "Which AI model providers does VibeOpenClaw support?",
-                  acceptedAnswer: {
-                    "@type": "Answer",
-                    text: "VibeOpenClaw supports 13 LLM providers via BYOK: OpenAI, Anthropic, Google, Groq, xAI, Mistral, DeepSeek, Together, Fireworks, Perplexity, OpenRouter, Cohere, and NVIDIA. You bring your own API keys and control your model spend directly.",
-                  },
-                },
-                {
-                  "@type": "Question",
-                  name: "What is the difference between OpenClaw and Hermes agents?",
-                  acceptedAnswer: {
-                    "@type": "Answer",
-                    text: "OpenClaw is a Node.js personal-assistant platform with 20+ messaging channels and a skills marketplace, exposing an HTTP endpoint. Hermes is a Python self-improving agent by Nous Research that learns skills from experience and runs as a messaging gateway (no public HTTP endpoint). Both deploy in one click on VibeOpenClaw.",
-                  },
-                },
-                {
-                  "@type": "Question",
-                  name: "Is my data and API key secure on VibeOpenClaw?",
-                  acceptedAnswer: {
-                    "@type": "Answer",
-                    text: "Each agent runs in its own isolated Docker container with dedicated RAM. Your provider API keys are encrypted at rest with AES-256-GCM and are never marked up or proxied for billing — you pay your provider directly.",
-                  },
-                },
               ],
             }),
           }}
