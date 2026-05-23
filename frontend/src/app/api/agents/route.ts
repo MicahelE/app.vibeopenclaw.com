@@ -58,6 +58,10 @@ export async function POST(req: NextRequest) {
     if (!name || !agentType) {
       return NextResponse.json({ detail: 'Name and agent_type required' }, { status: 400 });
     }
+
+    if (agentType.toUpperCase() === 'HERMES' && user.plan_tier?.toLowerCase() !== 'premium') {
+      return NextResponse.json({ detail: 'Hermes agents require the Premium plan. Upgrade to unlock.' }, { status: 403 });
+    }
     
     const limits = PLAN_LIMITS[user.plan_tier?.toLowerCase()] || PLAN_LIMITS.pro;
     const countResult = await query(

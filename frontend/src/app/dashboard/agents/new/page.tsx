@@ -2,7 +2,9 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { createAgent } from '@/lib/api';
+import { useAuth } from '@/lib/auth';
 import { PROVIDERS, getProvider } from '@/lib/providers';
 
 const CHANNEL_GUIDES = {
@@ -78,6 +80,8 @@ export default function NewAgentPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const router = useRouter();
+  const { user } = useAuth();
+  const isPremium = user?.plan_tier?.toLowerCase() === 'premium';
 
   const steps: { key: Step; label: string; num: number }[] = [
     { key: 'type', label: 'Agent Type', num: 1 },
@@ -193,22 +197,32 @@ export default function NewAgentPage() {
             </button>
             <button
               type="button"
-              onClick={() => setAgentType('HERMES')}
-              className={`p-4 rounded-xl border text-left transition-all ${
-                agentType === 'HERMES'
+              onClick={() => isPremium && setAgentType('HERMES')}
+              className={`p-4 rounded-xl border text-left transition-all relative ${
+                !isPremium
+                  ? 'border-[rgba(136,146,176,0.15)] bg-[rgba(255,255,255,0.02)] opacity-50 cursor-not-allowed'
+                  : agentType === 'HERMES'
                   ? 'border-[#00e5cc] bg-[rgba(0,229,204,0.08)] shadow-[0_0_20px_rgba(0,229,204,0.15)]'
                   : 'border-[rgba(136,146,176,0.15)] bg-[rgba(255,255,255,0.02)] hover:border-[rgba(136,146,176,0.3)]'
               }`}
             >
+              {!isPremium && (
+                <span className="absolute top-2 right-2 text-[10px] font-bold px-2 py-0.5 rounded-full bg-[rgba(0,229,204,0.15)] text-[#00e5cc] border border-[rgba(0,229,204,0.2)]">Premium</span>
+              )}
               <div className="text-lg font-bold text-[#f0f4ff] mb-1" style={{ fontFamily: '"Clash Display", system-ui, sans-serif' }}>Hermes</div>
               <div className="text-xs text-[#5a6480]">Python self-improving agent by Nous Research with learning loop and skill creation</div>
+              {!isPremium && (
+                <Link href="/dashboard/billing" className="inline-block mt-2 text-[11px] text-[#00e5cc] hover:text-[#00ffd5] transition-colors">
+                  Upgrade to Premium →
+                </Link>
+              )}
             </button>
           </div>
 
           <div className="flex justify-end mt-6">
             <button
               onClick={nextStep}
-              disabled={!name}
+              disabled={!name || (agentType === 'HERMES' && !isPremium)}
               className="px-6 py-2.5 rounded-xl text-white font-semibold text-sm transition-all hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(255,77,77,0.35)] disabled:opacity-40 disabled:hover:translate-y-0 disabled:hover:shadow-none"
               style={{ fontFamily: '"Clash Display", system-ui, sans-serif', background: 'linear-gradient(135deg, #ff4d4d 0%, #991b1b 100%)', boxShadow: '0 4px 20px rgba(255,77,77,0.25)' }}
             >

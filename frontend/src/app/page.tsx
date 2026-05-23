@@ -256,7 +256,7 @@ export default function HomePage() {
                 <span className="text-[#5a6480]">/month</span>
               </div>
               <ul className="space-y-3 mb-8">
-                {['1 OpenClaw or Hermes Agent', '2 GB RAM', 'BYOK — Bring Your Own Keys', 'Telegram & Discord', 'Email Support'].map((item, i) => (
+                {['1 OpenClaw Agent', '2 GB RAM', 'BYOK — Bring Your Own Keys', 'Telegram & Discord', 'Email Support'].map((item, i) => (
                   <li key={i} className="flex items-center gap-3 text-sm text-[#8892b0]">
                     <svg className="w-5 h-5 text-[#00e5cc] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
@@ -448,21 +448,31 @@ export default function HomePage() {
                   <label className="block text-sm text-[#8892b0] mb-1.5">Plan</label>
                   <div className="grid grid-cols-2 gap-2">
                     {[
-                      { id: 'pro' as const, label: 'Pro', price: '$60/mo' },
-                      { id: 'premium' as const, label: 'Premium', price: '$100/mo' },
+                      { id: 'pro' as const, label: 'Pro', price: '$60/mo', features: ['1 OpenClaw Agent', '2 GB RAM', 'Telegram & Discord'] },
+                      { id: 'premium' as const, label: 'Premium', price: '$100/mo', features: ['3 OpenClaw or Hermes Agents', '4 GB RAM each', 'All Channels + Slack'] },
                     ].map((plan) => (
                       <button
                         key={plan.id}
                         type="button"
                         onClick={() => setSelectedPlan(plan.id)}
-                        className={`rounded-xl border px-3 py-2 text-left transition-all ${
+                        className={`rounded-xl border px-3 py-2 text-left transition-all relative ${
                           selectedPlan === plan.id
                             ? 'border-[#ff4d4d] bg-[rgba(255,77,77,0.08)]'
                             : 'border-[rgba(136,146,176,0.15)] bg-[rgba(255,255,255,0.03)]'
                         }`}
                       >
+                        {plan.id === 'premium' && (
+                          <span className="absolute top-2 right-2 text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-[rgba(0,229,204,0.15)] text-[#00e5cc] border border-[rgba(0,229,204,0.2)]">Hermes</span>
+                        )}
                         <span className="block text-sm font-semibold text-[#f0f4ff]">{plan.label}</span>
-                        <span className="block text-xs text-[#5a6480]">{plan.price}</span>
+                        <span className="block text-xs text-[#5a6480] mb-1.5">{plan.price}</span>
+                        <ul className="space-y-0.5">
+                          {plan.features.map((f, i) => (
+                            <li key={i} className="text-[11px] text-[#8892b0] flex items-center gap-1">
+                              <span className="text-[#00e5cc]">✓</span> {f}
+                            </li>
+                          ))}
+                        </ul>
                       </button>
                     ))}
                   </div>
