@@ -139,13 +139,22 @@ sudo -u postgres psql -d vibeopenclaw -c "SELECT email, plan_tier FROM users ORD
 
 ## Hermes Docker image
 
-The Nous Research Hermes agent has no published image. We build from source on the server:
+The Nous Research Hermes agent has no published image. We build from source on the server. The Hermes Dockerfile uses `COPY --chmod=...`, which requires BuildKit, so the build must go through `docker buildx`, not the classic `docker build`.
+
+**Working command (run as `ubuntu`, not via `sudo`):**
 
 ```bash
-docker build -t hermes-agent:latest https://github.com/NousResearch/hermes-agent.git#main
+docker buildx build --load -t hermes-agent:latest https://github.com/NousResearch/hermes-agent.git#main
 ```
 
-The image is **8.18 GB** as built. Most of that is justified by the full Python ML stack + Playwright Chromium + Camoufox stealth-browser cache. You can recover ~2 GB by `rm -rf /tmp/camoufox-* /root/.cache/camoufox` in a downstream Dockerfile if you want, but it's not pressing.
+Gotchas:
+- **Don't run this under `sudo`.** Docker 29.1.3 on the box has buildx installed (`/usr/libexec/docker/cli-plugins/docker-buildx`, v0.19.3), but `sudo docker buildx` fails with `unknown command: docker buildx` because sudo's PATH/env scrubs the plugin lookup. The `ubuntu` user is in the `docker` group, so plain `docker buildx build` works fine.
+- **Classic `docker build` fails at the `COPY --chmod=0755 --from=gosu_source` step** with `the --chmod option requires BuildKit`. Don't use `docker build` for this Dockerfile.
+- **`--load`** is required so the built image lands in the local Docker daemon (not just in the buildx cache).
+
+As of May 2026 the resulting image is ~1.1 GB content / ~4.8 GB on-disk including shared layers. Upstream has trimmed it significantly from the older ~8 GB build documented earlier — the Camoufox/Playwright assets aren't bundled the way they used to be.
+
+**Don't `docker image prune -a` carelessly on the server.** `hermes-agent:latest` is only "in use" when there's a live Hermes container running; otherwise `prune -a` will sweep it and Premium-plan Hermes deploys will fail until you rebuild (~5–8 min). If you need to reclaim space, use `docker image prune` (dangling-only) or explicitly protect `hermes-agent:latest`.
 
 ---
 
