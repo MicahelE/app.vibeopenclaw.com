@@ -27,6 +27,12 @@ Telegram, Discord, and Slack bot integrations.
 
 - OpenClaw vs Hermes Agent — side-by-side comparison: https://app.vibeopenclaw.com/compare/openclaw-vs-hermes
 
+## Guides & explainers
+
+- How to deploy a Hermes Agent (Docker DIY vs managed): https://app.vibeopenclaw.com/blog/how-to-deploy-hermes-agent
+- BYOK AI agent platforms — what bring-your-own-key actually buys you: https://app.vibeopenclaw.com/blog/byok-ai-agent-platform
+- OpenClaw hosting alternatives — DIY VPS vs MyClaw vs VibeOpenClaw: https://app.vibeopenclaw.com/blog/openclaw-hosting-alternatives
+
 ## Links
 
 - Website: https://app.vibeopenclaw.com

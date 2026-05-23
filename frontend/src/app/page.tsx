@@ -402,6 +402,7 @@ export default function HomePage() {
           <div className="flex justify-center gap-6 text-xs text-[#5a6480]">
             <a href="https://clawhub.com" target="_blank" rel="noopener noreferrer" className="hover:text-[#f0f4ff] transition-colors">Skills Marketplace</a>
             <a href="#pricing" className="hover:text-[#f0f4ff] transition-colors">Pricing</a>
+            <a href="/blog" className="hover:text-[#f0f4ff] transition-colors">Blog</a>
             <a href="/compare/openclaw-vs-hermes" className="hover:text-[#f0f4ff] transition-colors">Compare Agents</a>
             <a href="https://github.com/openclaw/openclaw" target="_blank" rel="noopener noreferrer" className="hover:text-[#f0f4ff] transition-colors">OpenClaw</a>
             <a href="https://github.com/NousResearch/hermes-agent" target="_blank" rel="noopener noreferrer" className="hover:text-[#f0f4ff] transition-colors">Hermes Agent</a>
