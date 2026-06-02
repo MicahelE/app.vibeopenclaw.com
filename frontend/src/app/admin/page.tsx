@@ -40,6 +40,10 @@ export default function AdminPage() {
       router.push('/');
       return;
     }
+    if (!user.is_admin) {
+      router.push('/dashboard');
+      return;
+    }
     getAdminStats()
       .then(setData)
       .catch((err) => setError(err.message || 'Failed to load admin stats'));
@@ -53,7 +57,7 @@ export default function AdminPage() {
     return () => clearInterval(timer);
   }, [data]);
 
-  if (isLoading || !user) {
+  if (isLoading || !user || !user.is_admin) {
     return (
       <div className="min-h-screen bg-[#050810] flex items-center justify-center">
         <div className="w-8 h-8 border-2 border-[#ff4d4d] border-t-transparent rounded-full animate-spin" />

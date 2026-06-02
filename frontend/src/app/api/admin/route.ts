@@ -11,7 +11,7 @@ export async function GET(req: NextRequest) {
 
   const [users, agents, keys, recentAgents, usageToday, usage7d] = await Promise.all([
     query(
-      `SELECT plan_tier, COALESCE(subscription_status, 'none') AS subscription_status, COUNT(*)::int AS count
+      `SELECT plan_tier, COALESCE(subscription_status::text, 'none') AS subscription_status, COUNT(*)::int AS count
        FROM users
        GROUP BY plan_tier, subscription_status
        ORDER BY count DESC`
