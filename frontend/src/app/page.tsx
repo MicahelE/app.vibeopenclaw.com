@@ -401,7 +401,8 @@ export default function HomePage() {
           </div>
           <p className="text-[#5a6480] text-xs mb-4">Managed hosting for OpenClaw &amp; Hermes AI agents</p>
           <div className="flex justify-center gap-6 text-xs text-[#5a6480]">
-            <a href="https://clawhub.com" target="_blank" rel="noopener noreferrer" className="hover:text-[#f0f4ff] transition-colors">Skills Marketplace</a>
+            <a href="/openclaw-hosting" className="hover:text-[#f0f4ff] transition-colors">OpenClaw Hosting</a>
+            <a href="/hermes-agent-hosting" className="hover:text-[#f0f4ff] transition-colors">Hermes Hosting</a>
             <a href="#pricing" className="hover:text-[#f0f4ff] transition-colors">Pricing</a>
             <a href="/blog" className="hover:text-[#f0f4ff] transition-colors">Blog</a>
             <a href="/compare/openclaw-vs-hermes" className="hover:text-[#f0f4ff] transition-colors">Compare Agents</a>

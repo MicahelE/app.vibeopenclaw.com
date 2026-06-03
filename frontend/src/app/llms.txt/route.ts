@@ -23,6 +23,12 @@ Telegram, Discord, and Slack bot integrations.
 - **Pro — $24/month:** 1 OpenClaw agent, 2 GB RAM, BYOK, Telegram & Discord, email support.
 - **Premium — $48/month:** 3 OpenClaw or Hermes agents, 4 GB RAM each, BYOK, all channels including Slack, priority support, usage analytics.
 
+## Hosting
+
+- Managed OpenClaw Hosting — one-click deploy from $24/mo: https://app.vibeopenclaw.com/openclaw-hosting
+- Managed Hermes Agent Hosting — on Premium at $48/mo: https://app.vibeopenclaw.com/hermes-agent-hosting
+- Managed AI Agent Hosting (both agents): https://app.vibeopenclaw.com/managed-ai-agent-hosting
+
 ## Comparisons
 
 - OpenClaw vs Hermes Agent — side-by-side comparison: https://app.vibeopenclaw.com/compare/openclaw-vs-hermes
