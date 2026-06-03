@@ -20,6 +20,7 @@ export function MarketingShell({
             <Link href="/openclaw-hosting" className="hover:text-[#f0f4ff] transition-colors">OpenClaw Hosting</Link>
             <Link href="/hermes-agent-hosting" className="hover:text-[#f0f4ff] transition-colors">Hermes Hosting</Link>
             <Link href="/blog" className="hover:text-[#f0f4ff] transition-colors">Blog</Link>
+            <Link href="/docs" className="hover:text-[#f0f4ff] transition-colors">Docs</Link>
             <Link href="/#pricing" className="hover:text-[#f0f4ff] transition-colors">Pricing</Link>
           </div>
         </nav>
