@@ -7,8 +7,8 @@ const BODY = `# VibeOpenClaw
 - **One-click AI agent hosting.** Sign up, pick an agent type, choose a model provider, optionally add channel tokens, and deploy. Each agent runs in its own isolated Docker container with dedicated RAM.
 - **BYOK (Bring Your Own Keys).** You add your own provider API keys; VibeOpenClaw never marks up or proxies API costs for billing. Keys are encrypted at rest with AES-256-GCM.
 - **Two agent types:**
-  - **OpenClaw** — open-source Node.js personal-assistant platform with 20+ messaging channels and a skills marketplace (clawhub.com). Exposes an HTTP endpoint with automatic SSL.
-  - **Hermes** — open-source self-improving Python agent by Nous Research that learns skills from experience. Runs as a messaging gateway (no public HTTP endpoint).
+  - **OpenClaw** — open-source Node.js personal-assistant platform (376k+ GitHub stars as of June 2026, github.com/openclaw/openclaw) with 20+ messaging channels and a skills marketplace (clawhub.com). Exposes an HTTP endpoint with automatic SSL.
+  - **Hermes** — open-source self-improving Python agent by Nous Research (178k+ GitHub stars as of June 2026, github.com/NousResearch/hermes-agent) that learns skills from experience. Runs as a messaging gateway (no public HTTP endpoint).
 
 ## Supported model providers (13, via BYOK)
 
