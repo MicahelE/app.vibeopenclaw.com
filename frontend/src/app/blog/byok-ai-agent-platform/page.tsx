@@ -103,6 +103,15 @@ export default function Page() {
           <p>
             If you&apos;re still deciding between OpenClaw and Hermes, see the <Link href="/compare/openclaw-vs-hermes" className="text-[#00e5cc] hover:underline">framework comparison</Link>. If you want a concrete walk-through of deploying one, the <Link href="/blog/how-to-deploy-hermes-agent" className="text-[#00e5cc] hover:underline">Hermes deployment guide</Link> covers both the DIY-Docker and one-click managed paths.
           </p>
+
+          <h2 className="text-2xl font-bold text-[#f0f4ff] mt-10 mb-4" style={{ fontFamily: '"Clash Display", system-ui, sans-serif' }}>
+            Sources
+          </h2>
+          <ul className="list-disc pl-6 space-y-2 text-sm text-[#8892b0]">
+            <li><a href="https://csrc.nist.gov/pubs/sp/800/38/d/final" target="_blank" rel="noopener noreferrer" className="text-[#00e5cc] hover:underline">NIST SP 800-38D</a> — the AES-GCM (Galois/Counter Mode) specification used to encrypt stored keys.</li>
+            <li><a href="https://github.com/openclaw/openclaw" target="_blank" rel="noopener noreferrer" className="text-[#00e5cc] hover:underline">OpenClaw</a> and <a href="https://github.com/NousResearch/hermes-agent" target="_blank" rel="noopener noreferrer" className="text-[#00e5cc] hover:underline">Hermes Agent</a> — the open-source agents VibeOpenClaw hosts.</li>
+            <li>Provider API key docs: <a href="https://platform.openai.com/docs/api-reference" target="_blank" rel="noopener noreferrer" className="text-[#00e5cc] hover:underline">OpenAI</a>, <a href="https://docs.anthropic.com" target="_blank" rel="noopener noreferrer" className="text-[#00e5cc] hover:underline">Anthropic</a>, <a href="https://openrouter.ai/docs" target="_blank" rel="noopener noreferrer" className="text-[#00e5cc] hover:underline">OpenRouter</a> — among the 13 supported providers.</li>
+          </ul>
         </section>
       </article>
 

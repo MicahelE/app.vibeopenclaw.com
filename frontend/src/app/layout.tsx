@@ -7,9 +7,9 @@ const SITE_URL = process.env.NEXT_PUBLIC_APP_URL || "https://app.vibeopenclaw.co
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: "VibeOpenClaw — Host and Deploy AI Agents | OpenClaw & Hermes Managed SaaS",
+  title: "Host & Deploy OpenClaw + Hermes AI Agents | VibeOpenClaw",
   description:
-    "Deploy OpenClaw and Hermes AI agents in one click. Managed hosting with Docker isolation, BYOK model support, Telegram/Discord/Slack integrations, and automatic SSL. Start at $60/mo.",
+    "Deploy OpenClaw & Hermes AI agents in one click. Managed hosting with Docker isolation, BYOK keys, and Telegram/Discord/Slack channels. From $60/mo.",
   keywords: [
     "openclaw hosting",
     "hermes agent hosting",

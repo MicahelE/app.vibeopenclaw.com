@@ -119,6 +119,15 @@ docker run -d \\
           <p>
             If you&apos;re still deciding between Hermes and OpenClaw entirely, see the <Link href="/compare/openclaw-vs-hermes" className="text-[#00e5cc] hover:underline">OpenClaw vs Hermes comparison</Link>.
           </p>
+
+          <h2 className="text-2xl font-bold text-[#f0f4ff] mt-10 mb-4" style={{ fontFamily: '"Clash Display", system-ui, sans-serif' }}>
+            Sources
+          </h2>
+          <ul className="list-disc pl-6 space-y-2 text-sm text-[#8892b0]">
+            <li><a href="https://github.com/NousResearch/hermes-agent" target="_blank" rel="noopener noreferrer" className="text-[#00e5cc] hover:underline">NousResearch/hermes-agent</a> — official repository (178k+ stars as of June 2026), build and config reference.</li>
+            <li><a href="https://modelcontextprotocol.io" target="_blank" rel="noopener noreferrer" className="text-[#00e5cc] hover:underline">Model Context Protocol</a> — the tool-integration standard Hermes uses.</li>
+            <li><a href="https://docs.docker.com/build/buildkit/" target="_blank" rel="noopener noreferrer" className="text-[#00e5cc] hover:underline">Docker BuildKit docs</a> — required for the image&apos;s <code>--chmod</code> build steps.</li>
+          </ul>
         </section>
       </article>
 

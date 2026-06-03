@@ -28,7 +28,7 @@ export const metadata: Metadata = {
 const ROWS: { label: string; openclaw: string; hermes: string }[] = [
   { label: "Language / runtime", openclaw: "Node.js (TypeScript)", hermes: "Python" },
   { label: "Maintainer", openclaw: "OpenClaw community (open source)", hermes: "Nous Research (open source)" },
-  { label: "GitHub stars", openclaw: "366k+", hermes: "Growing — research-led project" },
+  { label: "GitHub stars", openclaw: "376k+ ⭐", hermes: "178k+ ⭐" },
   { label: "Primary strength", openclaw: "Multi-channel personal assistant + skills marketplace", hermes: "Self-improving agent that learns skills from experience" },
   { label: "Learning loop", openclaw: "Plugin/skills via clawhub.com marketplace", hermes: "Built-in: creates and improves skills from each session" },
   { label: "Messaging channels", openclaw: "20+ (Telegram, Discord, Slack, WhatsApp, iMessage, …)", hermes: "Telegram, Discord, Slack via the messaging gateway" },
@@ -83,6 +83,25 @@ export default function ComparePage() {
             Two of the most capable open-source AI agent frameworks. <strong className="text-[#f0f4ff]">OpenClaw</strong> is a polished multi-channel assistant with a skills marketplace; <strong className="text-[#f0f4ff]">Hermes</strong> is a self-improving agent from Nous Research that learns new skills from experience. Both deploy in one click on VibeOpenClaw — pick the one that fits your use case, or run both side-by-side.
           </p>
         </header>
+
+        {/* In their own words — attributed quotes + headline stats */}
+        <section aria-label="Project overview" className="mb-12">
+          <p className="text-sm text-[#8892b0] mb-5 leading-relaxed">
+            Both are among the most-starred AI projects on GitHub. As of June 2026, <strong className="text-[#f0f4ff]">OpenClaw has 376,000+ stars</strong> and <strong className="text-[#f0f4ff]">Hermes Agent has 178,000+ stars</strong> (
+            <a href="https://github.com/openclaw/openclaw" target="_blank" rel="noopener noreferrer" className="text-[#ff4d4d] hover:underline">openclaw/openclaw</a>,{" "}
+            <a href="https://github.com/NousResearch/hermes-agent" target="_blank" rel="noopener noreferrer" className="text-[#00e5cc] hover:underline">NousResearch/hermes-agent</a>). VibeOpenClaw deploys either in roughly 30 seconds with BYOK across 13 LLM providers.
+          </p>
+          <div className="grid md:grid-cols-2 gap-4">
+            <figure className="p-5 rounded-2xl border border-[rgba(255,77,77,0.25)] bg-[rgba(255,77,77,0.04)]">
+              <blockquote className="text-[#f0f4ff] text-sm leading-relaxed">“Your own personal AI assistant. Any OS. Any platform. The lobster way.”</blockquote>
+              <figcaption className="mt-2 text-xs text-[#8892b0]">— OpenClaw, official project description (TypeScript / Node.js)</figcaption>
+            </figure>
+            <figure className="p-5 rounded-2xl border border-[rgba(0,229,204,0.25)] bg-[rgba(0,229,204,0.04)]">
+              <blockquote className="text-[#f0f4ff] text-sm leading-relaxed">“The agent that grows with you.”</blockquote>
+              <figcaption className="mt-2 text-xs text-[#8892b0]">— Hermes Agent by Nous Research, official project description (Python)</figcaption>
+            </figure>
+          </div>
+        </section>
 
         {/* Comparison table */}
         <section aria-labelledby="comparison-table" className="mb-12">
@@ -205,6 +224,23 @@ export default function ComparePage() {
               </details>
             ))}
           </div>
+        </section>
+
+        {/* Sources */}
+        <section aria-labelledby="sources" className="mb-12">
+          <h2
+            id="sources"
+            className="text-lg font-bold mb-4 text-[#8892b0]"
+            style={{ fontFamily: '"Clash Display", system-ui, sans-serif' }}
+          >
+            Sources & further reading
+          </h2>
+          <ul className="space-y-2 text-sm text-[#c8d0e0]">
+            <li>• <a href="https://github.com/openclaw/openclaw" target="_blank" rel="noopener noreferrer" className="text-[#ff4d4d] hover:underline">OpenClaw — official repository</a> (star count, language, channels)</li>
+            <li>• <a href="https://github.com/NousResearch/hermes-agent" target="_blank" rel="noopener noreferrer" className="text-[#00e5cc] hover:underline">Hermes Agent — official repository</a> by Nous Research (learning loop, MCP support)</li>
+            <li>• <a href="https://clawhub.com" target="_blank" rel="noopener noreferrer" className="text-[#f0f4ff] hover:underline">ClawHub</a> — OpenClaw skills marketplace</li>
+            <li>• <a href="https://modelcontextprotocol.io" target="_blank" rel="noopener noreferrer" className="text-[#f0f4ff] hover:underline">Model Context Protocol (MCP)</a> — the tool-integration standard both agents support</li>
+          </ul>
         </section>
 
         {/* Footer */}

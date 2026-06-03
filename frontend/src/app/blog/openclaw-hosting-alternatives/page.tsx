@@ -133,6 +133,15 @@ export default function Page() {
           <p>
             Related reading: <Link href="/compare/openclaw-vs-hermes" className="text-[#00e5cc] hover:underline">OpenClaw vs Hermes Agent</Link>, <Link href="/blog/byok-ai-agent-platform" className="text-[#00e5cc] hover:underline">what BYOK actually buys you</Link>, and the <Link href="/blog/how-to-deploy-hermes-agent" className="text-[#00e5cc] hover:underline">Hermes deployment walkthrough</Link>.
           </p>
+
+          <h2 className="text-2xl font-bold text-[#f0f4ff] mt-10 mb-4" style={{ fontFamily: '"Clash Display", system-ui, sans-serif' }}>
+            Sources
+          </h2>
+          <ul className="list-disc pl-6 space-y-2 text-sm text-[#8892b0]">
+            <li><a href="https://github.com/openclaw/openclaw" target="_blank" rel="noopener noreferrer" className="text-[#00e5cc] hover:underline">OpenClaw</a> — official repository (376k+ stars as of June 2026), self-hosting requirements and supported channels.</li>
+            <li><a href="https://clawhub.com" target="_blank" rel="noopener noreferrer" className="text-[#00e5cc] hover:underline">ClawHub</a> — the OpenClaw skills marketplace.</li>
+            <li>VPS pricing referenced from <a href="https://www.hetzner.com/cloud" target="_blank" rel="noopener noreferrer" className="text-[#00e5cc] hover:underline">Hetzner Cloud</a> and <a href="https://contabo.com/en/vps/" target="_blank" rel="noopener noreferrer" className="text-[#00e5cc] hover:underline">Contabo VPS</a> (June 2026).</li>
+          </ul>
         </section>
       </article>
 
