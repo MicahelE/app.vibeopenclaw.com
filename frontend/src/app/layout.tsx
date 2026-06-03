@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: "Host & Deploy OpenClaw + Hermes AI Agents | VibeOpenClaw",
   description:
-    "Deploy OpenClaw & Hermes AI agents in one click. Managed hosting with Docker isolation, BYOK keys, and Telegram/Discord/Slack channels. From $60/mo.",
+    "Deploy OpenClaw & Hermes AI agents in one click. Managed hosting with Docker isolation, BYOK keys, and Telegram/Discord/Slack channels. From $24/mo.",
   keywords: [
     "openclaw hosting",
     "hermes agent hosting",
@@ -52,7 +52,7 @@ export const metadata: Metadata = {
     siteName: "VibeOpenClaw",
     title: "VibeOpenClaw — Host and Deploy AI Agents",
     description:
-      "Deploy OpenClaw and Hermes AI agents in one click. Managed hosting with Docker isolation, BYOK, and channel integrations. Start at $60/mo.",
+      "Deploy OpenClaw and Hermes AI agents in one click. Managed hosting with Docker isolation, BYOK, and channel integrations. Start at $24/mo.",
   },
   twitter: {
     card: "summary_large_image",
@@ -96,7 +96,7 @@ export default function RootLayout({
                 {
                   "@type": "Offer",
                   name: "Pro",
-                  price: "60",
+                  price: "24",
                   priceCurrency: "USD",
                   billingIncrement: "P1M",
                   description: "1 OpenClaw Agent, 2 GB RAM, BYOK, Telegram & Discord, Email Support",
@@ -104,7 +104,7 @@ export default function RootLayout({
                 {
                   "@type": "Offer",
                   name: "Premium",
-                  price: "100",
+                  price: "48",
                   priceCurrency: "USD",
                   billingIncrement: "P1M",
                   description: "3 OpenClaw or Hermes Agents, 4 GB RAM each, BYOK, All Channels + Slack, Priority Support, Usage Analytics",

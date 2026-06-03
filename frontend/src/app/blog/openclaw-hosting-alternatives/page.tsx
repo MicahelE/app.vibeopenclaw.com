@@ -28,7 +28,7 @@ export const metadata: Metadata = {
 
 type Row = { label: string; vps: string; myclaw: string; voc: string };
 const ROWS: Row[] = [
-  { label: "Monthly cost (1 agent, ~2 GB RAM)", vps: "$5–$15 VPS + your time", myclaw: "Varies (proprietary)", voc: "$60 (Pro)" },
+  { label: "Monthly cost (1 agent, ~2 GB RAM)", vps: "$5–$15 VPS + your time", myclaw: "Varies (proprietary)", voc: "$24 (Pro)" },
   { label: "Time to first running agent", vps: "1–3 hours (Docker, SSL, channels)", myclaw: "~minutes (hosted UI)", voc: "~30 seconds" },
   { label: "BYOK", vps: "Yes (you own everything)", myclaw: "Partial / varies", voc: "Yes — 13 providers, encrypted at rest" },
   { label: "HTTPS / SSL", vps: "You set up Caddy or Nginx", myclaw: "Included", voc: "Automatic per agent" },
@@ -127,8 +127,8 @@ export default function Page() {
           <ul className="list-disc pl-6 space-y-2">
             <li><strong className="text-[#f0f4ff]">Hobbyist running one bot, comfortable with Linux:</strong> DIY VPS on Hetzner or Contabo. Cheapest, full control.</li>
             <li><strong className="text-[#f0f4ff]">Non-technical user, OpenClaw only:</strong> Try MyClaw&apos;s hosted UI.</li>
-            <li><strong className="text-[#f0f4ff]">Builder who wants BYOK + Hermes + minimal ops:</strong> VibeOpenClaw. Pricing at $60/$100/month covers the infrastructure; your provider keys cover inference.</li>
-            <li><strong className="text-[#f0f4ff]">Multiple agents in production:</strong> Either DIY (if you already have the ops muscle) or VibeOpenClaw Premium ($100/month, 3 agents, 4&nbsp;GB each). MyClaw is harder to recommend at this scale.</li>
+            <li><strong className="text-[#f0f4ff]">Builder who wants BYOK + Hermes + minimal ops:</strong> VibeOpenClaw. Pricing at $24/$48/month covers the infrastructure; your provider keys cover inference.</li>
+            <li><strong className="text-[#f0f4ff]">Multiple agents in production:</strong> Either DIY (if you already have the ops muscle) or VibeOpenClaw Premium ($48/month, 3 agents, 4&nbsp;GB each). MyClaw is harder to recommend at this scale.</li>
           </ul>
           <p>
             Related reading: <Link href="/compare/openclaw-vs-hermes" className="text-[#00e5cc] hover:underline">OpenClaw vs Hermes Agent</Link>, <Link href="/blog/byok-ai-agent-platform" className="text-[#00e5cc] hover:underline">what BYOK actually buys you</Link>, and the <Link href="/blog/how-to-deploy-hermes-agent" className="text-[#00e5cc] hover:underline">Hermes deployment walkthrough</Link>.
@@ -147,7 +147,7 @@ export default function Page() {
 
       <div className="mt-12 p-6 rounded-2xl border border-[rgba(136,146,176,0.15)] bg-[rgba(10,15,26,0.4)] text-center">
         <h3 className="text-xl font-bold mb-2" style={{ fontFamily: '"Clash Display", system-ui, sans-serif' }}>Try the managed option</h3>
-        <p className="text-sm text-[#8892b0] mb-4">$60/month gets you a Docker-isolated OpenClaw agent with BYOK, HTTPS, and channel integrations — no VPS to operate.</p>
+        <p className="text-sm text-[#8892b0] mb-4">$24/month gets you a Docker-isolated OpenClaw agent with BYOK, HTTPS, and channel integrations — no VPS to operate.</p>
         <Link
           href="/"
           className="inline-flex items-center justify-center px-6 py-3 rounded-xl text-white font-semibold transition-all hover:-translate-y-0.5"

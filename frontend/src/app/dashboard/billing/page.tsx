@@ -57,7 +57,7 @@ export default function BillingPage() {
       <div className="grid md:grid-cols-2 gap-5 mb-8 max-w-2xl">
         <div className="glass-card rounded-2xl p-8 transition-all hover:-translate-y-1 hover:border-[rgba(255,77,77,0.2)]">
           <h2 className="text-lg font-semibold text-[#f0f4ff] mb-2" style={{ fontFamily: '"Clash Display", system-ui, sans-serif' }}>Pro</h2>
-          <p className="text-3xl font-bold text-[#f0f4ff] mb-1">$60<span className="text-sm font-normal text-[#5a6480]">/mo</span></p>
+          <p className="text-3xl font-bold text-[#f0f4ff] mb-1">$24<span className="text-sm font-normal text-[#5a6480]">/mo</span></p>
           <ul className="space-y-2.5 text-sm text-[#8892b0] mb-6 mt-4">
             {['1 AI Agent', '2 GB RAM', 'BYOK', 'Discord & Telegram', 'Email Support'].map((item, i) => (
               <li key={i} className="flex items-center gap-2.5">
@@ -85,7 +85,7 @@ export default function BillingPage() {
         <div className="glass-card rounded-2xl p-8 relative overflow-hidden transition-all hover:-translate-y-1 hover:border-[rgba(255,77,77,0.2)]">
           <div className="absolute top-0 right-0 bg-[#ff4d4d] text-white text-[10px] font-bold px-3 py-1 rounded-bl-lg uppercase tracking-wider">Popular</div>
           <h2 className="text-lg font-semibold text-[#f0f4ff] mb-2" style={{ fontFamily: '"Clash Display", system-ui, sans-serif' }}>Premium</h2>
-          <p className="text-3xl font-bold text-[#f0f4ff] mb-1">$100<span className="text-sm font-normal text-[#5a6480]">/mo</span></p>
+          <p className="text-3xl font-bold text-[#f0f4ff] mb-1">$48<span className="text-sm font-normal text-[#5a6480]">/mo</span></p>
           <ul className="space-y-2.5 text-sm text-[#8892b0] mb-6 mt-4">
             {['3 AI Agents', '4 GB RAM each', 'BYOK', 'All Channels + Slack', 'Priority Support', 'Usage Analytics'].map((item, i) => (
               <li key={i} className="flex items-center gap-2.5">

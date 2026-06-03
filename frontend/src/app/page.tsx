@@ -9,11 +9,11 @@ import { createCheckout, login, register } from '@/lib/api';
 const FAQ: { q: string; a: string; href?: string; hrefText?: string }[] = [
   {
     q: "What is VibeOpenClaw?",
-    a: "VibeOpenClaw is a managed SaaS platform for deploying AI agents powered by OpenClaw and Hermes. It provides Docker-isolated hosting, BYOK model support, and integrations with Telegram, Discord, and Slack — all from $60/month.",
+    a: "VibeOpenClaw is a managed SaaS platform for deploying AI agents powered by OpenClaw and Hermes. It provides Docker-isolated hosting, BYOK model support, and integrations with Telegram, Discord, and Slack — all from $24/month.",
   },
   {
     q: "What is OpenClaw?",
-    a: "OpenClaw is an open-source personal AI assistant platform (Node.js) with 366k+ GitHub stars. It supports 20+ messaging channels including Telegram, Discord, Slack, WhatsApp, and iMessage, with multi-agent routing and a skills marketplace at clawhub.com.",
+    a: "OpenClaw is an open-source personal AI assistant platform (Node.js) with 376k+ GitHub stars. It supports 20+ messaging channels including Telegram, Discord, Slack, WhatsApp, and iMessage, with multi-agent routing and a skills marketplace at clawhub.com.",
   },
   {
     q: "What is Hermes Agent?",
@@ -29,7 +29,7 @@ const FAQ: { q: string; a: string; href?: string; hrefText?: string }[] = [
   },
   {
     q: "How much does VibeOpenClaw cost?",
-    a: "The Pro plan is $60/month for 1 AI agent with 2 GB RAM, Telegram & Discord support. The Premium plan is $100/month for 3 AI agents with 4 GB RAM each, all channels including Slack, priority support, and usage analytics.",
+    a: "The Pro plan is $24/month for 1 AI agent with 2 GB RAM, Telegram & Discord support. The Premium plan is $48/month for 3 AI agents with 4 GB RAM each, all channels including Slack, priority support, and usage analytics.",
   },
   {
     q: "Which AI model providers does VibeOpenClaw support?",
@@ -162,7 +162,7 @@ export default function HomePage() {
                 boxShadow: '0 4px 20px rgba(255,77,77,0.25)',
               }}
             >
-              Get Started — $60/mo
+              Get Started — $24/mo
             </button>
             <button
               onClick={() => { setShowAuth(true); setIsLogin(true); }}
@@ -253,7 +253,7 @@ export default function HomePage() {
             <div className="glass-card rounded-2xl p-8 transition-all duration-300 hover:-translate-y-1 hover:border-[rgba(255,77,77,0.3)] hover:shadow-[0_12px_40px_rgba(255,77,77,0.12)]">
               <h3 className="text-lg font-semibold text-[#f0f4ff] mb-2" style={{ fontFamily: '"Clash Display", system-ui, sans-serif' }}>Pro</h3>
               <div className="flex items-baseline gap-1.5 mb-6">
-                <span className="text-4xl font-bold text-[#f0f4ff]">$60</span>
+                <span className="text-4xl font-bold text-[#f0f4ff]">$24</span>
                 <span className="text-[#5a6480]">/month</span>
               </div>
               <ul className="space-y-3 mb-8">
@@ -284,7 +284,7 @@ export default function HomePage() {
               <div className="absolute top-0 right-0 bg-[#ff4d4d] text-white text-[10px] font-bold px-3 py-1 rounded-bl-lg uppercase tracking-wider">Popular</div>
               <h3 className="text-lg font-semibold text-[#f0f4ff] mb-2" style={{ fontFamily: '"Clash Display", system-ui, sans-serif' }}>Premium</h3>
               <div className="flex items-baseline gap-1.5 mb-6">
-                <span className="text-4xl font-bold text-[#f0f4ff]">$100</span>
+                <span className="text-4xl font-bold text-[#f0f4ff]">$48</span>
                 <span className="text-[#5a6480]">/month</span>
               </div>
               <ul className="space-y-3 mb-8">
@@ -450,8 +450,8 @@ export default function HomePage() {
                   <label className="block text-sm text-[#8892b0] mb-1.5">Plan</label>
                   <div className="grid grid-cols-2 gap-2">
                     {[
-                      { id: 'pro' as const, label: 'Pro', price: '$60/mo', features: ['1 OpenClaw Agent', '2 GB RAM', 'Telegram & Discord'] },
-                      { id: 'premium' as const, label: 'Premium', price: '$100/mo', features: ['3 OpenClaw or Hermes Agents', '4 GB RAM each', 'All Channels + Slack'] },
+                      { id: 'pro' as const, label: 'Pro', price: '$24/mo', features: ['1 OpenClaw Agent', '2 GB RAM', 'Telegram & Discord'] },
+                      { id: 'premium' as const, label: 'Premium', price: '$48/mo', features: ['3 OpenClaw or Hermes Agents', '4 GB RAM each', 'All Channels + Slack'] },
                     ].map((plan) => (
                       <button
                         key={plan.id}

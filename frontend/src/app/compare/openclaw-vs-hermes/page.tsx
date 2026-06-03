@@ -54,7 +54,7 @@ const FAQ: { q: string; a: string }[] = [
   },
   {
     q: "Which agent should I start with on VibeOpenClaw?",
-    a: "If you want a chat-style assistant that talks to your team across Telegram/Slack/Discord, start with OpenClaw. If you want an autonomous agent that learns new skills over time and runs background tasks via cron, start with Hermes. The Premium plan ($100/month) lets you run up to 3 of either type.",
+    a: "If you want a chat-style assistant that talks to your team across Telegram/Slack/Discord, start with OpenClaw. If you want an autonomous agent that learns new skills over time and runs background tasks via cron, start with Hermes. The Premium plan ($48/month) lets you run up to 3 of either type.",
   },
 ];
 
