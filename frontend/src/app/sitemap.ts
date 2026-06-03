@@ -2,6 +2,8 @@ import { MetadataRoute } from 'next'
 import { MODEL_PROVIDERS } from '@/content/modelProviders'
 import { USE_CASES } from '@/content/useCases'
 import { DOCS } from '@/content/docs'
+import { ALTERNATIVES } from '@/content/alternatives'
+import { INTEGRATIONS } from '@/content/integrations'
 
 const SITE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://app.vibeopenclaw.com'
 
@@ -57,6 +59,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...MODEL_PROVIDERS.map((p) => e(`/openclaw-hosting/${p.slug}`, 0.6)),
     // OpenClaw use cases
     ...USE_CASES.map((u) => e(`/openclaw-hosting/use-cases/${u.slug}`, 0.6)),
+    // OpenClaw competitor alternatives
+    e('/openclaw-hosting/alternatives', 0.7),
+    ...ALTERNATIVES.map((a) => e(`/openclaw-hosting/alternatives/${a.slug}`, 0.6)),
+    // OpenClaw integrations
+    e('/openclaw-hosting/integrations', 0.7),
+    ...INTEGRATIONS.map((i) => e(`/openclaw-hosting/integrations/${i.slug}`, 0.6)),
     // Hermes channels
     ...HERMES_CHANNELS.map((c) => e(`/hermes-agent-hosting/${c}`, 0.6)),
 

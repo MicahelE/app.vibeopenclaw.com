@@ -147,8 +147,13 @@ export default function OpenClawHostingPage() {
       <ComparisonTable cols={['VibeOpenClaw', 'xCloud', 'MyClaw', 'DIY VPS']} rows={VS_COMPETITORS} highlightCol={0} />
       <P>
         Prefer a head-to-head? See <a href="/compare/vibeopenclaw-vs-xcloud" className="text-[#00e5cc] hover:underline">VibeOpenClaw vs xCloud</a> and{' '}
-        <a href="/compare/vibeopenclaw-vs-myclaw" className="text-[#00e5cc] hover:underline">VibeOpenClaw vs MyClaw</a>, or the full{' '}
-        <a href="/blog/best-openclaw-hosting-providers-2026" className="text-[#00e5cc] hover:underline">best OpenClaw hosting providers</a> rundown.
+        <a href="/compare/vibeopenclaw-vs-myclaw" className="text-[#00e5cc] hover:underline">VibeOpenClaw vs MyClaw</a>, the full{' '}
+        <a href="/blog/best-openclaw-hosting-providers-2026" className="text-[#00e5cc] hover:underline">best OpenClaw hosting providers</a> rundown, or our{' '}
+        <a href="/openclaw-hosting/alternatives" className="text-[#00e5cc] hover:underline">OpenClaw hosting alternatives</a>.
+      </P>
+      <P>
+        Connecting your agent to other tools? Browse <a href="/openclaw-hosting/integrations" className="text-[#00e5cc] hover:underline">OpenClaw integrations</a> (n8n, Zapier, Notion, GitHub, and more), or pick a model provider on the{' '}
+        <a href="/openclaw-hosting/anthropic" className="text-[#00e5cc] hover:underline">per-provider pages</a>.
       </P>
 
       <H2 id="pricing">Simple pricing</H2>

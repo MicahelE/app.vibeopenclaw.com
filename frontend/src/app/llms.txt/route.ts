@@ -28,6 +28,8 @@ Telegram, Discord, and Slack bot integrations.
 - Managed OpenClaw Hosting — one-click deploy from $24/mo: https://app.vibeopenclaw.com/openclaw-hosting
 - Managed Hermes Agent Hosting — on Premium at $48/mo: https://app.vibeopenclaw.com/hermes-agent-hosting
 - Managed AI Agent Hosting (both agents): https://app.vibeopenclaw.com/managed-ai-agent-hosting
+- OpenClaw integrations (n8n, Zapier, Notion, GitHub, Slack, and more): https://app.vibeopenclaw.com/openclaw-hosting/integrations
+- OpenClaw hosting alternatives: https://app.vibeopenclaw.com/openclaw-hosting/alternatives
 
 ## What they are
 
