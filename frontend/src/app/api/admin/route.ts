@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
   if (!user) return NextResponse.json({ detail: 'Not authenticated' }, { status: 401 });
   if (!isAdmin(user.email)) return NextResponse.json({ detail: 'Forbidden' }, { status: 403 });
 
-  const [users, agents, keys, recentAgents, usageToday, usage7d] = await Promise.all([
+  const [users, agents, keys, recentAgents, usageToday, usage7d, userList] = await Promise.all([
     query(
       `SELECT plan_tier, COALESCE(subscription_status::text, 'none') AS subscription_status, COUNT(*)::int AS count
        FROM users
@@ -55,6 +55,16 @@ export async function GET(req: NextRequest) {
         ORDER BY api_calls DESC
         LIMIT 10`
     ),
+    query(
+      `SELECT u.id, u.email, u.name, u.plan_tier,
+              COALESCE(u.subscription_status::text, 'none') AS subscription_status,
+              u.created_at,
+              COUNT(a.id) FILTER (WHERE a.status <> 'DELETED')::int AS agent_count
+         FROM users u
+         LEFT JOIN agents a ON a.user_id = u.id
+        GROUP BY u.id
+        ORDER BY u.created_at DESC NULLS LAST`
+    ),
   ]);
 
   const recent = await Promise.all(
@@ -99,5 +109,6 @@ export async function GET(req: NextRequest) {
     },
     recent_agents: recent,
     top_users_7d: usage7d.rows,
+    users: userList.rows,
   });
 }
