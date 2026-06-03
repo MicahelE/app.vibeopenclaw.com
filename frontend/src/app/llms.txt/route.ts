@@ -35,6 +35,12 @@ Telegram, Discord, and Slack bot integrations.
 
 ## Guides & explainers
 
+- Best OpenClaw hosting providers in 2026 (managed & VPS): https://app.vibeopenclaw.com/blog/best-openclaw-hosting-providers-2026
+- Best managed OpenClaw hosting in 2026: https://app.vibeopenclaw.com/blog/best-managed-openclaw-hosting
+- Managed vs self-hosting OpenClaw (cost & security): https://app.vibeopenclaw.com/blog/managed-vs-self-hosting-openclaw
+- How to deploy OpenClaw (DIY Docker vs one-click): https://app.vibeopenclaw.com/blog/how-to-deploy-openclaw
+- How much does OpenClaw hosting cost: https://app.vibeopenclaw.com/blog/openclaw-hosting-cost
+- OpenClaw security — is it safe to run: https://app.vibeopenclaw.com/blog/openclaw-security
 - How to deploy a Hermes Agent (Docker DIY vs managed): https://app.vibeopenclaw.com/blog/how-to-deploy-hermes-agent
 - BYOK AI agent platforms — what bring-your-own-key actually buys you: https://app.vibeopenclaw.com/blog/byok-ai-agent-platform
 - OpenClaw hosting alternatives — DIY VPS vs MyClaw vs VibeOpenClaw: https://app.vibeopenclaw.com/blog/openclaw-hosting-alternatives

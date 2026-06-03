@@ -12,6 +12,48 @@ export const metadata: Metadata = {
 
 const POSTS: { slug: string; title: string; description: string; tag: string }[] = [
   {
+    slug: "best-openclaw-hosting-providers-2026",
+    title: "Best OpenClaw hosting providers in 2026 (managed & VPS)",
+    description:
+      "Managed and VPS OpenClaw hosts compared — VibeOpenClaw, xCloud, MyClaw, OneClaw, and DIY VPS — on price, isolation, BYOK, and which agents each one runs.",
+    tag: "Comparison",
+  },
+  {
+    slug: "best-managed-openclaw-hosting",
+    title: "Best managed OpenClaw hosting in 2026",
+    description:
+      "The fully-managed OpenClaw hosts compared, and what 'managed' should actually include: provisioning, deploy, SSL, updates, backups, isolation, and support.",
+    tag: "Comparison",
+  },
+  {
+    slug: "managed-vs-self-hosting-openclaw",
+    title: "Managed vs self-hosting OpenClaw in 2026: cost & security",
+    description:
+      "A practical cost, security, and effort comparison — when a $24/mo managed host beats a DIY VPS for OpenClaw, and when self-hosting still makes sense.",
+    tag: "Guide",
+  },
+  {
+    slug: "how-to-deploy-openclaw",
+    title: "How to deploy OpenClaw (DIY Docker vs one-click)",
+    description:
+      "Two ways to get an OpenClaw agent running: a hand-rolled Docker setup on a VPS, or a one-click managed deploy on VibeOpenClaw. Step-by-step.",
+    tag: "Tutorial",
+  },
+  {
+    slug: "openclaw-hosting-cost",
+    title: "How much does OpenClaw hosting cost in 2026?",
+    description:
+      "The honest breakdown of OpenClaw hosting cost — managed plans vs DIY VPS, plus the BYOK model-API budget most guides forget to mention.",
+    tag: "Explainer",
+  },
+  {
+    slug: "openclaw-security",
+    title: "OpenClaw security: is it safe to run? (2026)",
+    description:
+      "OpenClaw's risk surface explained, plus how per-agent Docker isolation and AES-256-GCM key encryption reduce it — and a self-hosting security checklist.",
+    tag: "Guide",
+  },
+  {
     slug: "how-to-deploy-hermes-agent",
     title: "How to deploy a Hermes Agent (the easy way and the hard way)",
     description:
