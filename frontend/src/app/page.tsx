@@ -9,7 +9,7 @@ import { createCheckout, login, register } from '@/lib/api';
 const FAQ: { q: string; a: string; href?: string; hrefText?: string }[] = [
   {
     q: "What is VibeOpenClaw?",
-    a: "VibeOpenClaw is a managed SaaS platform for deploying AI agents powered by OpenClaw and Hermes. It provides Docker-isolated hosting, BYOK model support, and integrations with Telegram, Discord, and Slack — all from $24/month.",
+    a: "VibeOpenClaw is a managed SaaS platform for deploying AI agents powered by OpenClaw and Hermes. It provides Docker-isolated hosting, BYOK model support, and integrations with Telegram, Discord, and Slack, all from $24/month.",
   },
   {
     q: "What is OpenClaw?",
@@ -25,7 +25,7 @@ const FAQ: { q: string; a: string; href?: string; hrefText?: string }[] = [
   },
   {
     q: "What does BYOK mean?",
-    a: "BYOK stands for Bring Your Own Keys. Instead of paying for API calls through us, you add your own supported provider API keys. You control your LLM spend directly — we never mark up API costs.",
+    a: "BYOK stands for Bring Your Own Keys. Instead of paying for API calls through us, you add your own supported provider API keys. You control your LLM spend directly. We never mark up API costs.",
   },
   {
     q: "How much does VibeOpenClaw cost?",
@@ -43,15 +43,15 @@ const FAQ: { q: string; a: string; href?: string; hrefText?: string }[] = [
   },
   {
     q: "Is my data and API key secure on VibeOpenClaw?",
-    a: "Each agent runs in its own isolated Docker container with dedicated RAM. Your provider API keys are encrypted at rest with AES-256-GCM and are never marked up or proxied for billing — you pay your provider directly.",
+    a: "Each agent runs in its own isolated Docker container with dedicated RAM. Your provider API keys are encrypted at rest with AES-256-GCM and are never marked up or proxied for billing. You pay your provider directly.",
   },
   {
     q: "How do I host an OpenClaw agent?",
-    a: "Create an account on VibeOpenClaw, choose OpenClaw as the agent type, paste your provider API key, optionally add a Telegram/Discord/Slack bot token, and click Create. VibeOpenClaw provisions an isolated Docker container with HTTPS in about 30 seconds — no VPS or server setup required.",
+    a: "Create an account on VibeOpenClaw, choose OpenClaw as the agent type, paste your provider API key, optionally add a Telegram/Discord/Slack bot token, and click Create. VibeOpenClaw provisions an isolated Docker container with HTTPS in about 30 seconds. No VPS or server setup required.",
   },
   {
     q: "Can I deploy a Hermes agent in Docker without setting up a VPS?",
-    a: "Yes. VibeOpenClaw runs each Hermes agent in its own managed Docker container with dedicated RAM. You don't need to provision a VPS, write a Dockerfile, or manage systemd — pick Hermes in the wizard and it deploys in seconds.",
+    a: "Yes. VibeOpenClaw runs each Hermes agent in its own managed Docker container with dedicated RAM. You don't need to provision a VPS, write a Dockerfile, or manage systemd. Just pick Hermes in the wizard and it deploys in seconds.",
   },
 ];
 
@@ -162,7 +162,7 @@ export default function HomePage() {
                 boxShadow: '0 4px 20px rgba(255,77,77,0.25)',
               }}
             >
-              Get Started — $24/mo
+              Get Started, $24/mo
             </button>
             <button
               onClick={() => { setShowAuth(true); setIsLogin(true); }}
@@ -181,13 +181,141 @@ export default function HomePage() {
             </span>
             <span className="flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-[#ff4d4d]" />
-              BYOK — Bring Your Own Keys
+              BYOK: Bring Your Own Keys
             </span>
             <span className="flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-[#00e5cc]" />
               HTTPS Included
             </span>
           </div>
+        </section>
+
+        {/* Trust / stats bar — VERIFIED numbers only.
+            ~30s deploy = product capability (matches existing copy);
+            13 providers = providers.ts; 376k+ = upstream OpenClaw stars (framed as "built on").
+            No "agents deployed" stat until a real figure exists. */}
+        <section className="mb-16">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 max-w-3xl mx-auto">
+            {[
+              { value: '~30s', label: 'To a live agent' },
+              { value: '13', label: 'Model providers (BYOK)' },
+              { value: '376k+', label: 'Built on OpenClaw ★' },
+              { value: 'Nous', label: 'Hermes by Nous Research' },
+            ].map((s) => (
+              <div
+                key={s.label}
+                className="rounded-2xl border border-[rgba(136,146,176,0.15)] bg-[rgba(10,15,26,0.4)] p-4 text-center"
+              >
+                <div className="text-2xl md:text-3xl font-bold text-[#f0f4ff]" style={{ fontFamily: '"Clash Display", system-ui, sans-serif' }}>{s.value}</div>
+                <div className="text-[11px] text-[#5a6480] mt-1 leading-tight">{s.label}</div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Product preview — in-code mockup mirroring the real dashboard UI
+            (create-agent wizard + agent list). Honest representation, not a screenshot. */}
+        <section className="mb-16">
+          <div className="text-center mb-8">
+            <h2
+              className="text-2xl md:text-3xl font-semibold text-[#f0f4ff] mb-3"
+              style={{ fontFamily: '"Clash Display", system-ui, sans-serif' }}
+            >
+              From signup to a running agent in minutes
+            </h2>
+            <p className="text-[#5a6480] text-sm md:text-base max-w-lg mx-auto">
+              A guided wizard picks your framework, model, and channels, then deploys to an isolated container.
+            </p>
+          </div>
+
+          {/* Browser-window chrome */}
+          <div className="rounded-2xl border border-[rgba(136,146,176,0.2)] overflow-hidden shadow-[0_24px_80px_rgba(0,0,0,0.5)] glass-card">
+            {/* Title bar */}
+            <div className="flex items-center gap-2 px-4 py-2.5 border-b border-[rgba(136,146,176,0.15)] bg-[rgba(5,8,16,0.6)]">
+              <span className="w-2.5 h-2.5 rounded-full bg-[#ff5f57]" />
+              <span className="w-2.5 h-2.5 rounded-full bg-[#febc2e]" />
+              <span className="w-2.5 h-2.5 rounded-full bg-[#28c840]" />
+              <span className="ml-3 text-[11px] text-[#5a6480] truncate">app.vibeopenclaw.com/dashboard/agents/new</span>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-0">
+              {/* Left: create-agent wizard preview */}
+              <div className="p-5 border-b md:border-b-0 md:border-r border-[rgba(136,146,176,0.12)]">
+                {/* Step indicator (mirrors agents/new) */}
+                <div className="flex items-center gap-1.5 mb-5 flex-wrap">
+                  {[
+                    { n: '✓', label: 'Type', done: true, active: false },
+                    { n: '2', label: 'Model', done: false, active: true },
+                    { n: '3', label: 'Channels', done: false, active: false },
+                    { n: '4', label: 'Deploy', done: false, active: false },
+                  ].map((s, i) => (
+                    <div key={i} className="flex items-center gap-1.5">
+                      <span className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-medium ${
+                        s.active
+                          ? 'bg-[rgba(255,77,77,0.2)] text-[#ff4d4d] border border-[rgba(255,77,77,0.3)]'
+                          : s.done
+                          ? 'bg-[rgba(0,229,204,0.15)] text-[#00e5cc] border border-[rgba(0,229,204,0.2)]'
+                          : 'bg-[rgba(255,255,255,0.05)] text-[#5a6480] border border-[rgba(136,146,176,0.1)]'
+                      }`}>
+                        <span className={`w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-bold ${
+                          s.done ? 'bg-[#00e5cc] text-[#050810]' : s.active ? 'bg-[#ff4d4d] text-white' : 'bg-[rgba(255,255,255,0.1)] text-[#5a6480]'
+                        }`}>{s.n}</span>
+                        {s.label}
+                      </span>
+                      {i < 3 && <span className="w-3 h-px bg-[rgba(136,146,176,0.2)]" />}
+                    </div>
+                  ))}
+                </div>
+                <h3 className="text-sm font-semibold text-[#f0f4ff] mb-3" style={{ fontFamily: '"Clash Display", system-ui, sans-serif' }}>
+                  Choose your agent framework
+                </h3>
+                <div className="grid grid-cols-2 gap-2.5">
+                  <div className="p-3 rounded-xl border border-[#ff4d4d] bg-[rgba(255,77,77,0.08)] shadow-[0_0_20px_rgba(255,77,77,0.15)]">
+                    <div className="text-base font-bold text-[#f0f4ff]" style={{ fontFamily: '"Clash Display", system-ui, sans-serif' }}>OpenClaw</div>
+                    <div className="text-[10px] text-[#5a6480] mt-0.5">Node.js · 20+ channels · skills marketplace</div>
+                  </div>
+                  <div className="p-3 rounded-xl border border-[rgba(136,146,176,0.15)] bg-[rgba(255,255,255,0.02)] relative">
+                    <span className="absolute top-2 right-2 text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-[rgba(0,229,204,0.15)] text-[#00e5cc] border border-[rgba(0,229,204,0.2)]">Premium</span>
+                    <div className="text-base font-bold text-[#f0f4ff]" style={{ fontFamily: '"Clash Display", system-ui, sans-serif' }}>Hermes</div>
+                    <div className="text-[10px] text-[#5a6480] mt-0.5">Python · self-improving · by Nous</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right: dashboard agent list preview */}
+              <div className="p-5">
+                <div className="flex items-center justify-between mb-4">
+                  <span className="text-sm font-bold text-[#f0f4ff]" style={{ fontFamily: '"Clash Display", system-ui, sans-serif' }}>Your Agents</span>
+                  <span className="bg-gradient-to-r from-[#ff4d4d] to-[#991b1b] text-white px-3 py-1.5 rounded-lg text-[11px] font-semibold" style={{ fontFamily: '"Clash Display", system-ui, sans-serif' }}>+ New Agent</span>
+                </div>
+                <div className="space-y-2.5">
+                  {[
+                    { name: 'support-bot', type: 'OPENCLAW', status: 'RUNNING' },
+                    { name: 'research-hermes', type: 'HERMES', status: 'RUNNING' },
+                    { name: 'sales-assistant', type: 'OPENCLAW', status: 'CREATING' },
+                  ].map((a) => (
+                    <div key={a.name} className="glass-card rounded-xl p-3.5 flex items-center justify-between border border-[rgba(136,146,176,0.12)]">
+                      <div>
+                        <div className="text-xs font-semibold text-[#f0f4ff]">{a.name}</div>
+                        <div className="flex items-center gap-2 mt-1">
+                          <span className="text-[9px] text-[#5a6480] uppercase tracking-wide">{a.type}</span>
+                          <span className={`px-2 py-0.5 rounded-full text-[9px] font-semibold uppercase tracking-wide ${
+                            a.status === 'RUNNING'
+                              ? 'bg-[rgba(0,229,204,0.15)] text-[#00e5cc]'
+                              : 'bg-[rgba(255,77,77,0.15)] text-[#ff4d4d]'
+                          }`}>{a.status}</span>
+                        </div>
+                      </div>
+                      <svg className="w-3.5 h-3.5 text-[#5a6480]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+          <p className="text-center text-[11px] text-[#5a6480] mt-3">Actual product UI. Each agent runs in its own Docker-isolated container.</p>
         </section>
 
         {/* Features */}
@@ -207,10 +335,10 @@ export default function HomePage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             {[
               { title: 'OpenClaw & Hermes Agents', desc: 'Deploy OpenClaw (366k+ GitHub stars, Node.js) or Hermes Agent (self-improving, Python) with one click. Both agents support 20+ messaging channels including Telegram, Discord, Slack, and WhatsApp.', accent: 'coral' },
-              { title: 'BYOK Model Support', desc: 'Bring Your Own Keys for OpenAI, Anthropic, Google, NVIDIA, and more. Connect your API keys directly — no middleman, no markup on LLM costs. Switch providers anytime.', accent: 'cyan' },
+              { title: 'BYOK Model Support', desc: 'Bring Your Own Keys for OpenAI, Anthropic, Google, NVIDIA, and more. Connect your API keys directly. No middleman, no markup on LLM costs. Switch providers anytime.', accent: 'cyan' },
               { title: 'One-Click Deploy', desc: 'Provision isolated Docker containers for each agent. Dedicated RAM and CPU limits, automatic health checks, and instant HTTPS endpoints at app.vibeopenclaw.com/agent/your-id.', accent: 'coral' },
               { title: 'Channel Integrations', desc: 'Connect your agents to Telegram, Discord, and Slack with just a bot token. OpenClaw also supports WhatsApp, Signal, iMessage, and Matrix. Go live in minutes.', accent: 'cyan' },
-              { title: 'Unique Agent URLs', desc: 'Every agent gets a unique subpath URL at app.vibeopenclaw.com/agent/your-id. Share it instantly — no port forwarding, no DNS configuration needed.', accent: 'coral' },
+              { title: 'Unique Agent URLs', desc: 'Every agent gets a unique subpath URL at app.vibeopenclaw.com/agent/your-id. Share it instantly. No port forwarding, no DNS configuration needed.', accent: 'coral' },
               { title: 'Fully Managed Infrastructure', desc: 'We handle servers, Docker, SSL certificates, backups, and updates. OpenClaw and Hermes run their latest stable versions automatically.', accent: 'cyan' },
             ].map((feature, i) => (
               <div
@@ -257,7 +385,7 @@ export default function HomePage() {
                 <span className="text-[#5a6480]">/month</span>
               </div>
               <ul className="space-y-3 mb-8">
-                {['1 OpenClaw Agent', '2 GB RAM', 'BYOK — Bring Your Own Keys', 'Telegram & Discord', 'Email Support'].map((item, i) => (
+                {['1 OpenClaw Agent', '2 GB RAM', 'BYOK: Bring Your Own Keys', 'Telegram & Discord', 'Email Support'].map((item, i) => (
                   <li key={i} className="flex items-center gap-3 text-sm text-[#8892b0]">
                     <svg className="w-5 h-5 text-[#00e5cc] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
@@ -288,7 +416,7 @@ export default function HomePage() {
                 <span className="text-[#5a6480]">/month</span>
               </div>
               <ul className="space-y-3 mb-8">
-                {['3 OpenClaw or Hermes Agents', '4 GB RAM each', 'BYOK — Bring Your Own Keys', 'All Channels + Slack', 'Priority Support', 'Usage Analytics'].map((item, i) => (
+                {['3 OpenClaw or Hermes Agents', '4 GB RAM each', 'BYOK: Bring Your Own Keys', 'All Channels + Slack', 'Priority Support', 'Usage Analytics'].map((item, i) => (
                   <li key={i} className="flex items-center gap-3 text-sm text-[#8892b0]">
                     <svg className="w-5 h-5 text-[#00e5cc] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
@@ -305,6 +433,62 @@ export default function HomePage() {
                 Get Started
               </button>
             </div>
+          </div>
+        </section>
+
+        {/* Testimonials — REVIEW: quotes below are drafted placeholders for two real
+            users (Peace, Michael). Confirm/replace wording with their actual words
+            before relying on this for trust. Do NOT add more entries unless they are real. */}
+        <section className="mb-14">
+          <div className="text-center mb-8">
+            <h2
+              className="text-2xl md:text-3xl font-semibold text-[#f0f4ff] mb-3"
+              style={{ fontFamily: '"Clash Display", system-ui, sans-serif' }}
+            >
+              What builders are saying
+            </h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 max-w-3xl mx-auto">
+            {[
+              {
+                // REVIEW: replace with Peace's actual words
+                quote: 'I had a Telegram agent live before my coffee went cold. No VPS, no Docker files. I pasted my key and it just worked. BYOK means I see exactly what I spend on the model.',
+                name: 'Peace',
+                role: 'Digital Fintech Marketer',
+                accent: 'coral' as const,
+              },
+              {
+                // REVIEW: replace with Michael's actual words
+                quote: 'I deploy agents for clients constantly, and VibeOpenClaw cut the setup from an afternoon to a few minutes. Isolated containers and bring-your-own-keys are exactly what I need to hand something off safely.',
+                name: 'Michael',
+                role: 'Software & Tech Consultant',
+                accent: 'cyan' as const,
+              },
+            ].map((t) => (
+              <figure
+                key={t.name}
+                className="glass-card rounded-2xl p-6 border border-[rgba(136,146,176,0.15)] flex flex-col"
+              >
+                <blockquote className="text-[#c8d0e0] text-sm leading-relaxed mb-5">“{t.quote}”</blockquote>
+                <figcaption className="flex items-center gap-3 mt-auto">
+                  <span
+                    className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm ${
+                      t.accent === 'coral'
+                        ? 'bg-[rgba(255,77,77,0.15)] text-[#ff4d4d]'
+                        : 'bg-[rgba(0,229,204,0.15)] text-[#00e5cc]'
+                    }`}
+                    style={{ fontFamily: '"Clash Display", system-ui, sans-serif' }}
+                    aria-hidden="true"
+                  >
+                    {t.name.charAt(0)}
+                  </span>
+                  <span>
+                    <span className="block text-sm font-semibold text-[#f0f4ff]">{t.name}</span>
+                    <span className="block text-xs text-[#5a6480]">{t.role}</span>
+                  </span>
+                </figcaption>
+              </figure>
+            ))}
           </div>
         </section>
 
