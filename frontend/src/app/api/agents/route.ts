@@ -94,8 +94,8 @@ export async function POST(req: NextRequest) {
     const memoryLimit = `${limits.memory_mb}m`;
 
     await query(
-      `INSERT INTO agents (id, user_id, name, agent_type, status, model_provider, model_name, telegram_bot_token, discord_bot_token, slack_bot_token)
-       VALUES ($1, $2, $3, $4, 'CREATING', $5, $6, $7, $8, $9)`,
+      `INSERT INTO agents (id, user_id, name, agent_type, status, model_provider, model_name, telegram_bot_token, discord_bot_token, slack_bot_token, created_at, updated_at)
+       VALUES ($1, $2, $3, $4, 'CREATING', $5, $6, $7, $8, $9, NOW(), NOW())`,
       [agentId, user.id, name, agentType.toUpperCase(), modelProvider, modelName, telegramToken || null, discordToken || null, slackToken || null]
     );
     

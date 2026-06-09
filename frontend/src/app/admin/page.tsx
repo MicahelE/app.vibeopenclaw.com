@@ -168,7 +168,7 @@ export default function AdminPage() {
                     </td>
                     <td className="py-2 pr-3 text-[#5a6480]">{a.model}</td>
                     <td className="py-2 pr-3 text-[#5a6480]">{a.port ?? '—'}</td>
-                    <td className="py-2 text-[#5a6480]">{new Date(a.created_at).toLocaleString()}</td>
+                    <td className="py-2 text-[#5a6480] whitespace-nowrap">{a.created_at ? new Date(a.created_at).toLocaleString() : '—'}</td>
                   </tr>
                 ))}
               </tbody>

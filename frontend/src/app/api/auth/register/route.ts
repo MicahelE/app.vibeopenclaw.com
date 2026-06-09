@@ -31,8 +31,8 @@ export async function POST(req: NextRequest) {
     const passwordHash = await hashPassword(password);
     
     await query(
-      `INSERT INTO users (id, email, password_hash, name, plan_tier, subscription_status)
-       VALUES ($1, $2, $3, $4, $5, 'UNPAID')`,
+      `INSERT INTO users (id, email, password_hash, name, plan_tier, subscription_status, created_at, updated_at)
+       VALUES ($1, $2, $3, $4, $5, 'UNPAID', NOW(), NOW())`,
       [id, email, passwordHash, name || null, planTier(plan)]
     );
     
