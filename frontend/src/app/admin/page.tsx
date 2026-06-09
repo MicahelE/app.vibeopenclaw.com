@@ -253,8 +253,13 @@ function UsersSection({ users }: { users: PlatformUser[] }) {
                 <td className="py-2 pr-3"><PlanPill plan={u.plan_tier} /></td>
                 <td className="py-2 pr-3"><SubPill status={u.subscription_status} /></td>
                 <td className="py-2 pr-3 text-right text-[#c8d0e0] font-medium">{u.agent_count}</td>
-                <td className="py-2 text-[#5a6480]">
-                  {u.created_at ? new Date(u.created_at).toLocaleDateString() : '—'}
+                <td className="py-2 text-[#5a6480] whitespace-nowrap">
+                  {u.created_at
+                    ? new Date(u.created_at).toLocaleString(undefined, {
+                        year: 'numeric', month: 'short', day: 'numeric',
+                        hour: '2-digit', minute: '2-digit',
+                      })
+                    : '—'}
                 </td>
               </tr>
             ))}
