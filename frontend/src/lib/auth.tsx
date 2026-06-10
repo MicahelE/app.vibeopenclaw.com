@@ -1,6 +1,7 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { identifyUser, resetAnalytics } from './analytics';
 interface User {
   id: string;
   email: string;
@@ -46,6 +47,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     fetchUser(storedToken).then((u) => {
       if (u) {
         setUser(u);
+        identifyUser(u.id, { email: u.email, plan: u.plan_tier });
         localStorage.setItem('voc_user', JSON.stringify(u));
       } else {
         localStorage.removeItem('voc_token');
@@ -63,6 +65,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (fullUser) {
       localStorage.setItem('voc_user', JSON.stringify(fullUser));
       setUser(fullUser);
+      identifyUser(fullUser.id, { email: fullUser.email, plan: fullUser.plan_tier });
     }
   };
 
@@ -82,6 +85,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem('voc_user');
     setToken(null);
     setUser(null);
+    resetAnalytics();
   };
 
   return (

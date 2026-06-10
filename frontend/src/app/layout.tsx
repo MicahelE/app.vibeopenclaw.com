@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import "./globals.css";
 import { AuthProvider } from "@/lib/auth";
+import { PostHogProvider } from "@/components/analytics/PostHogProvider";
+import { ToastProvider } from "@/components/ui";
 
 const SITE_URL = process.env.NEXT_PUBLIC_APP_URL || "https://app.vibeopenclaw.com";
 
@@ -155,7 +157,11 @@ export default function RootLayout({
       </head>
       <body className="antialiased">
         <AuthProvider>
-          {children}
+          <PostHogProvider>
+            <ToastProvider>
+              {children}
+            </ToastProvider>
+          </PostHogProvider>
         </AuthProvider>
       </body>
       {gaId ? <GoogleAnalytics gaId={gaId} /> : null}
