@@ -3,63 +3,84 @@
 import { useState } from 'react';
 import { createCheckout, createPortal } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
+import { capture } from '@/lib/analytics';
+import { Button, Badge, useToast, FONT_DISPLAY } from '@/components/ui';
+import { PLANS, type PlanId } from '@/content/pricing';
 
 export default function BillingPage() {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  // `pending` holds the in-flight action so only the clicked button spins.
+  const [pending, setPending] = useState<PlanId | 'portal' | null>(null);
   const { user } = useAuth();
-  const isActive = user?.subscription_status === 'ACTIVE';
+  const { error } = useToast();
 
-  async function handleSubscribe(plan: string) {
-    setError('');
-    setLoading(true);
+  const isActive = user?.subscription_status === 'ACTIVE';
+  // Current tier from the subscription data the page already loads.
+  const currentTier = isActive ? user?.plan_tier : undefined;
+  const isCurrent = (plan: PlanId) => currentTier === PLANS[plan].tier;
+
+  async function handleSubscribe(plan: PlanId) {
+    capture('checkout_started', { plan });
+    setPending(plan);
     try {
       const data = await createCheckout(plan);
       if (data.checkout_url) window.location.href = data.checkout_url;
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Failed to start checkout');
+      error(err instanceof Error ? err.message : 'Failed to start checkout');
     } finally {
-      setLoading(false);
+      setPending(null);
     }
   }
 
   async function handlePortal() {
-    setError('');
-    setLoading(true);
+    setPending('portal');
     try {
       const data = await createPortal();
       if (data.portal_url) window.location.href = data.portal_url;
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Failed to open portal');
+      error(err instanceof Error ? err.message : 'Failed to open portal');
     } finally {
-      setLoading(false);
+      setPending(null);
     }
+  }
+
+  // Bullet feature list for a plan card.
+  const features: Record<PlanId, string[]> = {
+    pro: ['1 AI Agent', '2 GB RAM', 'BYOK', 'Discord & Telegram', 'Email Support'],
+    premium: ['3 AI Agents', '4 GB RAM each', 'BYOK', 'All Channels + Slack', 'Priority Support', 'Usage Analytics'],
+  };
+
+  // Button label for a card given the current tier.
+  function ctaLabel(plan: PlanId): string {
+    if (isCurrent(plan)) return 'Current Plan';
+    if (plan === 'premium' && currentTier === 'PRO') return 'Upgrade to Premium';
+    if (plan === 'pro' && currentTier === 'PREMIUM') return 'Switch to Pro';
+    return `Subscribe to ${PLANS[plan].name}`;
   }
 
   return (
     <div>
-      <h1 className="text-xl font-bold text-[#f0f4ff] mb-2" style={{ fontFamily: '"Clash Display", system-ui, sans-serif' }}>Billing</h1>
+      <h1 className="text-xl font-bold text-[#f0f4ff] mb-2" style={{ fontFamily: FONT_DISPLAY }}>Billing</h1>
       <p className="text-sm text-[#5a6480] mb-6">
         {isActive
           ? `Your ${user?.plan_tier?.toLowerCase()} subscription is active.`
-          : 'Payment is required before you can create or manage agents.'}
+          : 'A subscription is required to create new agents. Existing agents stay viewable and manageable.'}
       </p>
 
-      {error && (
-        <div className="bg-[rgba(255,77,77,0.15)] text-[#ff4d4d] p-3 rounded-xl mb-4 text-sm border border-[rgba(255,77,77,0.3)]">{error}</div>
-      )}
       {!isActive && (
         <div className="bg-[rgba(255,193,7,0.12)] text-[#ffd166] p-3 rounded-xl mb-4 text-sm border border-[rgba(255,193,7,0.25)]">
-          Choose a plan and complete Polar checkout to unlock agent creation.
+          Choose a plan and complete Polar checkout to unlock new agent creation.
         </div>
       )}
 
       <div className="grid md:grid-cols-2 gap-5 mb-8 max-w-2xl">
         <div className="glass-card rounded-2xl p-8 transition-all hover:-translate-y-1 hover:border-[rgba(255,77,77,0.2)]">
-          <h2 className="text-lg font-semibold text-[#f0f4ff] mb-2" style={{ fontFamily: '"Clash Display", system-ui, sans-serif' }}>Pro</h2>
-          <p className="text-3xl font-bold text-[#f0f4ff] mb-1">$24<span className="text-sm font-normal text-[#5a6480]">/mo</span></p>
+          <div className="flex items-center justify-between mb-2">
+            <h2 className="text-lg font-semibold text-[#f0f4ff]" style={{ fontFamily: FONT_DISPLAY }}>Pro</h2>
+            {isCurrent('pro') && <Badge tone="cyan">Current Plan</Badge>}
+          </div>
+          <p className="text-3xl font-bold text-[#f0f4ff] mb-1">${PLANS.pro.monthly}<span className="text-sm font-normal text-[#5a6480]">/mo</span></p>
           <ul className="space-y-2.5 text-sm text-[#8892b0] mb-6 mt-4">
-            {['1 AI Agent', '2 GB RAM', 'BYOK', 'Discord & Telegram', 'Email Support'].map((item, i) => (
+            {features.pro.map((item, i) => (
               <li key={i} className="flex items-center gap-2.5">
                 <svg className="w-4 h-4 text-[#00e5cc] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
@@ -68,26 +89,27 @@ export default function BillingPage() {
               </li>
             ))}
           </ul>
-          <button
+          <Button
+            variant="primary"
+            fullWidth
+            size="lg"
+            loading={pending === 'pro'}
+            disabled={isCurrent('pro') || pending !== null}
             onClick={() => handleSubscribe('pro')}
-            disabled={loading}
-            className="w-full py-3 rounded-xl text-white font-semibold text-sm transition-all hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(255,77,77,0.35)] active:translate-y-0"
-            style={{
-              fontFamily: '"Clash Display", system-ui, sans-serif',
-              background: 'linear-gradient(135deg, #ff4d4d 0%, #991b1b 100%)',
-              boxShadow: '0 4px 20px rgba(255,77,77,0.25)',
-            }}
           >
-            {isActive && user?.plan_tier === 'PRO' ? 'Current Plan' : 'Subscribe to Pro'}
-          </button>
+            {ctaLabel('pro')}
+          </Button>
         </div>
 
         <div className="glass-card rounded-2xl p-8 relative overflow-hidden transition-all hover:-translate-y-1 hover:border-[rgba(255,77,77,0.2)]">
           <div className="absolute top-0 right-0 bg-[#ff4d4d] text-white text-[10px] font-bold px-3 py-1 rounded-bl-lg uppercase tracking-wider">Popular</div>
-          <h2 className="text-lg font-semibold text-[#f0f4ff] mb-2" style={{ fontFamily: '"Clash Display", system-ui, sans-serif' }}>Premium</h2>
-          <p className="text-3xl font-bold text-[#f0f4ff] mb-1">$48<span className="text-sm font-normal text-[#5a6480]">/mo</span></p>
+          <div className="flex items-center justify-between mb-2 pr-16">
+            <h2 className="text-lg font-semibold text-[#f0f4ff]" style={{ fontFamily: FONT_DISPLAY }}>Premium</h2>
+            {isCurrent('premium') && <Badge tone="cyan">Current Plan</Badge>}
+          </div>
+          <p className="text-3xl font-bold text-[#f0f4ff] mb-1">${PLANS.premium.monthly}<span className="text-sm font-normal text-[#5a6480]">/mo</span></p>
           <ul className="space-y-2.5 text-sm text-[#8892b0] mb-6 mt-4">
-            {['3 AI Agents', '4 GB RAM each', 'BYOK', 'All Channels + Slack', 'Priority Support', 'Usage Analytics'].map((item, i) => (
+            {features.premium.map((item, i) => (
               <li key={i} className="flex items-center gap-2.5">
                 <svg className="w-4 h-4 text-[#00e5cc] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
@@ -96,28 +118,31 @@ export default function BillingPage() {
               </li>
             ))}
           </ul>
-          <button
+          <Button
+            variant="secondary"
+            fullWidth
+            size="lg"
+            loading={pending === 'premium'}
+            disabled={isCurrent('premium') || pending !== null}
             onClick={() => handleSubscribe('premium')}
-            disabled={loading}
-            className="w-full py-3 rounded-xl text-[#050810] font-semibold text-sm transition-all hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(255,255,255,0.2)] active:translate-y-0 bg-white"
-            style={{ fontFamily: '"Clash Display", system-ui, sans-serif' }}
           >
-            {isActive && user?.plan_tier === 'PREMIUM' ? 'Current Plan' : 'Subscribe to Premium'}
-          </button>
+            {ctaLabel('premium')}
+          </Button>
         </div>
       </div>
 
       {isActive && (
         <div className="glass-card rounded-2xl p-6 border border-[rgba(136,146,176,0.15)]">
-          <h2 className="text-base font-semibold text-[#f0f4ff] mb-1" style={{ fontFamily: '"Clash Display", system-ui, sans-serif' }}>Manage Subscription</h2>
+          <h2 className="text-base font-semibold text-[#f0f4ff] mb-1" style={{ fontFamily: FONT_DISPLAY }}>Manage Subscription</h2>
           <p className="text-sm text-[#5a6480] mb-4">Update payment method, view invoices, or cancel your subscription.</p>
-          <button
+          <Button
+            variant="ghost"
+            loading={pending === 'portal'}
+            disabled={pending !== null}
             onClick={handlePortal}
-            disabled={loading}
-            className="px-4 py-2.5 border border-[rgba(136,146,176,0.2)] rounded-xl text-[#8892b0] text-sm hover:text-[#f0f4ff] hover:border-[rgba(136,146,176,0.4)] transition-colors"
           >
             Open Customer Portal
-          </button>
+          </Button>
         </div>
       )}
     </div>

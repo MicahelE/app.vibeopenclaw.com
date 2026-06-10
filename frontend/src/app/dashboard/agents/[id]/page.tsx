@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { getAgents, startAgent, stopAgent, deleteAgent, updateAgent, getAgentLogs } from '@/lib/api';
+import { Button, StatusBadge, PasswordInput, ConfirmDialog, useToast, FONT_DISPLAY } from '@/components/ui';
 
 const CHANNELS = [
   { key: 'telegram', tokenKey: 'telegram_bot_token', has: 'has_telegram', label: 'Telegram', placeholder: '123456789:ABCdef...', guide: 'https://t.me/BotFather' },
@@ -26,6 +27,7 @@ interface AgentData {
 export default function AgentDetailPage() {
   const params = useParams();
   const router = useRouter();
+  const { success, error: toastError } = useToast();
   const [agent, setAgent] = useState<AgentData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -35,6 +37,8 @@ export default function AgentDetailPage() {
   const [openChannel, setOpenChannel] = useState<string | null>(null);
   const [pendingToken, setPendingToken] = useState<Record<string, string>>({});
   const [savingChannel, setSavingChannel] = useState<string | null>(null);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   async function reload() {
     try {
@@ -51,6 +55,29 @@ export default function AgentDetailPage() {
 
   useEffect(() => { reload(); }, [params.id]);
 
+  // Poll while the agent is provisioning so the status flips without a manual reload.
+  const isCreating = agent?.status?.toUpperCase() === 'CREATING';
+  useEffect(() => {
+    if (!isCreating) return;
+    const t = setInterval(reload, 4000);
+    return () => clearInterval(t);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isCreating, params.id]);
+
+  async function handleDelete() {
+    if (!agent) return;
+    setDeleting(true);
+    try {
+      await deleteAgent(agent.id);
+      success('Agent deleted');
+      router.push('/dashboard');
+    } catch (err: any) {
+      toastError(err.message || 'Failed to delete agent');
+      setDeleting(false);
+      setConfirmOpen(false);
+    }
+  }
+
   async function saveName() {
     if (!agent || !pendingName.trim() || pendingName === agent.name) {
       setEditingName(false);
@@ -62,8 +89,9 @@ export default function AgentDetailPage() {
       await updateAgent(agent.id, { name: pendingName.trim() });
       setEditingName(false);
       await reload();
+      success('Agent renamed');
     } catch (err: any) {
-      setError(err.message || 'Failed to rename agent');
+      toastError(err.message || 'Failed to rename agent');
     } finally {
       setSavingName(false);
     }
@@ -79,8 +107,9 @@ export default function AgentDetailPage() {
       setPendingToken((p) => ({ ...p, [channel.key]: '' }));
       setOpenChannel(null);
       await reload();
+      success(`${channel.label} token saved`);
     } catch (err: any) {
-      setError(err.message || `Failed to update ${channel.label}`);
+      toastError(err.message || `Failed to update ${channel.label}`);
     } finally {
       setSavingChannel(null);
     }
@@ -93,8 +122,9 @@ export default function AgentDetailPage() {
     try {
       await updateAgent(agent.id, { [channel.tokenKey]: null });
       await reload();
+      success(`${channel.label} disconnected`);
     } catch (err: any) {
-      setError(err.message || `Failed to disconnect ${channel.label}`);
+      toastError(err.message || `Failed to disconnect ${channel.label}`);
     } finally {
       setSavingChannel(null);
     }
@@ -103,15 +133,8 @@ export default function AgentDetailPage() {
   if (loading) return <div className="text-center py-12 text-[#5a6480]">Loading...</div>;
   if (!agent) return <div className="text-[#ff4d4d]">{error || 'Agent not found'}</div>;
 
-  const statusColor = agent.status === 'RUNNING'
-    ? 'bg-[rgba(0,229,204,0.15)] text-[#00e5cc]'
-    : agent.status === 'STOPPED'
-    ? 'bg-[rgba(136,146,176,0.15)] text-[#8892b0]'
-    : agent.status === 'CREATING'
-    ? 'bg-[rgba(255,193,7,0.15)] text-[#ffc107]'
-    : 'bg-[rgba(255,77,77,0.15)] text-[#ff4d4d]';
-
   const isBusy = savingChannel !== null || savingName || agent.status === 'CREATING';
+  const endpointUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'https://app.vibeopenclaw.com'}/agent/${agent.id}/`;
 
   return (
     <div className="max-w-2xl">
@@ -140,18 +163,20 @@ export default function AgentDetailPage() {
                   onChange={(e) => setPendingName(e.target.value)}
                   onKeyDown={(e) => { if (e.key === 'Enter') saveName(); if (e.key === 'Escape') setEditingName(false); }}
                   className="flex-1 px-3 py-1.5 rounded-lg bg-[rgba(255,255,255,0.05)] border border-[rgba(136,146,176,0.3)] text-[#f0f4ff] text-lg font-bold outline-none focus:border-[#ff4d4d]"
-                  style={{ fontFamily: '"Clash Display", system-ui, sans-serif' }}
+                  style={{ fontFamily: FONT_DISPLAY }}
                 />
-                <button onClick={saveName} disabled={savingName} className="px-3 py-1.5 text-xs bg-[rgba(0,229,204,0.15)] text-[#00e5cc] rounded-lg hover:bg-[rgba(0,229,204,0.25)] disabled:opacity-50">
-                  {savingName ? '...' : 'Save'}
-                </button>
-                <button onClick={() => setEditingName(false)} disabled={savingName} className="px-3 py-1.5 text-xs text-[#5a6480] hover:text-[#f0f4ff]">Cancel</button>
+                <Button variant="primary" size="sm" loading={savingName} onClick={saveName}>
+                  Save
+                </Button>
+                <Button variant="ghost" size="sm" onClick={() => setEditingName(false)} disabled={savingName}>
+                  Cancel
+                </Button>
               </div>
             ) : (
               <button
                 onClick={() => { setPendingName(agent.name); setEditingName(true); }}
                 className="text-xl font-bold text-[#f0f4ff] hover:text-[#ff4d4d] transition-colors text-left"
-                style={{ fontFamily: '"Clash Display", system-ui, sans-serif' }}
+                style={{ fontFamily: FONT_DISPLAY }}
                 title="Click to rename"
               >
                 {agent.name}
@@ -159,29 +184,29 @@ export default function AgentDetailPage() {
             )}
             <div className="flex items-center gap-3 mt-1.5 text-xs text-[#5a6480]">
               <span className="uppercase tracking-wide">{agent.type}</span>
-              <span className={`px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wide ${statusColor}`}>
-                {agent.status}
-              </span>
+              <StatusBadge status={agent.status} />
               {agent.port && <span>Port: {agent.port}</span>}
             </div>
           </div>
           <div className="flex gap-2 flex-shrink-0">
             {agent.status === 'RUNNING' ? (
-              <button
+              <Button
+                variant="secondary"
+                size="sm"
                 onClick={async () => { try { await stopAgent(agent.id); } catch {} await reload(); }}
                 disabled={isBusy}
-                className="px-4 py-2 text-xs border border-[rgba(136,146,176,0.2)] rounded-lg text-[#8892b0] hover:text-[#f0f4ff] hover:border-[rgba(136,146,176,0.4)] transition-colors disabled:opacity-50"
               >
                 Stop
-              </button>
+              </Button>
             ) : agent.status === 'STOPPED' ? (
-              <button
+              <Button
+                variant="primary"
+                size="sm"
                 onClick={async () => { try { await startAgent(agent.id); } catch {} await reload(); }}
                 disabled={isBusy}
-                className="px-4 py-2 text-xs bg-[rgba(0,229,204,0.15)] text-[#00e5cc] rounded-lg hover:bg-[rgba(0,229,204,0.25)] transition-colors disabled:opacity-50"
               >
                 Start
-              </button>
+              </Button>
             ) : null}
           </div>
         </div>
@@ -200,9 +225,22 @@ export default function AgentDetailPage() {
         {agent.port && (
           <div className="mt-4 p-3 rounded-xl bg-[rgba(0,229,204,0.06)] border border-[rgba(0,229,204,0.15)]">
             <div className="text-xs text-[#8892b0] mb-1">Agent Endpoint</div>
-            <code className="text-sm text-[#00e5cc] font-mono">
-              {process.env.NEXT_PUBLIC_APP_URL || 'https://app.vibeopenclaw.com'}/agent/{agent.id}/
-            </code>
+            <div className="flex items-center gap-2">
+              <code className="text-sm text-[#00e5cc] font-mono break-all flex-1 min-w-0">
+                {endpointUrl}
+              </code>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="flex-shrink-0"
+                onClick={async () => {
+                  await navigator.clipboard.writeText(endpointUrl);
+                  success('Endpoint copied');
+                }}
+              >
+                Copy
+              </Button>
+            </div>
           </div>
         )}
         {!agent.port && agent.type === 'HERMES' && (
@@ -215,7 +253,7 @@ export default function AgentDetailPage() {
       </div>
 
       <div className="glass-card rounded-2xl p-6 border border-[rgba(136,146,176,0.15)]">
-        <h2 className="text-sm font-semibold text-[#f0f4ff] mb-1" style={{ fontFamily: '"Clash Display", system-ui, sans-serif' }}>
+        <h2 className="text-sm font-semibold text-[#f0f4ff] mb-1" style={{ fontFamily: FONT_DISPLAY }}>
           Connected Channels
         </h2>
         <p className="text-xs text-[#5a6480] mb-4">
@@ -261,13 +299,12 @@ export default function AgentDetailPage() {
                   </div>
                 </button>
                 {isOpen && (
-                  <div className="px-3 pb-3 border-t border-[rgba(136,146,176,0.1)] mt-1 space-y-2">
-                    <input
-                      type="password"
+                  <div className="px-3 pb-3 border-t border-[rgba(136,146,176,0.1)] mt-1 space-y-2 pt-3">
+                    <PasswordInput
+                      className="ph-no-capture"
                       value={draftToken}
                       onChange={(e) => setPendingToken((p) => ({ ...p, [channel.key]: e.target.value }))}
                       placeholder={connected ? 'Replace existing token (or leave blank)' : channel.placeholder}
-                      className="w-full mt-3 px-3 py-2 rounded-lg bg-[rgba(255,255,255,0.05)] border border-[rgba(136,146,176,0.15)] text-[#f0f4ff] placeholder-[#5a6480] text-xs outline-none focus:border-[#ff4d4d]"
                       disabled={saving}
                     />
                     <div className="flex items-center justify-between">
@@ -281,22 +318,25 @@ export default function AgentDetailPage() {
                       </a>
                       <div className="flex items-center gap-2">
                         {connected && (
-                          <button
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-[#ff4d4d] hover:text-[#ff6b6b]"
                             onClick={() => clearToken(channel)}
                             disabled={saving || isBusy}
-                            className="text-[10px] text-[#ff4d4d] hover:text-[#ff6b6b] transition-colors disabled:opacity-50"
                           >
                             Disconnect
-                          </button>
+                          </Button>
                         )}
-                        <button
+                        <Button
+                          variant="primary"
+                          size="sm"
+                          loading={saving}
                           onClick={() => saveToken(channel)}
-                          disabled={!draftToken || saving || isBusy}
-                          className="px-3 py-1.5 text-[11px] rounded-lg text-white font-semibold transition-all disabled:opacity-40"
-                          style={{ background: 'linear-gradient(135deg, #ff4d4d 0%, #991b1b 100%)' }}
+                          disabled={!draftToken || isBusy}
                         >
                           {saving ? 'Redeploying...' : 'Save'}
-                        </button>
+                        </Button>
                       </div>
                     </div>
                   </div>
@@ -310,22 +350,25 @@ export default function AgentDetailPage() {
       <AgentLogs agentId={agent.id} />
 
       <div className="mt-4">
-        <button
-          onClick={async () => {
-            if (!confirm('Delete this agent? This cannot be undone.')) return;
-            try {
-              await deleteAgent(agent.id);
-              router.push('/dashboard');
-            } catch (err: any) {
-              setError(err.message);
-            }
-          }}
+        <Button
+          variant="danger"
+          size="sm"
+          onClick={() => setConfirmOpen(true)}
           disabled={isBusy}
-          className="text-xs text-[#ff4d4d] hover:text-[#ff6b6b] transition-colors disabled:opacity-50"
         >
           Delete this agent
-        </button>
+        </Button>
       </div>
+
+      <ConfirmDialog
+        open={confirmOpen}
+        title="Delete this agent?"
+        body="This cannot be undone."
+        confirmLabel="Delete"
+        loading={deleting}
+        onConfirm={handleDelete}
+        onCancel={() => setConfirmOpen(false)}
+      />
     </div>
   );
 }
@@ -369,7 +412,7 @@ function AgentLogs({ agentId }: { agentId: string }) {
         className="w-full px-6 py-4 flex items-center justify-between hover:bg-[rgba(255,255,255,0.02)] transition-colors"
       >
         <div className="flex items-center gap-2">
-          <h2 className="text-sm font-semibold text-[#f0f4ff]" style={{ fontFamily: '"Clash Display", system-ui, sans-serif' }}>
+          <h2 className="text-sm font-semibold text-[#f0f4ff]" style={{ fontFamily: FONT_DISPLAY }}>
             Container logs
           </h2>
           <span className="text-[10px] text-[#5a6480]">last 200 lines</span>

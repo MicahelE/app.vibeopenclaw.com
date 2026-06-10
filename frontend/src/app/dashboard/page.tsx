@@ -1,8 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { getAgents } from '@/lib/api';
+import { ButtonLink, StatusBadge, EmptyState, SkeletonCards, FONT_DISPLAY } from '@/components/ui';
 
 interface Agent {
   id: string;
@@ -16,12 +17,13 @@ export default function DashboardPage() {
   const [agents, setAgents] = useState<Agent[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   async function loadAgents() {
     try {
-      setLoading(true);
       const data = await getAgents();
       setAgents(data);
+      setError('');
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -31,55 +33,61 @@ export default function DashboardPage() {
 
   useEffect(() => {
     loadAgents();
+    return () => {
+      if (pollRef.current) clearInterval(pollRef.current);
+    };
   }, []);
+
+  // Auto-refresh while any agent is still booting (CREATING) so the UI flips
+  // to RUNNING without a manual reload. Stop polling once everything settles.
+  useEffect(() => {
+    const anyCreating = agents.some((a) => a.status?.toUpperCase() === 'CREATING');
+    if (anyCreating && !pollRef.current) {
+      pollRef.current = setInterval(loadAgents, 4000);
+    } else if (!anyCreating && pollRef.current) {
+      clearInterval(pollRef.current);
+      pollRef.current = null;
+    }
+  }, [agents]);
 
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-xl font-bold text-[#f0f4ff]" style={{ fontFamily: '"Clash Display", system-ui, sans-serif' }}>Your Agents</h1>
-        <Link
-          href="/dashboard/agents/new"
-          className="bg-gradient-to-r from-[#ff4d4d] to-[#991b1b] text-white px-4 py-2 rounded-xl text-sm font-semibold hover:shadow-[0_4px_20px_rgba(255,77,77,0.35)] transition-all hover:-translate-y-0.5"
-          style={{ fontFamily: '"Clash Display", system-ui, sans-serif' }}
-        >
+        <h1 className="text-xl font-bold text-[#f0f4ff]" style={{ fontFamily: FONT_DISPLAY }}>
+          Your Agents
+        </h1>
+        <ButtonLink href="/dashboard/agents/new" size="md">
           + New Agent
-        </Link>
+        </ButtonLink>
       </div>
 
       {error && (
-        <div className="bg-[rgba(255,77,77,0.15)] text-[#ff4d4d] p-3 rounded-xl mb-4 text-sm border border-[rgba(255,77,77,0.3)]">{error}</div>
+        <div className="bg-[rgba(255,77,77,0.15)] text-[#ff4d4d] p-3 rounded-xl mb-4 text-sm border border-[rgba(255,77,77,0.3)]">
+          {error}
+        </div>
       )}
 
       {loading ? (
-        <div className="text-center py-12 text-[#5a6480]">Loading agents...</div>
+        <SkeletonCards count={3} />
       ) : agents.length === 0 ? (
-        <div className="text-center py-12 glass-card rounded-2xl border border-[rgba(136,146,176,0.15)]">
-          <p className="text-[#5a6480] mb-4">No agents yet</p>
-          <Link href="/dashboard/agents/new" className="text-[#ff4d4d] hover:underline font-medium text-sm">
-            Create your first agent
-          </Link>
-        </div>
+        <EmptyState
+          title="No agents yet"
+          body="Deploy your first OpenClaw or Hermes agent — pick a model, add a channel, and it's live in about 30 seconds."
+          action={{ label: '+ Create your first agent', href: '/dashboard/agents/new' }}
+        />
       ) : (
         <div className="grid gap-3">
           {agents.map((agent) => (
             <Link
               key={agent.id}
               href={`/dashboard/agents/${agent.id}`}
-              className="glass-card rounded-xl p-5 flex items-center justify-between transition-all hover:border-[rgba(255,77,77,0.2)] block"
+              className="glass-card rounded-xl p-5 flex items-center justify-between transition-all hover:border-[rgba(255,77,77,0.2)] block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff4d4d] focus-visible:ring-offset-2 focus-visible:ring-offset-[#050810]"
             >
               <div>
                 <h3 className="font-semibold text-[#f0f4ff] text-sm">{agent.name}</h3>
-                <div className="flex items-center gap-3 mt-1 text-xs text-[#5a6480]">
+                <div className="flex items-center gap-3 mt-1.5 text-xs text-[#5a6480]">
                   <span className="uppercase tracking-wide">{agent.type}</span>
-                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wide ${
-                    agent.status === 'RUNNING'
-                      ? 'bg-[rgba(0,229,204,0.15)] text-[#00e5cc]'
-                      : agent.status === 'STOPPED'
-                      ? 'bg-[rgba(136,146,176,0.15)] text-[#8892b0]'
-                      : 'bg-[rgba(255,77,77,0.15)] text-[#ff4d4d]'
-                  }`}>
-                    {agent.status}
-                  </span>
+                  <StatusBadge status={agent.status} />
                   {agent.port && <span className="text-[#5a6480]">Port: {agent.port}</span>}
                 </div>
               </div>

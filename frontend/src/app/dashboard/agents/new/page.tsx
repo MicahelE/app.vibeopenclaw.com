@@ -1,11 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { createAgent } from '@/lib/api';
+import { createAgent, getApiKeys } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
 import { PROVIDERS, getProvider } from '@/lib/providers';
+import { Button, PasswordInput, useToast } from '@/components/ui';
+import { capture } from '@/lib/analytics';
 
 const CHANNEL_GUIDES = {
   telegram: {
@@ -78,10 +80,32 @@ export default function NewAgentPage() {
   const [slackToken, setSlackToken] = useState('');
   const [expandedChannel, setExpandedChannel] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [apiKeys, setApiKeys] = useState<{ provider: string }[]>([]);
   const router = useRouter();
+  const { error: toastError, success } = useToast();
   const { user } = useAuth();
   const isPremium = user?.plan_tier?.toLowerCase() === 'premium';
+
+  useEffect(() => {
+    capture('agent_create_started');
+  }, []);
+
+  useEffect(() => {
+    if (step !== 'confirm') return;
+    let cancelled = false;
+    getApiKeys()
+      .then((data) => {
+        if (!cancelled) setApiKeys(Array.isArray(data) ? data : []);
+      })
+      .catch(() => {
+        if (!cancelled) setApiKeys([]);
+      });
+    return () => { cancelled = true; };
+  }, [step]);
+
+  const hasMatchingKey = apiKeys.some(
+    (k) => k.provider?.toLowerCase() === modelProvider.toLowerCase()
+  );
 
   const steps: { key: Step; label: string; num: number }[] = [
     { key: 'type', label: 'Agent Type', num: 1 },
@@ -93,10 +117,9 @@ export default function NewAgentPage() {
   const currentStepIndex = steps.findIndex((s) => s.key === step);
 
   async function handleSubmit() {
-    setError('');
     setLoading(true);
     try {
-      await createAgent({
+      const res = await createAgent({
         name,
         agent_type: agentType,
         model_provider: modelProvider,
@@ -105,9 +128,12 @@ export default function NewAgentPage() {
         discord_token: discordToken || undefined,
         slack_token: slackToken || undefined,
       });
-      router.push('/dashboard');
+      capture('agent_created', { agentType, modelProvider });
+      success('Agent created — deploying now');
+      const id = res?.id;
+      router.push(id ? `/dashboard/agents/${id}` : '/dashboard');
     } catch (err: any) {
-      setError(err.message || 'Failed to create agent');
+      toastError(err.message || 'Failed to create agent');
     } finally {
       setLoading(false);
     }
@@ -157,12 +183,6 @@ export default function NewAgentPage() {
           </div>
         ))}
       </div>
-
-      {error && (
-        <div className="bg-[rgba(255,77,77,0.15)] text-[#ff4d4d] p-3 rounded-xl mb-4 text-sm border border-[rgba(255,77,77,0.3)]">
-          {error}
-        </div>
-      )}
 
       {/* Step 1: Agent Type & Name */}
       {step === 'type' && (
@@ -220,14 +240,13 @@ export default function NewAgentPage() {
           </div>
 
           <div className="flex justify-end mt-6">
-            <button
+            <Button
+              variant="primary"
               onClick={nextStep}
               disabled={!name || (agentType === 'HERMES' && !isPremium)}
-              className="px-6 py-2.5 rounded-xl text-white font-semibold text-sm transition-all hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(255,77,77,0.35)] disabled:opacity-40 disabled:hover:translate-y-0 disabled:hover:shadow-none"
-              style={{ fontFamily: '"Clash Display", system-ui, sans-serif', background: 'linear-gradient(135deg, #ff4d4d 0%, #991b1b 100%)', boxShadow: '0 4px 20px rgba(255,77,77,0.25)' }}
             >
               Next: Choose Model
-            </button>
+            </Button>
           </div>
         </div>
       )}
@@ -277,16 +296,8 @@ export default function NewAgentPage() {
           </div>
 
           <div className="flex justify-between mt-6">
-            <button onClick={prevStep} className="px-4 py-2.5 border border-[rgba(136,146,176,0.2)] rounded-xl text-[#8892b0] text-sm hover:text-[#f0f4ff] hover:border-[rgba(136,146,176,0.4)] transition-colors">
-              Back
-            </button>
-            <button
-              onClick={nextStep}
-              className="px-6 py-2.5 rounded-xl text-white font-semibold text-sm transition-all hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(255,77,77,0.35)]"
-              style={{ fontFamily: '"Clash Display", system-ui, sans-serif', background: 'linear-gradient(135deg, #ff4d4d 0%, #991b1b 100%)', boxShadow: '0 4px 20px rgba(255,77,77,0.25)' }}
-            >
-              Next: Connect Channels
-            </button>
+            <Button variant="ghost" onClick={prevStep}>Back</Button>
+            <Button variant="primary" onClick={nextStep}>Next: Connect Channels</Button>
           </div>
         </div>
       )}
@@ -359,11 +370,10 @@ export default function NewAgentPage() {
                           </svg>
                         </a>
                       </div>
-                      <input
-                        type="password"
+                      <PasswordInput
+                        className="ph-no-capture"
                         value={tokenValue}
                         onChange={(e) => setToken(e.target.value)}
-                        className="w-full px-4 py-2.5 rounded-xl bg-[rgba(255,255,255,0.05)] border border-[rgba(136,146,176,0.15)] text-[#f0f4ff] placeholder-[#5a6480] text-sm outline-none transition-all focus:border-[#ff4d4d]"
                         placeholder={guide.placeholder}
                       />
                       {tokenValue && (
@@ -383,16 +393,8 @@ export default function NewAgentPage() {
           </div>
 
           <div className="flex justify-between mt-6">
-            <button onClick={prevStep} className="px-4 py-2.5 border border-[rgba(136,146,176,0.2)] rounded-xl text-[#8892b0] text-sm hover:text-[#f0f4ff] hover:border-[rgba(136,146,176,0.4)] transition-colors">
-              Back
-            </button>
-            <button
-              onClick={nextStep}
-              className="px-6 py-2.5 rounded-xl text-white font-semibold text-sm transition-all hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(255,77,77,0.35)]"
-              style={{ fontFamily: '"Clash Display", system-ui, sans-serif', background: 'linear-gradient(135deg, #ff4d4d 0%, #991b1b 100%)', boxShadow: '0 4px 20px rgba(255,77,77,0.25)' }}
-            >
-              Next: Review & Deploy
-            </button>
+            <Button variant="ghost" onClick={prevStep}>Back</Button>
+            <Button variant="primary" onClick={nextStep}>Next: Review &amp; Deploy</Button>
           </div>
         </div>
       )}
@@ -447,25 +449,22 @@ export default function NewAgentPage() {
             </div>
           )}
 
+          {!hasMatchingKey && (
+            <div className="mt-3 p-3 rounded-lg bg-[rgba(255,179,71,0.1)] border border-[rgba(255,179,71,0.3)]">
+              <p className="text-xs text-[#ffce85]">
+                ⚠ You haven&apos;t added a {getProvider(modelProvider)?.label || modelProvider} API key yet — your agent won&apos;t start until you add one.{' '}
+                <Link href="/dashboard/keys" className="text-[#ffb347] underline hover:text-[#ffce85] transition-colors">
+                  Add a key →
+                </Link>
+              </p>
+            </div>
+          )}
+
           <div className="flex justify-between mt-6">
-            <button onClick={prevStep} className="px-4 py-2.5 border border-[rgba(136,146,176,0.2)] rounded-xl text-[#8892b0] text-sm hover:text-[#f0f4ff] hover:border-[rgba(136,146,176,0.4)] transition-colors">
-              Back
-            </button>
-            <button
-              onClick={handleSubmit}
-              disabled={loading}
-              className="px-6 py-2.5 rounded-xl text-white font-semibold text-sm transition-all hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(255,77,77,0.35)] disabled:opacity-50 disabled:hover:translate-y-0"
-              style={{ fontFamily: '"Clash Display", system-ui, sans-serif', background: 'linear-gradient(135deg, #ff4d4d 0%, #991b1b 100%)', boxShadow: '0 4px 20px rgba(255,77,77,0.25)' }}
-            >
-              {loading ? (
-                <span className="flex items-center gap-2">
-                  <span className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  Deploying...
-                </span>
-              ) : (
-                'Deploy Agent'
-              )}
-            </button>
+            <Button variant="ghost" onClick={prevStep}>Back</Button>
+            <Button variant="primary" loading={loading} onClick={handleSubmit}>
+              Deploy Agent
+            </Button>
           </div>
         </div>
       )}

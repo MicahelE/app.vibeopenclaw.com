@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth';
 import { createCheckout, login, register } from '@/lib/api';
+import { Button, Input, PasswordInput } from '@/components/ui';
+import { capture } from '@/lib/analytics';
 
 // FAQ entries — visible HTML below and JSON-LD must stay in sync (Google rich snippet rule).
 const FAQ: { q: string; a: string; href?: string; hrefText?: string }[] = [
@@ -60,9 +62,10 @@ export default function HomePage() {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
   const [name, setName] = useState('');
   const [error, setError] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
   const [loading, setLoading] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<'pro' | 'premium'>('pro');
   const { login: authLogin } = useAuth();
@@ -74,21 +77,45 @@ export default function HomePage() {
     setIsLogin(false);
   }
 
+  function validate(): boolean {
+    let ok = true;
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setEmailError('Enter a valid email address');
+      ok = false;
+    }
+    // Only enforce length on signup; login just needs a non-empty password.
+    if (!isLogin && password.length < 8) {
+      setPasswordError('Password must be at least 8 characters');
+      ok = false;
+    } else if (!password) {
+      setPasswordError('Enter your password');
+      ok = false;
+    }
+    return ok;
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError('');
+    setEmailError('');
+    setPasswordError('');
+    if (!validate()) return;
     setLoading(true);
     try {
       let res;
       if (isLogin) {
         res = await login(email, password);
         await authLogin(res.access_token);
+        capture('login_succeeded');
         router.push('/dashboard');
       } else {
+        capture('signup_submitted', { plan: selectedPlan });
         res = await register(email, password, name || undefined, selectedPlan);
         await authLogin(res.access_token);
+        capture('signup_succeeded', { plan: selectedPlan });
         const checkout = await createCheckout(selectedPlan);
         if (checkout.checkout_url) {
+          capture('checkout_started', { plan: selectedPlan });
           window.location.href = checkout.checkout_url;
           return;
         }
@@ -614,7 +641,7 @@ export default function HomePage() {
       {/* Auth Modal */}
       {showAuth && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => { setShowAuth(false); setShowPassword(false); }} />
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => { setShowAuth(false); setEmailError(''); setPasswordError(''); }} />
           <div
             className="relative rounded-2xl p-8 w-full max-w-md border border-[rgba(136,146,176,0.15)]"
             style={{
@@ -623,7 +650,7 @@ export default function HomePage() {
             }}
           >
             <button
-              onClick={() => { setShowAuth(false); setShowPassword(false); }}
+              onClick={() => { setShowAuth(false); setEmailError(''); setPasswordError(''); }}
               className="absolute top-4 right-4 text-[#5a6480] hover:text-[#f0f4ff] transition-colors"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
@@ -681,79 +708,41 @@ export default function HomePage() {
                 </div>
               )}
               {!isLogin && (
-                <div>
-                  <label className="block text-sm text-[#8892b0] mb-1.5">Name</label>
-                  <input
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl bg-[rgba(255,255,255,0.05)] border border-[rgba(136,146,176,0.15)] text-[#f0f4ff] placeholder-[#5a6480] text-sm outline-none transition-all focus:border-[#ff4d4d] focus:shadow-[0_0_0_3px_rgba(255,77,77,0.15)]"
-                    placeholder="Your name"
-                  />
-                </div>
-              )}
-              <div>
-                <label className="block text-sm text-[#8892b0] mb-1.5">Email</label>
-                <input
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl bg-[rgba(255,255,255,0.05)] border border-[rgba(136,146,176,0.15)] text-[#f0f4ff] placeholder-[#5a6480] text-sm outline-none transition-all focus:border-[#ff4d4d] focus:shadow-[0_0_0_3px_rgba(255,77,77,0.15)]"
-                  placeholder="you@example.com"
+                <Input
+                  label="Name"
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Your name"
                 />
-              </div>
-              <div>
-                <label className="block text-sm text-[#8892b0] mb-1.5">Password</label>
-                <div className="relative">
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="w-full px-4 py-3 pr-11 rounded-xl bg-[rgba(255,255,255,0.05)] border border-[rgba(136,146,176,0.15)] text-[#f0f4ff] placeholder-[#5a6480] text-sm outline-none transition-all focus:border-[#ff4d4d] focus:shadow-[0_0_0_3px_rgba(255,77,77,0.15)]"
-                    placeholder="Min 8 characters"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword((s) => !s)}
-                    aria-label={showPassword ? 'Hide password' : 'Show password'}
-                    aria-pressed={showPassword}
-                    tabIndex={-1}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#5a6480] hover:text-[#8892b0] transition-colors"
-                  >
-                    {showPassword ? (
-                      <svg className="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
-                        <line x1="1" y1="1" x2="23" y2="23" />
-                      </svg>
-                    ) : (
-                      <svg className="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                        <circle cx="12" cy="12" r="3" />
-                      </svg>
-                    )}
-                  </button>
-                </div>
-              </div>
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full py-3.5 rounded-xl text-white font-semibold text-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(255,77,77,0.35)] active:translate-y-0 disabled:opacity-50 disabled:hover:translate-y-0"
-                style={{
-                  fontFamily: '"Clash Display", system-ui, sans-serif',
-                  background: 'linear-gradient(135deg, #ff4d4d 0%, #991b1b 100%)',
-                  boxShadow: '0 4px 20px rgba(255,77,77,0.25)',
-                }}
-              >
-                {loading ? 'Please wait...' : isLogin ? 'Sign In' : 'Create Account & Pay'}
-              </button>
+              )}
+              <Input
+                label="Email"
+                type="email"
+                required
+                value={email}
+                error={emailError}
+                onChange={(e) => { setEmail(e.target.value); if (emailError) setEmailError(''); if (error) setError(''); }}
+                placeholder="you@example.com"
+              />
+              <PasswordInput
+                label="Password"
+                required
+                value={password}
+                error={passwordError}
+                onChange={(e) => { setPassword(e.target.value); if (passwordError) setPasswordError(''); if (error) setError(''); }}
+                placeholder={isLogin ? 'Your password' : 'Min 8 characters'}
+                className="ph-no-capture"
+              />
+              <Button type="submit" loading={loading} fullWidth size="lg">
+                {loading ? 'Please wait…' : isLogin ? 'Sign In' : 'Create Account & Pay'}
+              </Button>
             </form>
 
             <p className="text-center mt-4 text-sm text-[#5a6480]">
               {isLogin ? "Don't have an account? " : "Already have an account? "}
               <button
-                onClick={() => setIsLogin(!isLogin)}
+                onClick={() => { setIsLogin(!isLogin); setError(''); setEmailError(''); setPasswordError(''); }}
                 className="text-[#ff4d4d] hover:underline font-medium"
               >
                 {isLogin ? 'Sign Up' : 'Sign In'}

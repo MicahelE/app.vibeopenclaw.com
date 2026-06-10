@@ -1,10 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { confirmCheckout } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
+import { capture } from '@/lib/analytics';
+import { ButtonLink, Spinner, FONT_DISPLAY } from '@/components/ui';
 
 export default function SuccessClient({ checkoutId }: { checkoutId?: string }) {
   const router = useRouter();
@@ -28,9 +29,10 @@ export default function SuccessClient({ checkoutId }: { checkoutId?: string }) {
       .then(async (res) => {
         if (res.active) {
           await refreshUser();
+          capture('checkout_succeeded');
           setStatus('active');
           setMessage('Payment confirmed. Redirecting to your dashboard...');
-          setTimeout(() => router.push('/dashboard'), 900);
+          setTimeout(() => router.push('/dashboard'), 2500);
           return;
         }
         setStatus('pending');
@@ -47,25 +49,23 @@ export default function SuccessClient({ checkoutId }: { checkoutId?: string }) {
       <div className="stars" />
       <div className="nebula" />
       <div className="relative z-10 glass-card rounded-2xl p-8 border border-[rgba(136,146,176,0.15)] max-w-md w-full text-center">
-        <div className={`w-10 h-10 mx-auto mb-5 rounded-full border-2 ${
-          status === 'active' ? 'border-[#00e5cc]' : status === 'error' ? 'border-[#ff4d4d]' : 'border-[#8892b0] border-t-transparent animate-spin'
-        }`} />
-        <h1 className="text-xl font-bold mb-2" style={{ fontFamily: '"Clash Display", system-ui, sans-serif' }}>
+        <div className="mb-5 flex justify-center">
+          {status === 'checking' ? (
+            <Spinner size="lg" />
+          ) : (
+            <div
+              className={`w-10 h-10 rounded-full border-2 ${
+                status === 'active' ? 'border-[#00e5cc]' : 'border-[#ff4d4d]'
+              }`}
+            />
+          )}
+        </div>
+        <h1 className="text-xl font-bold mb-2" style={{ fontFamily: FONT_DISPLAY }}>
           {status === 'active' ? 'Payment Confirmed' : status === 'error' ? 'Payment Check Failed' : 'Checking Payment'}
         </h1>
         <p className="text-sm text-[#8892b0] mb-6">{message}</p>
-        {status !== 'checking' && status !== 'active' && (
-          <Link
-            href="/dashboard/billing"
-            className="inline-flex px-5 py-2.5 rounded-xl text-white font-semibold text-sm"
-            style={{
-              fontFamily: '"Clash Display", system-ui, sans-serif',
-              background: 'linear-gradient(135deg, #ff4d4d 0%, #991b1b 100%)',
-            }}
-          >
-            Back to Billing
-          </Link>
-        )}
+        {status === 'pending' && <ButtonLink href="/dashboard">Go to dashboard</ButtonLink>}
+        {status === 'error' && <ButtonLink href="/dashboard/billing">Back to billing</ButtonLink>}
       </div>
     </div>
   );
