@@ -211,7 +211,7 @@ export default function AgentDetailPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4 text-xs">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
           <div className="flex justify-between py-2 border-b border-[rgba(136,146,176,0.1)]">
             <span className="text-[#8892b0]">Model Provider</span>
             <span className="text-[#f0f4ff] capitalize">{agent.model_provider}</span>

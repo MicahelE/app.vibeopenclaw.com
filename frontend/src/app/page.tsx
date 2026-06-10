@@ -643,7 +643,7 @@ export default function HomePage() {
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => { setShowAuth(false); setEmailError(''); setPasswordError(''); }} />
           <div
-            className="relative rounded-2xl p-8 w-full max-w-md border border-[rgba(136,146,176,0.15)]"
+            className="relative rounded-2xl p-8 w-full max-w-md border border-[rgba(136,146,176,0.15)] max-h-[90vh] overflow-y-auto"
             style={{
               background: 'rgba(10, 15, 26, 0.9)',
               backdropFilter: 'blur(20px)',
