@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth';
-import { createCheckout, login, register } from '@/lib/api';
+import { login, register } from '@/lib/api';
 import { Button, Input, PasswordInput } from '@/components/ui';
 import { capture } from '@/lib/analytics';
 
@@ -113,13 +113,8 @@ export default function HomePage() {
         res = await register(email, password, name || undefined, selectedPlan);
         await authLogin(res.access_token);
         capture('signup_succeeded', { plan: selectedPlan });
-        const checkout = await createCheckout(selectedPlan);
-        if (checkout.checkout_url) {
-          capture('checkout_started', { plan: selectedPlan });
-          window.location.href = checkout.checkout_url;
-          return;
-        }
-        router.push('/dashboard/billing');
+        // Let users into the product first; they subscribe when they deploy.
+        router.push('/dashboard');
       }
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Something went wrong');
@@ -144,15 +139,15 @@ export default function HomePage() {
               <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full drop-shadow-[0_0_40px_rgba(255,77,77,0.4)]">
                 <defs>
                   <linearGradient id="lobster-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stop-color="#ff4d4d"/>
-                    <stop offset="100%" stop-color="#991b1b"/>
+                    <stop offset="0%" stopColor="#ff4d4d"/>
+                    <stop offset="100%" stopColor="#991b1b"/>
                   </linearGradient>
                 </defs>
                 <path d="M60 10 C30 10 15 35 15 55 C15 75 30 95 45 100 L45 110 L55 110 L55 100 C55 100 60 102 65 100 L65 110 L75 110 L75 100 C90 95 105 75 105 55 C105 35 90 10 60 10Z" fill="url(#lobster-gradient)"/>
                 <path d="M20 45 C5 40 0 50 5 60 C10 70 20 65 25 55 C28 48 25 45 20 45Z" fill="url(#lobster-gradient)"/>
                 <path d="M100 45 C115 40 120 50 115 60 C110 70 100 65 95 55 C92 48 95 45 100 45Z" fill="url(#lobster-gradient)"/>
-                <path d="M45 15 Q35 5 30 8" stroke="#ff4d4d" stroke-width="3" stroke-linecap="round"/>
-                <path d="M75 15 Q85 5 90 8" stroke="#ff4d4d" stroke-width="3" stroke-linecap="round"/>
+                <path d="M45 15 Q35 5 30 8" stroke="#ff4d4d" strokeWidth="3" strokeLinecap="round"/>
+                <path d="M75 15 Q85 5 90 8" stroke="#ff4d4d" strokeWidth="3" strokeLinecap="round"/>
                 <circle cx="45" cy="35" r="6" fill="#050810"/>
                 <circle cx="75" cy="35" r="6" fill="#050810"/>
                 <circle cx="46" cy="34" r="2.5" fill="#00e5cc"/>
@@ -160,19 +155,19 @@ export default function HomePage() {
               </svg>
             </div>
           </div>
+          <p
+            className="text-[#8892b0] text-xs md:text-sm mb-4"
+            style={{ fontFamily: '"Clash Display", system-ui, sans-serif', fontWeight: 600, letterSpacing: '0.22em', textTransform: 'uppercase' }}
+          >
+            VibeOpenClaw
+          </p>
+
           <h1
-            className="text-[clamp(3rem,10vw,4.5rem)] font-bold tracking-[-0.03em] leading-none mb-4"
+            className="text-[clamp(2.5rem,8vw,4rem)] font-bold tracking-[-0.03em] leading-[1.05] mb-5"
             style={{ fontFamily: '"Clash Display", system-ui, sans-serif' }}
           >
-            <span className="gradient-text animate-gradient-shift">VibeOpenClaw</span>
+            <span className="gradient-text animate-gradient-shift">Host OpenClaw &amp; Hermes agents in one click</span>
           </h1>
-
-          <p
-            className="text-[#8892b0] text-lg md:text-xl max-w-xl mx-auto mb-2"
-            style={{ fontFamily: '"Clash Display", system-ui, sans-serif', fontWeight: 500, letterSpacing: '0.15em', textTransform: 'uppercase' }}
-          >
-            Host AI Agents in One Click
-          </p>
 
           <p className="text-[#8892b0] text-base md:text-lg leading-relaxed max-w-2xl mx-auto mb-10">
             Managed hosting for <strong className="text-[#f0f4ff]">OpenClaw</strong> and <strong className="text-[#f0f4ff]">Hermes</strong> AI agents. Deploy to Docker-isolated containers with BYOK model support, Telegram &amp; Discord integrations, and automatic SSL. No infrastructure headaches.
@@ -214,6 +209,23 @@ export default function HomePage() {
               <span className="w-1.5 h-1.5 rounded-full bg-[#00e5cc]" />
               HTTPS Included
             </span>
+          </div>
+
+          {/* Social proof — Product Hunt */}
+          <div className="mt-8 flex justify-center">
+            <a
+              href="https://www.producthunt.com/products/vibeopenclaw?embed=true&utm_source=badge-featured&utm_medium=badge&utm_campaign=badge-vibeopenclaw"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                alt="VibeOpenClaw - Host OpenClaw & Hermes AI agents in one click | Product Hunt"
+                width={250}
+                height={54}
+                src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1166596&theme=light&t=1780996614488"
+              />
+            </a>
           </div>
         </section>
 
@@ -607,7 +619,7 @@ export default function HomePage() {
         {/* Footer */}
         <footer className="mt-auto text-center py-8 border-t border-[rgba(136,146,176,0.15)]">
           <div className="flex items-center justify-center gap-2 mb-4">
-            <div className="w-6 h-6"><svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full"><defs><linearGradient id="foot-logo" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#ff4d4d"/><stop offset="100%" stop-color="#991b1b"/></linearGradient></defs><path d="M60 10 C30 10 15 35 15 55 C15 75 30 95 45 100 L45 110 L55 110 L55 100 C55 100 60 102 65 100 L65 110 L75 110 L75 100 C90 95 105 75 105 55 C105 35 90 10 60 10Z" fill="url(#foot-logo)"/><path d="M20 45 C5 40 0 50 5 60 C10 70 20 65 25 55 C28 48 25 45 20 45Z" fill="url(#foot-logo)"/><path d="M100 45 C115 40 120 50 115 60 C110 70 100 65 95 55 C92 48 95 45 100 45Z" fill="url(#foot-logo)"/><circle cx="45" cy="35" r="6" fill="#050810"/><circle cx="75" cy="35" r="6" fill="#050810"/><circle cx="46" cy="34" r="2.5" fill="#00e5cc"/><circle cx="76" cy="34" r="2.5" fill="#00e5cc"/></svg></div>
+            <div className="w-6 h-6"><svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full"><defs><linearGradient id="foot-logo" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#ff4d4d"/><stop offset="100%" stopColor="#991b1b"/></linearGradient></defs><path d="M60 10 C30 10 15 35 15 55 C15 75 30 95 45 100 L45 110 L55 110 L55 100 C55 100 60 102 65 100 L65 110 L75 110 L75 100 C90 95 105 75 105 55 C105 35 90 10 60 10Z" fill="url(#foot-logo)"/><path d="M20 45 C5 40 0 50 5 60 C10 70 20 65 25 55 C28 48 25 45 20 45Z" fill="url(#foot-logo)"/><path d="M100 45 C115 40 120 50 115 60 C110 70 100 65 95 55 C92 48 95 45 100 45Z" fill="url(#foot-logo)"/><circle cx="45" cy="35" r="6" fill="#050810"/><circle cx="75" cy="35" r="6" fill="#050810"/><circle cx="46" cy="34" r="2.5" fill="#00e5cc"/><circle cx="76" cy="34" r="2.5" fill="#00e5cc"/></svg></div>
             <span className="text-[#f0f4ff] font-semibold text-sm" style={{ fontFamily: '"Clash Display", system-ui, sans-serif' }}>VibeOpenClaw</span>
           </div>
           <p className="text-[#5a6480] text-xs mb-4">Managed hosting for OpenClaw &amp; Hermes AI agents</p>
@@ -662,7 +674,7 @@ export default function HomePage() {
               {isLogin ? 'Welcome Back' : 'Get Started'}
             </h2>
             <p className="text-[#5a6480] text-center text-sm mb-6">
-              {isLogin ? 'Sign in to manage your agents' : 'Create your account, then complete Polar checkout'}
+              {isLogin ? 'Sign in to manage your agents' : 'Create your account free — explore the dashboard, subscribe when you deploy'}
             </p>
 
             {error && (
@@ -671,7 +683,7 @@ export default function HomePage() {
               </div>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} noValidate className="space-y-4">
               {!isLogin && (
                 <div>
                   <label className="block text-sm text-[#8892b0] mb-1.5">Plan</label>
@@ -735,7 +747,7 @@ export default function HomePage() {
                 className="ph-no-capture"
               />
               <Button type="submit" loading={loading} fullWidth size="lg">
-                {loading ? 'Please wait…' : isLogin ? 'Sign In' : 'Create Account & Pay'}
+                {loading ? 'Please wait…' : isLogin ? 'Sign In' : 'Create Account'}
               </Button>
             </form>
 

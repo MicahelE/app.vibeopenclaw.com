@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { createAgent, getApiKeys } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
 import { PROVIDERS, getProvider } from '@/lib/providers';
-import { Button, PasswordInput, useToast } from '@/components/ui';
+import { Button, ButtonLink, PasswordInput, useToast } from '@/components/ui';
 import { capture } from '@/lib/analytics';
 
 const CHANNEL_GUIDES = {
@@ -149,6 +149,29 @@ export default function NewAgentPage() {
     if (step === 'model') setStep('type');
     else if (step === 'channels') setStep('model');
     else if (step === 'confirm') setStep('channels');
+  }
+
+  // Agent creation requires an active subscription (also enforced by the API, 402).
+  // Show a graceful prompt rather than letting the user fill the whole wizard first.
+  if (user && user.subscription_status !== 'ACTIVE') {
+    return (
+      <div className="max-w-2xl">
+        <h1 className="text-xl font-bold text-[#f0f4ff] mb-2" style={{ fontFamily: '"Clash Display", system-ui, sans-serif' }}>
+          Create New Agent
+        </h1>
+        <p className="text-sm text-[#5a6480] mb-6">Set up your AI agent in a few simple steps.</p>
+        <div className="glass-card rounded-2xl border border-[rgba(136,146,176,0.15)] p-8 text-center">
+          <p className="text-[#f0f4ff] font-semibold mb-1" style={{ fontFamily: '"Clash Display", system-ui, sans-serif' }}>
+            Choose a plan to deploy
+          </p>
+          <p className="text-[#8892b0] text-sm mb-5 max-w-sm mx-auto">
+            Deploying an agent needs an active plan — Pro ($24/mo) or Premium ($48/mo).
+            You keep BYOK, so you only pay your model provider for inference.
+          </p>
+          <ButtonLink href="/dashboard/billing" size="md">Choose a plan →</ButtonLink>
+        </div>
+      </div>
+    );
   }
 
   return (

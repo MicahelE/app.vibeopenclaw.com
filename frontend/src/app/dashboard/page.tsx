@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { getAgents } from '@/lib/api';
+import { useAuth } from '@/lib/auth';
 import { ButtonLink, StatusBadge, EmptyState, SkeletonCards, FONT_DISPLAY } from '@/components/ui';
 
 interface Agent {
@@ -14,6 +15,8 @@ interface Agent {
 }
 
 export default function DashboardPage() {
+  const { user } = useAuth();
+  const subscribed = user?.subscription_status === 'ACTIVE';
   const [agents, setAgents] = useState<Agent[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -56,8 +59,8 @@ export default function DashboardPage() {
         <h1 className="text-xl font-bold text-[#f0f4ff]" style={{ fontFamily: FONT_DISPLAY }}>
           Your Agents
         </h1>
-        <ButtonLink href="/dashboard/agents/new" size="md">
-          + New Agent
+        <ButtonLink href={subscribed ? '/dashboard/agents/new' : '/dashboard/billing'} size="md">
+          {subscribed ? '+ New Agent' : 'Subscribe to deploy'}
         </ButtonLink>
       </div>
 
@@ -71,9 +74,17 @@ export default function DashboardPage() {
         <SkeletonCards count={3} />
       ) : agents.length === 0 ? (
         <EmptyState
-          title="No agents yet"
-          body="Deploy your first OpenClaw or Hermes agent — pick a model, add a channel, and it's live in about 30 seconds."
-          action={{ label: '+ Create your first agent', href: '/dashboard/agents/new' }}
+          title={subscribed ? 'No agents yet' : 'Deploy your first agent'}
+          body={
+            subscribed
+              ? "Deploy your first OpenClaw or Hermes agent — pick a model, add a channel, and it's live in about 30 seconds."
+              : 'Your account is ready. Choose a plan to deploy your first OpenClaw or Hermes agent — Docker-isolated, BYOK, live in about 30 seconds.'
+          }
+          action={
+            subscribed
+              ? { label: '+ Create your first agent', href: '/dashboard/agents/new' }
+              : { label: 'Choose a plan →', href: '/dashboard/billing' }
+          }
         />
       ) : (
         <div className="grid gap-3">

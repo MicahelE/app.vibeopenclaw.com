@@ -18,12 +18,10 @@ export default function DashboardLayout({
   useEffect(() => {
     if (!isLoading && !user) {
       router.push('/');
-      return;
     }
-    if (!isLoading && user && user.subscription_status !== 'ACTIVE' && !pathname.startsWith('/dashboard/billing')) {
-      router.push('/dashboard/billing');
-    }
-  }, [isLoading, pathname, user, router]);
+    // Note: unsubscribed users are allowed into the dashboard so they can see the
+    // product first. Agent *creation* is gated separately (UI prompt + API 402).
+  }, [isLoading, user, router]);
 
   if (isLoading) {
     return (
@@ -57,7 +55,7 @@ export default function DashboardLayout({
           <div className="max-w-6xl mx-auto px-4">
             <div className="flex items-center justify-between gap-x-4 gap-y-2 flex-wrap py-2 min-h-14">
               <Link href="/dashboard" className={`flex items-center gap-2 ${focusRing}`}>
-                <div className="w-6 h-6"><svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full"><defs><linearGradient id="nav-logo" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#ff4d4d"/><stop offset="100%" stop-color="#991b1b"/></linearGradient></defs><path d="M60 10 C30 10 15 35 15 55 C15 75 30 95 45 100 L45 110 L55 110 L55 100 C55 100 60 102 65 100 L65 110 L75 110 L75 100 C90 95 105 75 105 55 C105 35 90 10 60 10Z" fill="url(#nav-logo)"/><path d="M20 45 C5 40 0 50 5 60 C10 70 20 65 25 55 C28 48 25 45 20 45Z" fill="url(#nav-logo)"/><path d="M100 45 C115 40 120 50 115 60 C110 70 100 65 95 55 C92 48 95 45 100 45Z" fill="url(#nav-logo)"/><circle cx="45" cy="35" r="6" fill="#050810"/><circle cx="75" cy="35" r="6" fill="#050810"/><circle cx="46" cy="34" r="2.5" fill="#00e5cc"/><circle cx="76" cy="34" r="2.5" fill="#00e5cc"/></svg></div>
+                <div className="w-6 h-6"><svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full"><defs><linearGradient id="nav-logo" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#ff4d4d"/><stop offset="100%" stopColor="#991b1b"/></linearGradient></defs><path d="M60 10 C30 10 15 35 15 55 C15 75 30 95 45 100 L45 110 L55 110 L55 100 C55 100 60 102 65 100 L65 110 L75 110 L75 100 C90 95 105 75 105 55 C105 35 90 10 60 10Z" fill="url(#nav-logo)"/><path d="M20 45 C5 40 0 50 5 60 C10 70 20 65 25 55 C28 48 25 45 20 45Z" fill="url(#nav-logo)"/><path d="M100 45 C115 40 120 50 115 60 C110 70 100 65 95 55 C92 48 95 45 100 45Z" fill="url(#nav-logo)"/><circle cx="45" cy="35" r="6" fill="#050810"/><circle cx="75" cy="35" r="6" fill="#050810"/><circle cx="46" cy="34" r="2.5" fill="#00e5cc"/><circle cx="76" cy="34" r="2.5" fill="#00e5cc"/></svg></div>
                 <span className="font-bold text-base text-[#f0f4ff]" style={{ fontFamily: '"Clash Display", system-ui, sans-serif' }}>VibeOpenClaw</span>
               </Link>
               <div className="flex items-center flex-wrap gap-x-5 gap-y-2">
