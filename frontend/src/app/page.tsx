@@ -390,7 +390,7 @@ export default function HomePage() {
         </section>
 
         {/* Pricing */}
-        <section className="mb-14">
+        <section id="pricing" className="mb-14 scroll-mt-24">
           <div className="text-center mb-10">
             <h2
               className="text-2xl md:text-3xl font-semibold text-[#f0f4ff] mb-3"

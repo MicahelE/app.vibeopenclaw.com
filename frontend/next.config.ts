@@ -3,6 +3,13 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   output: 'standalone',
   serverExternalPackages: ['dockerode', 'pg'],
+  async redirects() {
+    // /pricing is a common direct hit (seen in Caddy access logs) but the
+    // pricing section lives on the homepage — redirect instead of 404ing.
+    return [
+      { source: '/pricing', destination: '/#pricing', permanent: true },
+    ];
+  },
   async headers() {
     const noindex = {
       key: 'X-Robots-Tag',
