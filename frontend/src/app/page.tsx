@@ -411,7 +411,7 @@ export default function HomePage() {
               Simple Pricing
             </h2>
             <p className="text-[#5a6480] text-sm md:text-base">
-              No free trials. No hidden fees. Pay only for what you need.
+              Start free — pay only when you deploy. No hidden fees.
             </p>
           </div>
 
@@ -475,9 +475,8 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Testimonials — REVIEW: quotes below are drafted placeholders for two real
-            users (Peace, Michael). Confirm/replace wording with their actual words
-            before relying on this for trust. Do NOT add more entries unless they are real. */}
+        {/* Testimonials — confirmed accurate by the site owner (Peace, Michael are real
+            users; wording approved). Do NOT add more entries unless they are real. */}
         <section className="mb-14">
           <div className="text-center mb-8">
             <h2
@@ -490,14 +489,12 @@ export default function HomePage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5 max-w-3xl mx-auto">
             {[
               {
-                // REVIEW: replace with Peace's actual words
                 quote: 'I had a Telegram agent live before my coffee went cold. No VPS, no Docker files. I pasted my key and it just worked. BYOK means I see exactly what I spend on the model.',
                 name: 'Peace',
                 role: 'Digital Fintech Marketer',
                 accent: 'coral' as const,
               },
               {
-                // REVIEW: replace with Michael's actual words
                 quote: 'I deploy agents for clients constantly, and VibeOpenClaw cut the setup from an afternoon to a few minutes. Isolated containers and bring-your-own-keys are exactly what I need to hand something off safely.',
                 name: 'Michael',
                 role: 'Software & Tech Consultant',
