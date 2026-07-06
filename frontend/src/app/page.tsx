@@ -629,7 +629,7 @@ export default function HomePage() {
             <a href="https://github.com/openclaw/openclaw" target="_blank" rel="noopener noreferrer" className="hover:text-[#f0f4ff] transition-colors">OpenClaw</a>
             <a href="https://github.com/NousResearch/hermes-agent" target="_blank" rel="noopener noreferrer" className="hover:text-[#f0f4ff] transition-colors">Hermes Agent</a>
           </div>
-          <div className="mt-6 flex justify-center">
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-4">
             <a
               href="https://www.producthunt.com/products/vibeopenclaw?embed=true&utm_source=badge-featured&utm_medium=badge&utm_campaign=badge-vibeopenclaw"
               target="_blank"
@@ -642,6 +642,10 @@ export default function HomePage() {
                 height={54}
                 src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1166596&theme=light&t=1780996614488"
               />
+            </a>
+            <a href="https://launchbuff.com" target="_blank" rel="noopener noreferrer" title="Featured on LaunchBuff">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="https://launchbuff.com/badge-featured-dark.svg" alt="Featured on LaunchBuff" width={256} height={80} />
             </a>
           </div>
         </footer>
