@@ -8,9 +8,6 @@ const nextConfig: NextConfig = {
     // pricing section lives on the homepage — redirect instead of 404ing.
     return [
       { source: '/pricing', destination: '/#pricing', permanent: true },
-      // Bare /compare 404s (seen in access logs); no index page exists, so send
-      // it to the most-trafficked comparison.
-      { source: '/compare', destination: '/compare/vibeopenclaw-vs-xcloud', permanent: true },
     ];
   },
   async headers() {

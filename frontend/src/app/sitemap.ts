@@ -4,6 +4,8 @@ import { USE_CASES } from '@/content/useCases'
 import { DOCS } from '@/content/docs'
 import { ALTERNATIVES } from '@/content/alternatives'
 import { INTEGRATIONS } from '@/content/integrations'
+import { COMPARE_PAGES } from '@/content/compare'
+import { GLOSSARY } from '@/content/glossary'
 
 const SITE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://app.vibeopenclaw.com'
 
@@ -17,16 +19,6 @@ const BLOG_SLUGS = [
   'how-to-deploy-hermes-agent',
   'byok-ai-agent-platform',
   'openclaw-hosting-alternatives',
-]
-
-const COMPARE_SLUGS = [
-  'openclaw-vs-hermes',
-  'vibeopenclaw-vs-xcloud',
-  'vibeopenclaw-vs-myclaw',
-  'vibeopenclaw-vs-oneclaw',
-  'vibeopenclaw-vs-digitalocean',
-  'vibeopenclaw-vs-railway',
-  'vibeopenclaw-vs-hostinger',
 ]
 
 const OPENCLAW_SUBPAGES = [
@@ -69,7 +61,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...HERMES_CHANNELS.map((c) => e(`/hermes-agent-hosting/${c}`, 0.6)),
 
     // Comparisons
-    ...COMPARE_SLUGS.map((s) => e(`/compare/${s}`, 0.8)),
+    e('/compare', 0.7),
+    ...COMPARE_PAGES.map((c) => e(`/compare/${c.slug}`, 0.8)),
 
     // Blog
     e('/blog', 0.7, 'weekly'),
@@ -78,5 +71,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     // Docs
     e('/docs', 0.6, 'weekly'),
     ...DOCS.map((d) => e(`/docs/${d.slug}`, 0.5)),
+
+    // Glossary
+    e('/glossary', 0.6),
+    ...GLOSSARY.map((g) => e(`/glossary/${g.slug}`, 0.5)),
   ]
 }

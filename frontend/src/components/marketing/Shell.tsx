@@ -26,6 +26,10 @@ export function MarketingShell({
         </nav>
         {children}
         <footer className="mt-16 text-center py-8 border-t border-[rgba(136,146,176,0.15)] text-xs text-[#5a6480]">
+          <div className="flex items-center justify-center gap-5 mb-4">
+            <Link href="/compare" className="hover:text-[#f0f4ff] transition-colors">Compare</Link>
+            <Link href="/glossary" className="hover:text-[#f0f4ff] transition-colors">Glossary</Link>
+          </div>
           <Link href="/" className="hover:text-[#f0f4ff] transition-colors">← Back to VibeOpenClaw</Link>
         </footer>
       </main>
