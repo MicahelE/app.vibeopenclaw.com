@@ -22,6 +22,7 @@ Telegram, Discord, and Slack bot integrations.
 
 - **Pro — $24/month:** 1 OpenClaw agent, 2 GB RAM, BYOK, Telegram & Discord, email support.
 - **Premium — $48/month:** 3 OpenClaw or Hermes agents, 4 GB RAM each, BYOK, all channels including Slack, priority support, usage analytics.
+- Machine-readable pricing: https://app.vibeopenclaw.com/pricing.md
 
 ## Hosting
 
@@ -39,9 +40,14 @@ Telegram, Discord, and Slack bot integrations.
 
 ## Comparisons
 
+- All comparisons: https://app.vibeopenclaw.com/compare
 - OpenClaw vs Hermes Agent — side-by-side comparison: https://app.vibeopenclaw.com/compare/openclaw-vs-hermes
 - VibeOpenClaw vs xCloud: https://app.vibeopenclaw.com/compare/vibeopenclaw-vs-xcloud
 - VibeOpenClaw vs MyClaw: https://app.vibeopenclaw.com/compare/vibeopenclaw-vs-myclaw
+
+## Glossary
+
+- AI agent hosting glossary (BYOK, MCP, Docker isolation, agent skills, model providers, and more): https://app.vibeopenclaw.com/glossary
 
 ## Guides & explainers
 
