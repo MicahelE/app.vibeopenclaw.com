@@ -68,6 +68,12 @@ export default function BestProvidersPage() {
               or <Link href="/hermes-agent-hosting" className="text-[#00e5cc] hover:underline">Hermes hosting</Link>.
             </p>
           )}
+          {p.id === 'diy-vps' && (
+            <p className="text-sm text-[#c8d0e0] mt-2">
+              → Running a Hostinger VPS specifically? See{' '}
+              <Link href="/compare/vibeopenclaw-vs-hostinger" className="text-[#00e5cc] hover:underline">OpenClaw on Hostinger vs VibeOpenClaw</Link>.
+            </p>
+          )}
         </div>
       ))}
 

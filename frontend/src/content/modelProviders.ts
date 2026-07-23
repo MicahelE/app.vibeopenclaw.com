@@ -76,10 +76,10 @@ export const MODEL_PROVIDERS: ModelProvider[] = [
   },
   {
     slug: 'fireworks', name: 'Fireworks AI', keyUrl: 'https://fireworks.ai/account/api-keys',
-    blurb: 'Fast, production-focused serving of open-weight models.',
-    strengths: 'Fireworks focuses on fast, reliable inference for open models with production-grade uptime, a good pick when you need open-weight models served dependably.',
-    models: 'Hosted open-weight models',
-    whyForAgents: 'Pick Fireworks for production-grade open-model inference behind your OpenClaw agent.',
+    blurb: 'Serverless, pay-per-token serving of popular open-weight models with fast, optimized inference.',
+    strengths: 'Fireworks AI runs a large catalog of open-weight models — including Llama, Mixtral, and Qwen families — on its own optimized inference stack, with serverless pricing so you only pay for tokens used and never provision idle GPU capacity. A strong pick when you want production-grade speed on open models without managing infrastructure.',
+    models: 'Llama, Mixtral, Qwen, and other open-weight model families, served serverless',
+    whyForAgents: 'Pick Fireworks for fast, serverless open-model inference behind your OpenClaw agent — no idle capacity to pay for or manage.',
   },
   {
     slug: 'perplexity', name: 'Perplexity', keyUrl: 'https://www.perplexity.ai/settings/api',

@@ -121,6 +121,13 @@ export default function HermesHostingPage() {
 
       <P>New to the two agents? Read the <a href="/compare/openclaw-vs-hermes" className="text-[#00e5cc] hover:underline">OpenClaw vs Hermes comparison</a> or the <a href="/blog/how-to-deploy-hermes-agent" className="text-[#00e5cc] hover:underline">Hermes deployment guide</a>.</P>
 
+      <H2 id="channels">Connect a channel</H2>
+      <P>
+        Setting up a specific channel? See the <a href="/hermes-agent-hosting/telegram" className="text-[#00e5cc] hover:underline">Telegram</a>,{' '}
+        <a href="/hermes-agent-hosting/discord" className="text-[#00e5cc] hover:underline">Discord</a>, or{' '}
+        <a href="/hermes-agent-hosting/slack" className="text-[#00e5cc] hover:underline">Slack</a> setup guide for step-by-step bot token instructions.
+      </P>
+
       <FaqAccordion faqs={FAQ} />
 
       <Cta title="Deploy your Hermes agent" body="One-click managed Hermes with Docker isolation and BYOK — on Premium at $48/mo." />

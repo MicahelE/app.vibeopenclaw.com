@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { MarketingShell, Breadcrumbs } from '@/components/marketing/Shell';
-import { H2, P, JsonLd } from '@/components/marketing/blocks';
-import { breadcrumbLd, articleLd, jsonLd } from '@/components/marketing/schema';
+import { H2, P, FaqAccordion, JsonLd } from '@/components/marketing/blocks';
+import { breadcrumbLd, articleLd, faqPageLd, jsonLd } from '@/components/marketing/schema';
 import { GLOSSARY, getGlossaryTerm } from '@/content/glossary';
 
 const SITE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://app.vibeopenclaw.com';
@@ -57,10 +57,13 @@ export default async function GlossaryTermPage({ params }: { params: Promise<{ s
         ))}
       </ul>
 
+      {g.faqs && <FaqAccordion faqs={g.faqs} />}
+
       <JsonLd
         data={jsonLd(
           breadcrumbLd([{ name: 'Home', path: '/' }, { name: 'Glossary', path: '/glossary' }, { name: g.term, path }]),
           articleLd({ headline: `What is ${g.term}?`, description: g.shortDef, path, datePublished: PUBLISHED }),
+          ...(g.faqs ? [faqPageLd(g.faqs)] : []),
         )}
       />
     </MarketingShell>

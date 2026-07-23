@@ -131,7 +131,7 @@ export default function Page() {
             <li><strong className="text-[#f0f4ff]">Multiple agents in production:</strong> Either DIY (if you already have the ops muscle) or VibeOpenClaw Premium ($48/month, 3 agents, 4&nbsp;GB each). MyClaw is harder to recommend at this scale.</li>
           </ul>
           <p>
-            Related reading: <Link href="/compare/openclaw-vs-hermes" className="text-[#00e5cc] hover:underline">OpenClaw vs Hermes Agent</Link>, <Link href="/blog/byok-ai-agent-platform" className="text-[#00e5cc] hover:underline">what BYOK actually buys you</Link>, and the <Link href="/blog/how-to-deploy-hermes-agent" className="text-[#00e5cc] hover:underline">Hermes deployment walkthrough</Link>.
+            Related reading: <Link href="/compare/openclaw-vs-hermes" className="text-[#00e5cc] hover:underline">OpenClaw vs Hermes Agent</Link>, <Link href="/blog/byok-ai-agent-platform" className="text-[#00e5cc] hover:underline">what BYOK actually buys you</Link>, the <Link href="/blog/how-to-deploy-hermes-agent" className="text-[#00e5cc] hover:underline">Hermes deployment walkthrough</Link>, and <Link href="/compare/vibeopenclaw-vs-hostinger" className="text-[#00e5cc] hover:underline">OpenClaw on a Hostinger VPS vs VibeOpenClaw</Link>.
           </p>
 
           <h2 className="text-2xl font-bold text-[#f0f4ff] mt-10 mb-4" style={{ fontFamily: '"Clash Display", system-ui, sans-serif' }}>

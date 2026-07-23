@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { MarketingShell, Breadcrumbs } from '@/components/marketing/Shell';
-import { Hero, ComparisonTable, FaqAccordion, Cta, H2, P, Sources, JsonLd } from '@/components/marketing/blocks';
+import { Hero, StatBar, ComparisonTable, PricingCards, FaqAccordion, Cta, H2, P, Sources, JsonLd } from '@/components/marketing/blocks';
 import { breadcrumbLd, faqPageLd, articleLd, jsonLd, type Faq } from '@/components/marketing/schema';
 
 const SITE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://app.vibeopenclaw.com';
@@ -37,6 +37,18 @@ const FAQ: Faq[] = [
   {
     q: 'What about security and key handling?',
     a: 'On VibeOpenClaw every agent runs in its own dedicated Docker container, and your provider API keys are encrypted at rest with AES-256-GCM and only decrypted in-process for model calls. On a Hostinger VPS, isolation and secret handling are whatever you configure on the server — the platform gives you a machine, but hardening it, encrypting secrets, and keeping it patched are your responsibility.',
+  },
+  {
+    q: 'Can you run OpenClaw on Hostinger?',
+    a: 'Yes. Hostinger sells VPS plans and publishes its own OpenClaw setup tutorials, so you can install and run OpenClaw on a Hostinger VPS. You\'ll be doing the install, Docker setup, SSL, and ongoing operations yourself — it\'s a capable VPS, not a managed agent platform.',
+  },
+  {
+    q: 'Is Hostinger a good VPS for OpenClaw?',
+    a: 'It\'s a reasonable budget option if you want to self-host and don\'t mind the ops work: install Docker, configure SSL, and keep OpenClaw updated and running yourself. If you\'d rather skip server administration entirely, a managed host like VibeOpenClaw removes that work at a higher flat monthly price.',
+  },
+  {
+    q: 'How do I install OpenClaw on a Hostinger VPS?',
+    a: 'The short version: provision a Hostinger VPS, SSH in, install Docker, pull and run the OpenClaw image, configure your model provider key and channel token, then put SSL in front of it (Hostinger\'s own tutorials walk through this in detail). On VibeOpenClaw, the equivalent is picking OpenClaw, pasting a key and token, and clicking Create — no VPS or Docker step required.',
   },
   {
     q: 'Which should I choose?',
@@ -76,6 +88,15 @@ export default function VibeOpenClawVsHostingerPage() {
         }
       />
 
+      <StatBar
+        stats={[
+          { value: '~30s', label: 'to first agent' },
+          { value: '$24', label: 'flat / mo' },
+          { value: '13', label: 'BYOK model providers' },
+          { value: 'AES-256', label: 'key encryption' },
+        ]}
+      />
+
       <H2 id="verdict">The short verdict</H2>
       <P>
         This comparison comes down to managed versus do-it-yourself. VibeOpenClaw is built specifically for AI
@@ -108,6 +129,15 @@ export default function VibeOpenClawVsHostingerPage() {
         attractive. But that price buys a bare server, not a running agent. To turn it into working OpenClaw you
         invest your own time in setup and ongoing operations, and any value you save on the monthly fee you spend
         in ops. VibeOpenClaw’s flat price bundles the managed runtime so there’s no hidden time cost.
+      </P>
+      <PricingCards />
+
+      <H2 id="hostinger-vps">Running OpenClaw on a Hostinger VPS</H2>
+      <P>
+        If you already have a Hostinger VPS, you can run OpenClaw on it yourself: SSH in, install Docker, pull and
+        run the OpenClaw image, add your model provider key and channel token, then put SSL in front of it.
+        Hostinger publishes its own OpenClaw setup tutorials that walk through this. It works — it&apos;s server
+        administration you take on, rather than a managed deploy you click through in about 30 seconds.
       </P>
 
       <H2 id="ops-isolation">Operations and isolation</H2>

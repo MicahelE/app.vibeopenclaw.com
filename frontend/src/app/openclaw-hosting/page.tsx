@@ -1,8 +1,10 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { MarketingShell, Breadcrumbs } from '@/components/marketing/Shell';
 import { Hero, StatBar, FeatureGrid, ComparisonTable, FaqAccordion, PricingCards, Cta, H2, P, Sources, JsonLd } from '@/components/marketing/blocks';
 import { breadcrumbLd, faqPageLd, serviceLd, jsonLd, type Faq } from '@/components/marketing/schema';
 import { PLANS } from '@/content/pricing';
+import { MODEL_PROVIDERS } from '@/content/modelProviders';
 
 const SITE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://app.vibeopenclaw.com';
 const PATH = '/openclaw-hosting';
@@ -146,15 +148,29 @@ export default function OpenClawHostingPage() {
       <P>Most managed OpenClaw hosts get you a one-click deploy. Two things set VibeOpenClaw apart: we run <strong className="text-[#f0f4ff]">both OpenClaw and Hermes</strong>, and every agent gets its own Docker container with keys encrypted at rest. Here’s how the options compare (figures as of June 2026 — see the comparison pages for detail).</P>
       <ComparisonTable cols={['VibeOpenClaw', 'xCloud', 'MyClaw', 'DIY VPS']} rows={VS_COMPETITORS} highlightCol={0} />
       <P>
-        Prefer a head-to-head? See <a href="/compare/vibeopenclaw-vs-xcloud" className="text-[#00e5cc] hover:underline">VibeOpenClaw vs xCloud</a> and{' '}
-        <a href="/compare/vibeopenclaw-vs-myclaw" className="text-[#00e5cc] hover:underline">VibeOpenClaw vs MyClaw</a>, the full{' '}
+        Prefer a head-to-head? See <a href="/compare/vibeopenclaw-vs-xcloud" className="text-[#00e5cc] hover:underline">VibeOpenClaw vs xCloud</a>,{' '}
+        <a href="/compare/vibeopenclaw-vs-myclaw" className="text-[#00e5cc] hover:underline">VibeOpenClaw vs MyClaw</a>, or{' '}
+        <a href="/compare/vibeopenclaw-vs-hostinger" className="text-[#00e5cc] hover:underline">OpenClaw on a Hostinger VPS vs VibeOpenClaw</a>, the full{' '}
         <a href="/blog/best-openclaw-hosting-providers-2026" className="text-[#00e5cc] hover:underline">best OpenClaw hosting providers</a> rundown, or our{' '}
         <a href="/openclaw-hosting/alternatives" className="text-[#00e5cc] hover:underline">OpenClaw hosting alternatives</a>.
       </P>
       <P>
-        Connecting your agent to other tools? Browse <a href="/openclaw-hosting/integrations" className="text-[#00e5cc] hover:underline">OpenClaw integrations</a> (n8n, Zapier, Notion, GitHub, and more), or pick a model provider on the{' '}
-        <a href="/openclaw-hosting/anthropic" className="text-[#00e5cc] hover:underline">per-provider pages</a>.
+        Connecting your agent to other tools? Browse <a href="/openclaw-hosting/integrations" className="text-[#00e5cc] hover:underline">OpenClaw integrations</a> (n8n, Zapier, Notion, GitHub, and more).
       </P>
+
+      <H2 id="providers">Pick a model provider</H2>
+      <P>All 13 are first-class BYOK — add your key and pay the provider directly, with no inference markup.</P>
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-3 my-6">
+        {MODEL_PROVIDERS.map((p) => (
+          <Link
+            key={p.slug}
+            href={`/openclaw-hosting/${p.slug}`}
+            className="rounded-xl border border-[rgba(136,146,176,0.15)] bg-[rgba(10,15,26,0.4)] px-4 py-3 text-sm font-medium text-[#c8d0e0] hover:text-[#f0f4ff] hover:border-[rgba(136,146,176,0.3)] transition-colors"
+          >
+            {p.name}
+          </Link>
+        ))}
+      </div>
 
       <H2 id="pricing">Simple pricing</H2>
       <P>Two plans, month-to-month, BYOK across 13 providers. You pay your model provider directly for inference — we never mark it up.</P>

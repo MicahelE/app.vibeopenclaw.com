@@ -3,6 +3,8 @@
 // VibeOpenClaw specifically implements the concept. No invented specifics
 // about other products; only state what's true of this platform.
 
+import type { Faq } from '@/components/marketing/schema';
+
 export interface GlossaryTerm {
   slug: string;
   term: string;
@@ -14,6 +16,8 @@ export interface GlossaryTerm {
   hereParas: string[];
   /** Related glossary/product pages to link to. */
   related: { label: string; path: string }[];
+  /** Optional FAQ, e.g. to answer common phrasing variants of the term directly. */
+  faqs?: Faq[];
 }
 
 export const GLOSSARY: GlossaryTerm[] = [
@@ -83,6 +87,12 @@ export const GLOSSARY: GlossaryTerm[] = [
       { label: 'What is an agent skill?', path: '/glossary/agent-skill' },
       { label: 'What is a webhook?', path: '/glossary/webhook' },
       { label: 'OpenClaw integrations', path: '/openclaw-hosting/integrations' },
+    ],
+    faqs: [
+      { q: 'What is MCP?', a: 'MCP (Model Context Protocol) is an open protocol that lets an AI model or agent connect to external tools and data sources through one standard interface, instead of custom glue code per integration.' },
+      { q: 'What does MCP stand for?', a: 'Model Context Protocol.' },
+      { q: 'What is the MCP protocol?', a: 'It\'s a standard way for an AI application to discover and call external tools — reading a file, querying a database, hitting an API — through a consistent interface that any MCP-compatible client can use, rather than writing bespoke integration code for every tool.' },
+      { q: 'What does MCP mean in AI?', a: 'In the context of AI agents, MCP means the model or agent can call out to external "MCP servers" for tools and data using a shared protocol, so adding a new tool doesn\'t require new integration code for that specific model or framework.' },
     ],
   },
   {
