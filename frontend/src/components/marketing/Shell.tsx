@@ -29,6 +29,9 @@ export function MarketingShell({
           <div className="flex items-center justify-center gap-5 mb-4">
             <Link href="/compare" className="hover:text-[#f0f4ff] transition-colors">Compare</Link>
             <Link href="/glossary" className="hover:text-[#f0f4ff] transition-colors">Glossary</Link>
+            <Link href="/privacy" className="hover:text-[#f0f4ff] transition-colors">Privacy</Link>
+            <Link href="/security" className="hover:text-[#f0f4ff] transition-colors">Security</Link>
+            <Link href="/terms" className="hover:text-[#f0f4ff] transition-colors">Terms</Link>
           </div>
           <Link href="/" className="hover:text-[#f0f4ff] transition-colors">← Back to VibeOpenClaw</Link>
         </footer>

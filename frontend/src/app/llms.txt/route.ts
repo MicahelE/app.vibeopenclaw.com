@@ -61,6 +61,12 @@ Telegram, Discord, and Slack bot integrations.
 - BYOK AI agent platforms — what bring-your-own-key actually buys you: https://app.vibeopenclaw.com/blog/byok-ai-agent-platform
 - OpenClaw hosting alternatives — DIY VPS vs MyClaw vs VibeOpenClaw: https://app.vibeopenclaw.com/blog/openclaw-hosting-alternatives
 
+## Trust
+
+- Security: https://app.vibeopenclaw.com/security
+- Privacy Policy: https://app.vibeopenclaw.com/privacy
+- Terms of Service: https://app.vibeopenclaw.com/terms
+
 ## Links
 
 - Website: https://app.vibeopenclaw.com

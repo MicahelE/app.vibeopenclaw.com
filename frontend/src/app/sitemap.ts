@@ -75,5 +75,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     // Glossary
     e('/glossary', 0.6),
     ...GLOSSARY.map((g) => e(`/glossary/${g.slug}`, 0.5)),
+
+    // Legal / trust
+    e('/security', 0.5),
+    e('/privacy', 0.4),
+    e('/terms', 0.4),
   ]
 }

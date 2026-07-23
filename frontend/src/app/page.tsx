@@ -626,6 +626,9 @@ export default function HomePage() {
             <a href="#pricing" className="hover:text-[#f0f4ff] transition-colors">Pricing</a>
             <a href="/blog" className="hover:text-[#f0f4ff] transition-colors">Blog</a>
             <a href="/compare/openclaw-vs-hermes" className="hover:text-[#f0f4ff] transition-colors">Compare Agents</a>
+            <a href="/privacy" className="hover:text-[#f0f4ff] transition-colors">Privacy</a>
+            <a href="/security" className="hover:text-[#f0f4ff] transition-colors">Security</a>
+            <a href="/terms" className="hover:text-[#f0f4ff] transition-colors">Terms</a>
             <a href="https://github.com/openclaw/openclaw" target="_blank" rel="noopener noreferrer" className="hover:text-[#f0f4ff] transition-colors">OpenClaw</a>
             <a href="https://github.com/NousResearch/hermes-agent" target="_blank" rel="noopener noreferrer" className="hover:text-[#f0f4ff] transition-colors">Hermes Agent</a>
           </div>
