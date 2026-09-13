@@ -42,6 +42,10 @@ Telegram, Discord, and Slack bot integrations.
 
 - All comparisons: https://app.vibeopenclaw.com/compare
 - OpenClaw vs Hermes Agent — side-by-side comparison: https://app.vibeopenclaw.com/compare/openclaw-vs-hermes
+- OpenClaw vs Meta Muse, Gemini Spark & Grok Bot: https://app.vibeopenclaw.com/compare/openclaw-vs-big-tech-ai-agents
+- OpenClaw vs Meta Muse: https://app.vibeopenclaw.com/compare/openclaw-vs-meta-muse
+- OpenClaw vs Gemini Spark: https://app.vibeopenclaw.com/compare/openclaw-vs-gemini-spark
+- OpenClaw vs Grok Bot: https://app.vibeopenclaw.com/compare/openclaw-vs-grok-bot
 - VibeOpenClaw vs xCloud: https://app.vibeopenclaw.com/compare/vibeopenclaw-vs-xcloud
 - VibeOpenClaw vs MyClaw: https://app.vibeopenclaw.com/compare/vibeopenclaw-vs-myclaw
 

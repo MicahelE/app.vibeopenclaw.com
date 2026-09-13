@@ -93,6 +93,9 @@ export const GLOSSARY: GlossaryTerm[] = [
       { q: 'What does MCP stand for?', a: 'Model Context Protocol.' },
       { q: 'What is the MCP protocol?', a: 'It\'s a standard way for an AI application to discover and call external tools — reading a file, querying a database, hitting an API — through a consistent interface that any MCP-compatible client can use, rather than writing bespoke integration code for every tool.' },
       { q: 'What does MCP mean in AI?', a: 'In the context of AI agents, MCP means the model or agent can call out to external "MCP servers" for tools and data using a shared protocol, so adding a new tool doesn\'t require new integration code for that specific model or framework.' },
+      { q: 'What does MCP stand for in software?', a: 'Model Context Protocol — an open standard for connecting AI models and agents to external tools and data sources through one shared interface.' },
+      { q: 'What is the meaning of MCP?', a: 'MCP means Model Context Protocol: a standard interface that lets an AI agent discover and call external tools (files, APIs, databases) without custom integration code for each one.' },
+      { q: 'What is MCP software?', a: 'MCP isn\'t a single piece of software — it\'s a protocol. "MCP software" usually refers to an MCP server (which exposes tools over the protocol) or an MCP-compatible client/agent (which calls those tools), both built to the same open specification.' },
     ],
   },
   {

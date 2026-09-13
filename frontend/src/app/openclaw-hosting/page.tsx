@@ -155,7 +155,21 @@ export default function OpenClawHostingPage() {
         <a href="/openclaw-hosting/alternatives" className="text-[#00e5cc] hover:underline">OpenClaw hosting alternatives</a>.
       </P>
       <P>
+        Weighing OpenClaw against a big-tech agent? See{' '}
+        <a href="/compare/openclaw-vs-big-tech-ai-agents" className="text-[#00e5cc] hover:underline">OpenClaw vs Meta Muse, Gemini Spark & Grok Bot</a>,{' '}
+        <a href="/compare/openclaw-vs-meta-muse" className="text-[#00e5cc] hover:underline">OpenClaw vs Meta Muse</a>,{' '}
+        <a href="/compare/openclaw-vs-gemini-spark" className="text-[#00e5cc] hover:underline">OpenClaw vs Gemini Spark</a>, or{' '}
+        <a href="/compare/openclaw-vs-grok-bot" className="text-[#00e5cc] hover:underline">OpenClaw vs Grok Bot</a>.
+      </P>
+      <P>
         Connecting your agent to other tools? Browse <a href="/openclaw-hosting/integrations" className="text-[#00e5cc] hover:underline">OpenClaw integrations</a> (n8n, Zapier, Notion, GitHub, and more).
+      </P>
+
+      <H2 id="channels">Connect a channel</H2>
+      <P>
+        Setting up a specific channel? See the <a href="/openclaw-hosting/telegram" className="text-[#00e5cc] hover:underline">Telegram</a>,{' '}
+        <a href="/openclaw-hosting/discord" className="text-[#00e5cc] hover:underline">Discord</a>, or{' '}
+        <a href="/openclaw-hosting/slack" className="text-[#00e5cc] hover:underline">Slack</a> setup guide for step-by-step bot token instructions.
       </P>
 
       <H2 id="providers">Pick a model provider</H2>

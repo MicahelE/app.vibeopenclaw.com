@@ -15,4 +15,8 @@ export const COMPARE_PAGES: ComparePage[] = [
   { slug: 'vibeopenclaw-vs-railway', title: 'VibeOpenClaw vs Railway' },
   { slug: 'vibeopenclaw-vs-hostinger', title: 'VibeOpenClaw vs Hostinger' },
   { slug: 'openclaw-vs-hermes', title: 'OpenClaw vs Hermes' },
+  { slug: 'openclaw-vs-big-tech-ai-agents', title: 'OpenClaw vs Meta Muse, Gemini Spark & Grok Bot' },
+  { slug: 'openclaw-vs-grok-bot', title: 'OpenClaw vs Grok Bot' },
+  { slug: 'openclaw-vs-meta-muse', title: 'OpenClaw vs Meta Muse' },
+  { slug: 'openclaw-vs-gemini-spark', title: 'OpenClaw vs Google Gemini Spark' },
 ];
