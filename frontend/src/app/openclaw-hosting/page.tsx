@@ -5,6 +5,8 @@ import { Hero, StatBar, FeatureGrid, ComparisonTable, FaqAccordion, PricingCards
 import { breadcrumbLd, faqPageLd, serviceLd, jsonLd, type Faq } from '@/components/marketing/schema';
 import { PLANS } from '@/content/pricing';
 import { MODEL_PROVIDERS } from '@/content/modelProviders';
+import { USE_CASES } from '@/content/useCases';
+import { VERTICALS } from '@/content/verticals';
 
 const SITE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://app.vibeopenclaw.com';
 const PATH = '/openclaw-hosting';
@@ -171,6 +173,34 @@ export default function OpenClawHostingPage() {
         <a href="/openclaw-hosting/discord" className="text-[#00e5cc] hover:underline">Discord</a>, or{' '}
         <a href="/openclaw-hosting/slack" className="text-[#00e5cc] hover:underline">Slack</a> setup guide for step-by-step bot token instructions.
       </P>
+
+      <H2 id="for">Built for your team</H2>
+      <P>OpenClaw fits different roles differently. Pick the one closest to you:</P>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 my-6">
+        {VERTICALS.map((v) => (
+          <Link
+            key={v.slug}
+            href={`/openclaw-hosting/for/${v.slug}`}
+            className="rounded-xl border border-[rgba(136,146,176,0.15)] bg-[rgba(10,15,26,0.4)] px-4 py-3 text-sm font-medium text-[#c8d0e0] hover:text-[#f0f4ff] hover:border-[rgba(136,146,176,0.3)] transition-colors"
+          >
+            {v.title.replace(/^OpenClaw for /i, '')}
+          </Link>
+        ))}
+      </div>
+
+      <H2 id="use-cases">Use cases</H2>
+      <P>Concrete tasks an OpenClaw agent handles out of the box:</P>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 my-6">
+        {USE_CASES.map((u) => (
+          <Link
+            key={u.slug}
+            href={`/openclaw-hosting/use-cases/${u.slug}`}
+            className="rounded-xl border border-[rgba(136,146,176,0.15)] bg-[rgba(10,15,26,0.4)] px-4 py-3 text-sm font-medium text-[#c8d0e0] hover:text-[#f0f4ff] hover:border-[rgba(136,146,176,0.3)] transition-colors"
+          >
+            {u.title.replace(/^OpenClaw (as |for )?/i, '')}
+          </Link>
+        ))}
+      </div>
 
       <H2 id="providers">Pick a model provider</H2>
       <P>All 13 are first-class BYOK — add your key and pay the provider directly, with no inference markup.</P>

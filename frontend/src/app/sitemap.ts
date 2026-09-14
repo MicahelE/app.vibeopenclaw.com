@@ -1,6 +1,7 @@
 import { MetadataRoute } from 'next'
 import { MODEL_PROVIDERS } from '@/content/modelProviders'
 import { USE_CASES } from '@/content/useCases'
+import { VERTICALS } from '@/content/verticals'
 import { DOCS } from '@/content/docs'
 import { ALTERNATIVES } from '@/content/alternatives'
 import { INTEGRATIONS } from '@/content/integrations'
@@ -51,6 +52,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...MODEL_PROVIDERS.map((p) => e(`/openclaw-hosting/${p.slug}`, 0.6)),
     // OpenClaw use cases
     ...USE_CASES.map((u) => e(`/openclaw-hosting/use-cases/${u.slug}`, 0.6)),
+    // OpenClaw for (persona/vertical)
+    ...VERTICALS.map((v) => e(`/openclaw-hosting/for/${v.slug}`, 0.6)),
     // OpenClaw competitor alternatives
     e('/openclaw-hosting/alternatives', 0.7),
     ...ALTERNATIVES.map((a) => e(`/openclaw-hosting/alternatives/${a.slug}`, 0.6)),

@@ -32,6 +32,23 @@ Telegram, Discord, and Slack bot integrations.
 - OpenClaw integrations (n8n, Zapier, Notion, GitHub, Slack, and more): https://app.vibeopenclaw.com/openclaw-hosting/integrations
 - OpenClaw hosting alternatives: https://app.vibeopenclaw.com/openclaw-hosting/alternatives
 
+## For your team
+
+- OpenClaw for agencies: https://app.vibeopenclaw.com/openclaw-hosting/for/agencies
+- OpenClaw for ecommerce: https://app.vibeopenclaw.com/openclaw-hosting/for/ecommerce
+- OpenClaw for project managers: https://app.vibeopenclaw.com/openclaw-hosting/for/project-managers
+- OpenClaw for founders and small business owners: https://app.vibeopenclaw.com/openclaw-hosting/for/founders
+
+## Use cases
+
+- Personal assistant: https://app.vibeopenclaw.com/openclaw-hosting/use-cases/personal-assistant
+- Customer support: https://app.vibeopenclaw.com/openclaw-hosting/use-cases/customer-support
+- Coding assistant: https://app.vibeopenclaw.com/openclaw-hosting/use-cases/coding-assistant
+- Research and summaries: https://app.vibeopenclaw.com/openclaw-hosting/use-cases/research
+- Scheduling and reminders: https://app.vibeopenclaw.com/openclaw-hosting/use-cases/scheduling-reminders
+- Team Slack bot: https://app.vibeopenclaw.com/openclaw-hosting/use-cases/team-slack-bot
+- Workflow automation: https://app.vibeopenclaw.com/openclaw-hosting/use-cases/automation
+
 ## What they are
 
 - What is OpenClaw (Clawdbot)?: https://app.vibeopenclaw.com/what-is-openclaw
