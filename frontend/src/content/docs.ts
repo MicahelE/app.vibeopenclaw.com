@@ -9,12 +9,19 @@ export interface DocSection {
   bullets?: string[];
 }
 
+export interface DocFaq {
+  q: string;
+  a: string;
+}
+
 export interface Doc {
   slug: string;
   title: string;
   description: string;
   category: 'Getting started' | 'Channels' | 'Models' | 'Account' | 'Help';
   sections: DocSection[];
+  /** Optional FAQ block — renders an accordion + FAQPage schema. */
+  faqs?: DocFaq[];
 }
 
 export const DOCS: Doc[] = [
@@ -155,12 +162,26 @@ export const DOCS: Doc[] = [
   },
   {
     slug: 'troubleshooting',
-    title: 'Troubleshooting',
-    description: 'Common issues and how to resolve them.',
+    title: 'OpenClaw troubleshooting: common issues and fixes',
+    description: 'Agent not responding, Telegram or Discord not working, invalid API key, or an agent stuck restarting — here’s how to diagnose and fix it.',
     category: 'Help',
     sections: [
-      { heading: 'Agent not responding', bullets: ['Check the channel token is correct and not revoked.', 'Confirm your model provider key is valid and has quota.', 'For Discord, ensure the Message Content intent is enabled if needed.'] },
-      { heading: 'Model errors', bullets: ['A provider 401 usually means an invalid or expired key — re-add it on the API Keys page.', 'Rate-limit errors come from your provider; check your provider dashboard.'] },
+      { heading: 'Agent not responding at all', bullets: ['Check the channel token is correct and not revoked.', 'Confirm your model provider key is valid and has quota.', 'Check the agent’s status on the dashboard — a crashed agent shows as stopped, not just quiet.', 'Send a plain test message with no special formatting to rule out a parsing issue.'] },
+      { heading: 'Telegram bot not responding', bullets: ['Confirm the bot token from BotFather was pasted in full, with no extra whitespace.', 'Make sure you’ve started a chat with the bot first — Telegram bots can’t message you until you message them.', 'Check the bot hasn’t been blocked or the token hasn’t been regenerated in BotFather.'] },
+      { heading: 'Discord bot not responding', bullets: ['Enable the “Message Content” privileged intent for the bot in the Discord Developer Portal — this is the most common cause.', 'Confirm the bot was actually invited to the server with the right permissions (Send Messages, Read Message History).', 'Check the bot shows as online in your server’s member list.'] },
+      { heading: 'Invalid API key / 401 errors', bullets: ['A provider 401 usually means an invalid, expired, or revoked key — re-add it on the API Keys page.', 'Confirm you copied the full key with no truncation, and that it’s for the provider you selected.', 'Check your provider dashboard for account-level issues (billing hold, org suspension) that can also return 401.'] },
+      { heading: 'Rate-limit or quota errors', bullets: ['These come from your model provider, not from VibeOpenClaw — check your provider’s dashboard for current usage and limits.', 'Some providers rate-limit new accounts more tightly for the first few days; check their docs for tier-specific limits.'] },
+      { heading: 'Agent keeps restarting or crashing', bullets: ['Check recent log output on the dashboard for the actual error before the restart.', 'A skill that throws repeatedly can trigger a crash loop — try disabling recently added skills one at a time.', 'If it started after a model switch, confirm the new provider/model combination is one OpenClaw supports.'] },
+      { heading: 'A skill or webhook isn’t triggering', bullets: ['Confirm the webhook URL is correct and reachable — test it independently of the agent first.', 'Check the skill’s permissions are scoped to allow the action you’re asking for.', 'Look for a typo in how you’re invoking the skill — natural-language phrasing matters for intent matching.'] },
+      { heading: 'Suspect a leaked or compromised key', bullets: ['Revoke the key immediately from your provider’s dashboard, then add a fresh one on the API Keys page.', 'Check your provider’s usage logs for activity you don’t recognize.', 'See the security guide for how key handling and isolation limit this kind of exposure going forward.'] },
+    ],
+    faqs: [
+      { q: 'Why is my OpenClaw agent not responding?', a: 'Start with the basics: an invalid or revoked channel token, an expired model provider key, or the agent having crashed are the three most common causes. Check the dashboard for the agent’s actual status — a stopped agent looks the same as a quiet one from the outside.' },
+      { q: 'My OpenClaw Telegram bot isn’t working — what do I check first?', a: 'Confirm the BotFather token was pasted in full with no extra whitespace, and that you’ve started a chat with the bot yourself — Telegram bots can’t initiate a conversation, so it can’t reply until you message it first.' },
+      { q: 'My OpenClaw Discord bot won’t respond to messages', a: 'The most common cause by far is the “Message Content” privileged intent not being enabled for the bot in the Discord Developer Portal. Enable it, then confirm the bot has Send Messages and Read Message History permissions in the server.' },
+      { q: 'How do I fix an invalid API key error in OpenClaw?', a: 'Re-add the key on the API Keys page, making sure it’s copied in full and matches the provider you selected. If it still fails, check your provider’s own dashboard for account-level issues like a billing hold.' },
+      { q: 'Why does my OpenClaw agent keep restarting or crashing?', a: 'Check the log output right before the restart — a skill that throws an error repeatedly is the usual cause. Disable recently added skills one at a time to isolate it, especially after switching models or providers.' },
+      { q: 'I think my OpenClaw API key leaked — what do I do?', a: 'Revoke it immediately in your provider’s dashboard and add a new one. Check your provider’s usage logs for unrecognized activity. See the OpenClaw security guide for how encrypted key storage and per-agent isolation reduce this risk going forward.' },
     ],
   },
 ];

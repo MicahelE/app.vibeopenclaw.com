@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { MarketingShell, Breadcrumbs } from '@/components/marketing/Shell';
-import { H2, P, JsonLd } from '@/components/marketing/blocks';
-import { breadcrumbLd, jsonLd } from '@/components/marketing/schema';
+import { H2, P, FaqAccordion, JsonLd } from '@/components/marketing/blocks';
+import { breadcrumbLd, faqPageLd, jsonLd } from '@/components/marketing/schema';
 import { DOCS, getDoc } from '@/content/docs';
 
 const SITE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://app.vibeopenclaw.com';
@@ -60,13 +60,26 @@ export default async function DocPage({ params }: { params: Promise<{ slug: stri
         </section>
       ))}
 
+      {d.faqs && <FaqAccordion faqs={d.faqs} />}
+
       <div className="mt-10 pt-6 border-t border-[rgba(136,146,176,0.15)] text-sm text-[#8892b0]">
         <Link href="/docs" className="text-[#00e5cc] hover:underline">← All docs</Link>
         <span className="mx-2">·</span>
         <Link href="/openclaw-hosting" className="text-[#00e5cc] hover:underline">OpenClaw hosting</Link>
+        {d.slug === 'troubleshooting' && (
+          <>
+            <span className="mx-2">·</span>
+            <Link href="/blog/openclaw-security" className="text-[#00e5cc] hover:underline">OpenClaw security guide</Link>
+          </>
+        )}
       </div>
 
-      <JsonLd data={jsonLd(breadcrumbLd([{ name: 'Home', path: '/' }, { name: 'Docs', path: '/docs' }, { name: d.title, path }]))} />
+      <JsonLd
+        data={jsonLd(
+          breadcrumbLd([{ name: 'Home', path: '/' }, { name: 'Docs', path: '/docs' }, { name: d.title, path }]),
+          ...(d.faqs ? [faqPageLd(d.faqs)] : []),
+        )}
+      />
     </MarketingShell>
   );
 }

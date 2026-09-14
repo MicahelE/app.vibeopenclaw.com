@@ -70,6 +70,14 @@ const FAQ: Faq[] = [
     q: 'What is the single most important OpenClaw security step?',
     a: 'Don’t expose it unnecessarily. The most common real-world incidents come from instances reachable on the open internet without authentication. After that, protect your keys (encrypted at rest, never in logs) and limit skill and channel permissions to least privilege. Those three habits cover the large majority of practical risk.',
   },
+  {
+    q: 'How do I stop an OpenClaw credential leak?',
+    a: 'Encrypt provider keys and channel tokens at rest, never write them to logs or plaintext config, and scope each token to least privilege so a leak of one credential doesn’t expose everything. If you suspect a key has already leaked, revoke it in your provider’s dashboard immediately and issue a new one — see the troubleshooting guide for the full steps.',
+  },
+  {
+    q: 'Has there been an OpenClaw security incident?',
+    a: 'The risk categories on this page — exposed instances, over-broad skill permissions, leaked keys, and unvetted community skills — are the same ones that affect any self-hosted automation tool with credentials and extensions, not a flaw specific to OpenClaw. Most reported incidents trace back to how an instance was deployed and configured, not to the project itself.',
+  },
 ];
 
 export default function OpenClawSecurityPage() {
@@ -162,6 +170,12 @@ export default function OpenClawSecurityPage() {
         <li>Keep audit logs of agent actions — but make sure those logs never contain secrets.</li>
         <li>Test your firewall from outside the host to confirm nothing is exposed that shouldn’t be.</li>
       </ol>
+
+      <P>
+        Suspect a leaked key or a misbehaving agent right now? See the{' '}
+        <Link href="/docs/troubleshooting" className="text-[#00e5cc] hover:underline">troubleshooting guide</Link> for
+        step-by-step fixes.
+      </P>
 
       <FaqAccordion faqs={FAQ} />
 

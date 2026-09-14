@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { MarketingShell, Breadcrumbs } from '@/components/marketing/Shell';
+import Link from 'next/link';
 import { H2, P, FeatureGrid, JsonLd } from '@/components/marketing/blocks';
 import { breadcrumbLd, jsonLd } from '@/components/marketing/schema';
 
@@ -46,6 +47,14 @@ export default function SecurityPage() {
 
       <H2>Controls in place</H2>
       <FeatureGrid features={CONTROLS} />
+
+      <H2>Running OpenClaw yourself?</H2>
+      <P>
+        These controls are specific to VibeOpenClaw. If you self-host OpenClaw, see our{' '}
+        <Link href="/blog/openclaw-security" className="text-[#00e5cc] hover:underline">OpenClaw security guide</Link>{' '}
+        for the general risk surface — exposed instances, key handling, skill permissions — and a checklist for
+        hardening a self-hosted deployment.
+      </P>
 
       <H2>Responsible disclosure</H2>
       <P>

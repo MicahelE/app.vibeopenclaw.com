@@ -54,6 +54,7 @@ Telegram, Discord, and Slack bot integrations.
 - What is OpenClaw (Clawdbot)?: https://app.vibeopenclaw.com/what-is-openclaw
 - What is Hermes Agent?: https://app.vibeopenclaw.com/what-is-hermes
 - Docs (deploy, channels, models, billing): https://app.vibeopenclaw.com/docs
+- Troubleshooting (agent not responding, Telegram/Discord issues, invalid API key, crash loops): https://app.vibeopenclaw.com/docs/troubleshooting
 
 ## Comparisons
 

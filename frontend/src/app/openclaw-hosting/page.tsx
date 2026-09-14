@@ -220,6 +220,14 @@ export default function OpenClawHostingPage() {
       <P>Two plans, month-to-month, BYOK across 13 providers. You pay your model provider directly for inference — we never mark it up.</P>
       <PricingCards />
 
+      <H2 id="help">Need help?</H2>
+      <P>
+        Agent not responding, a channel not connecting, or an API key error? See the{' '}
+        <a href="/docs/troubleshooting" className="text-[#00e5cc] hover:underline">troubleshooting guide</a>. Concerned
+        about key handling or exposure? Read the{' '}
+        <a href="/blog/openclaw-security" className="text-[#00e5cc] hover:underline">OpenClaw security guide</a>.
+      </P>
+
       <FaqAccordion faqs={FAQ} />
 
       <Cta title="Deploy your OpenClaw agent" body="One-click deploy, Docker isolation, BYOK across 13 providers, and channels wired up — from $24/mo." />
